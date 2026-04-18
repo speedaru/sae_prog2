@@ -2,19 +2,25 @@ package fr.uge.but.schtroumpf;
 
 import module java.base;
 
-import fr.uge.but.schtroumpf.view.Logger;
-import fr.uge.but.schtroumpf.view.LoggerFlag;
+import fr.uge.but.schtroumpf.controller.AppController;
+import fr.uge.but.schtroumpf.model.Logger;
+import fr.uge.but.schtroumpf.model.Logger.LoggerFlag;;
 
 public class Main {
 	public static void main(String[] args) {
 		// init logger
 		List<LoggerFlag> flags = List.of(
-				LoggerFlag.Debug,
-				LoggerFlag.Error,
-				LoggerFlag.Trace
+				LoggerFlag.DEBUG,
+				LoggerFlag.ERROR,
+				LoggerFlag.TRACE
 		);
 		Logger.Init(flags);
 		
-		Logger.LogError("hello");
+		// test logger
+		Logger.LogDebug("hello");
+		
+		// transition control to the global app controller
+		AppController app = new AppController();
+        app.launch();
 	}
 }

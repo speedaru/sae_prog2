@@ -1,8 +1,14 @@
-package fr.uge.but.schtroumpf.view;
+package fr.uge.but.schtroumpf.model;
 
 import module java.base;
 
 public class Logger {
+	public enum LoggerFlag {
+		DEBUG,
+		TRACE,
+		ERROR;
+	}
+	
 	// global loggin level
 	private static HashSet<LoggerFlag> logLevel = new HashSet<LoggerFlag>();
 	
@@ -16,15 +22,15 @@ public class Logger {
 		return logLevel.contains(flag);
 	}
 	
-	public static void LogDebug(String message) { Log(LoggerFlag.Debug, message); }
-	public static void LogTrace(String message) { Log(LoggerFlag.Trace, message); }
-	public static void LogError(String message) { Log(LoggerFlag.Error, message); }
+	public static void LogDebug(String message) { Log(LoggerFlag.DEBUG, message); }
+	public static void LogTrace(String message) { Log(LoggerFlag.TRACE, message); }
+	public static void LogError(String message) { Log(LoggerFlag.ERROR, message); }
 
 	// main logging function, can change to log to file maybe
 	private static void Log(LoggerFlag level, String message) {
 		Objects.requireNonNull(logLevel);
 		if (flagSet(level)) {
-			IO.println(String.format("%s : %s", level.getDescription(), message));
+			IO.println(String.format("%s : %s", level.name(), message));
 		}
 	}
 }
