@@ -3,8 +3,8 @@ package fr.uge.but.schtroumpf;
 import module java.base;
 
 import fr.uge.but.schtroumpf.controller.AppController;
-import fr.uge.but.schtroumpf.model.Logger;
-import fr.uge.but.schtroumpf.model.Logger.LoggerFlag;;
+import fr.uge.but.schtroumpf.view.Logger;
+import fr.uge.but.schtroumpf.view.Logger.LoggerFlag;;
 
 public class Main {
 	public static void main(String[] args) {

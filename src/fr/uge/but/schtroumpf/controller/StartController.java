@@ -14,6 +14,10 @@ public class StartController implements SubController {
 		window.load();
 		Choice choice = Choice.fromCode(window.getUserChoice());
 
+		return handleChoice(choice);
+	}
+	
+	NavigationResult handleChoice(Choice choice) {
 		return switch (choice) {
 		case START_GAME -> new NavigationResult(NavigationAction.PUSH, WindowType.GAME_WINDOW);
 		case CONTINUE_GAME -> new NavigationResult(NavigationAction.STAY, null);

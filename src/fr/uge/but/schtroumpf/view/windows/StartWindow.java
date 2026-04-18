@@ -21,16 +21,15 @@ public class StartWindow implements Window {
 
 	private final ConsoleMenu menu = new ConsoleMenu();
 	
+	public int getUserChoice() {
+		menu.print();
+		return menu.prompt().num();
+	}
+
 	@Override
 	public void load() {
 		menu.addChoice(new MenuChoice(Choice.START_GAME.code, "Start Game"));
 		menu.addChoice(new MenuChoice(Choice.CONTINUE_GAME.code, "Continue a previous game:Wqa"));
         menu.addChoice(new MenuChoice(Choice.EXIT.code, "Exit"));
-	}
-	
-	@Override
-	public int getUserChoice() {
-		menu.print();
-		return menu.prompt().num();
 	}
 }

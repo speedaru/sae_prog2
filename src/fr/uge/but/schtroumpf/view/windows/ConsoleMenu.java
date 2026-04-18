@@ -2,7 +2,7 @@ package fr.uge.but.schtroumpf.view.windows;
 
 import module java.base;
 
-import fr.uge.but.schtroumpf.model.Logger;
+import fr.uge.but.schtroumpf.view.Logger;
 
 public class ConsoleMenu {
 	public record MenuChoice(int num, String description) {

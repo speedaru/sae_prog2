@@ -1,4 +1,4 @@
-package fr.uge.but.schtroumpf.model;
+package fr.uge.but.schtroumpf.view;
 
 import module java.base;
 

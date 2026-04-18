@@ -33,7 +33,7 @@ public class AppController {
 	private SubController createController(WindowType windowType) {
 		return switch (windowType) {
 		case START_WINDOW -> new StartController();
-		case GAME_WINDOW -> new GameSessionController();
+		case GAME_WINDOW -> new GameController();
 		default -> throw new IllegalArgumentException("unknown window type : " + windowType);
 		};
 	}
