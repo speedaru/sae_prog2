@@ -7,6 +7,8 @@ import fr.uge.but.schtroumpf.model.characters.*;
 import fr.uge.but.schtroumpf.model.events.*;
 
 public class SmurfVillage {
+	private final static int CRISES_LIMIT = 3; // 3+ crises = lose
+	
 	private final ResourceManager resourceManager = new ResourceManager();
 	private List<ResourceSnapshot> previousRoundResources;
 	private List<SmurfCharacter> councilMembers;
@@ -61,6 +63,19 @@ public class SmurfVillage {
 		return List.copyOf(councilMembers);
 	}
 	
+	public List<SmurfCharacter> getAvailableSmurfs() {
+		ArrayList<SmurfCharacter> available = new ArrayList<SmurfCharacter>();
+		
+		for (SmurfCharacter smurf : councilMembers) {
+			// smurf is available if has at least 1 energy
+			if (smurf.getEnergy() >= 1) {
+				available.add(smurf);
+			}
+		}
+		
+		return List.copyOf(available);
+	}
+	
 	public List<EventHistory> getHistory() {
 		return List.copyOf(eventsHistory);
 	}
@@ -92,13 +107,13 @@ public class SmurfVillage {
 		return depletedResourceCount;
 	}
 	
-	public void saveRoundResources() {
-		previousRoundResources = resourceManager.getResourcesSnap();
+	/** 3 or more crises means lost */
+	public boolean isDefeated() {
+		return checkCrises() == CRISES_LIMIT;
 	}
 	
-	public void applyResourceConsumption() {
-		// TODO : implement
-		resourceManager.add(ResourceType.BERRIES, -2);
+	public void saveRoundResources() {
+		previousRoundResources = resourceManager.getResourcesSnap();
 	}
 	
 	public void recordEvent(EventHistory recordedEvent) {
@@ -107,5 +122,13 @@ public class SmurfVillage {
 	
 	public void applyEffect(Effect effect) {
 		resourceManager.add(effect.resourceType(), effect.delta());
+	}
+	
+	public void decreaseResource(ResourceType resource, int amount) {
+		if (amount < 0) {
+			throw new IllegalArgumentException("cannot decrease negative amount");
+		}
+		
+		resourceManager.add(resource, -amount);
 	}
 }

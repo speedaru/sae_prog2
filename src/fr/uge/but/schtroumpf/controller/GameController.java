@@ -23,6 +23,9 @@ public class GameController implements SubController {
 		
 		window.load();
 		
+		// save round resources in the very beginning of the round 
+		village.saveRoundResources();
+
 		// initial phase is production des ressources
 		GamePhase currentPhase = new ProductionPhase();
 		
@@ -35,16 +38,18 @@ public class GameController implements SubController {
 			window.newLine();
 		}
 		
-		postRoundLogic();
+		return postRoundLogic();
 		
-		return new NavigationResult(NavigationAction.STAY, null);
 	}
 	
-	private void postRoundLogic() {
-		village.saveRoundResources();
-		village.applyResourceConsumption();
+	/** @return NavigationResult of stay if game not finished */
+	private NavigationResult postRoundLogic() {
+		// check lose condition
+		if (village.isDefeated()) {
+			return new NavigationResult(NavigationAction.POP, null);
+		}
 		
-		// finally go to next round
 		round++;
+		return new NavigationResult(NavigationAction.STAY, null);
 	}
 }

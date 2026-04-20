@@ -9,7 +9,7 @@ public class StartWindow implements Window {
 	@Override
 	public void load() {
 		menu.addChoice(new MenuChoice(Choice.START_GAME.code, "Start Game"));
-		menu.addChoice(new MenuChoice(Choice.CONTINUE_GAME.code, "Continue a previous game:Wqa"));
+		menu.addChoice(new MenuChoice(Choice.CONTINUE_GAME.code, "Continue a previous game"));
         menu.addChoice(new MenuChoice(Choice.EXIT.code, "Exit"));
 	}
 	

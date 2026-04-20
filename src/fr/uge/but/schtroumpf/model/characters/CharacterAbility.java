@@ -11,11 +11,16 @@ import fr.uge.but.schtroumpf.model.SmurfVillage;
  */
 public record CharacterAbility(
     String description,
-    Predicate<SmurfVillage> canExecute,
+    int energyCost,
     Function<SmurfVillage, List<Effect>> actionLogic
 )
 {
-	public static boolean canAlwaysExecute(SmurfVillage village) {
+	public static boolean canAlwaysExecute(SmurfCharacter village) {
 		return true;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("%s (%d energie)", description, energyCost);
 	}
 }

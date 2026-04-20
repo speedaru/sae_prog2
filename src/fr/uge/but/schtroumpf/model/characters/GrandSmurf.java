@@ -6,6 +6,12 @@ import fr.uge.but.schtroumpf.model.*;
 import fr.uge.but.schtroumpf.view.Logger;
 
 public class GrandSmurf implements SmurfCharacter {
+	private int energy = 0;
+	
+	public GrandSmurf() {
+		energy = 10;
+	}
+	
 	@Override
 	public String getName() { return "Grand Schtroumpf"; }
 
@@ -14,21 +20,21 @@ public class GrandSmurf implements SmurfCharacter {
 		// consulter grimoire
 		CharacterAbility checkSpellBook = new CharacterAbility(
 			"Consulter le grimoire (+Savoir, -Moral si échec)",
-			CharacterAbility::canAlwaysExecute,
+			2,
 			this::executeCheckSpellBook
 		);
 		
 		// Organiser une réunion
 		CharacterAbility planMeeting = new CharacterAbility(
 			"Organiser une réunion (+Moral)",
-			CharacterAbility::canAlwaysExecute,
+			3,
 			this::executePlanMeeting
 		);
 		
 		// Négocier avec les animaux
 		CharacterAbility talkToAnimals = new CharacterAbility(
 			"Négocier avec les animaux (+Or ou +Défense)",
-			CharacterAbility::canAlwaysExecute,
+			1,
 			this::executeTalkToAnimals
 		);
 		
@@ -36,15 +42,13 @@ public class GrandSmurf implements SmurfCharacter {
 	}
 
 	@Override
-	public int getEnergy() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	public int getEnergy() { return energy; }
 
 	@Override
-	public void updateEnergy(int delta) {
-		// TODO Auto-generated method stub
-	}
+	public void updateEnergy(int delta) { energy += delta; }
+	
+	@Override
+	public String toString() { return getName(); }
 	
 	private List<Effect> executeCheckSpellBook(SmurfVillage village) {
 		final double successChance = 0.5;

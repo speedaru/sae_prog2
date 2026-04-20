@@ -6,6 +6,7 @@ import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.events.*;
 import fr.uge.but.schtroumpf.model.characters.*;
+import fr.uge.but.schtroumpf.model.crises.*;
 
 public class GameWindow implements Window {
 	// constants
@@ -32,10 +33,25 @@ public class GameWindow implements Window {
 	
 	public void displayEffectsApplied(List<Effect> effects) {
 		IO.println(SEPARATOR);
-		IO.println("Effets appliques sur le village");
+		IO.println("Effets appliques sur le village:");
 
 		for (Effect effect : effects) {
 			IO.println(effect);
+		}
+	}
+	
+	public void displayActiveCrises(List<Crisis> activeCrises) {
+		IO.println(SEPARATOR);
+		IO.println("Crises en cours:");
+
+		// special message if no active crisis
+		if (activeCrises.size() == 0) {
+			IO.println("aucune crise en cours");
+			return;
+		}
+
+		for (Crisis crisis : activeCrises) {
+			IO.println(crisis);
 		}
 	}
 	

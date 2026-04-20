@@ -10,6 +10,10 @@ public class ConsoleMenu {
 		choices.add(choice);
 	}
 	
+	public void clear() {
+		choices.clear();
+	}
+	
 	public void print() {
 		for (var choice : choices) {
 			IO.println(String.format("%d. %s", choice.num(), choice.description()));

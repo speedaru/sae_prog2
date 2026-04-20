@@ -10,6 +10,9 @@ import fr.uge.but.schtroumpf.model.ResourceType;
 public record Effect(ResourceType resourceType, int delta) {
 	@Override
 	public String toString() {
-		return String.format("%d %s", delta, resourceType);
+		String format = String.format("%d %s", delta, resourceType);
+		
+		// if delta is positive then add a + in front 
+		return delta > 0 ? "+" + format : format;
 	}
 }
