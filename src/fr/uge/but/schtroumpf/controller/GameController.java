@@ -5,14 +5,15 @@ import fr.uge.but.schtroumpf.controller.Navigation.NavigationResult;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.phases.*;
 import fr.uge.but.schtroumpf.view.windows.GameWindow;
+import fr.uge.but.schtroumpf.view.windows.GameWindow.*;
 
 public class GameController implements SubController {
+	// constants
+	private static final int MAX_ROUNDS = 12;
+
 	private final GameWindow window = new GameWindow();
 	private final SmurfVillage village = new SmurfVillage();
 	private int round = 1; // represents months
-	
-	// constants
-	private static final int MAX_ROUNDS = 12;
 	
 	@Override
 	public NavigationResult handle() {
@@ -25,11 +26,25 @@ public class GameController implements SubController {
 		// initial phase is production des ressources
 		GamePhase currentPhase = new ProductionPhase();
 		
+		// execute each phase of the month
 		while (currentPhase != null) {
-			currentPhase = currentPhase.execute(new GamePhaseContext(window, village));
+			window.displayHud(new HudContext(round, village));
+
+			var ctx = new GamePhaseContext(window, village, round);
+			currentPhase = currentPhase.execute(ctx);
+			window.newLine();
 		}
 		
-		round++;
+		postRoundLogic();
+		
 		return new NavigationResult(NavigationAction.STAY, null);
+	}
+	
+	private void postRoundLogic() {
+		village.saveRoundResources();
+		village.applyResourceConsumption();
+		
+		// finally go to next round
+		round++;
 	}
 }

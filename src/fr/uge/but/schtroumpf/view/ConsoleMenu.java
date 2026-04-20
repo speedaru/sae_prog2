@@ -1,28 +1,8 @@
-package fr.uge.but.schtroumpf.view.windows;
+package fr.uge.but.schtroumpf.view;
 
 import module java.base;
 
-import fr.uge.but.schtroumpf.view.Logger;
-
 public class ConsoleMenu {
-	public record MenuChoice(int num, String description) {
-		public MenuChoice {
-			Objects.requireNonNull(description);
-		}
-	}
-
-	enum Choice {
-		START_GAME(new MenuChoice(1, "start game"));
-		
-		private final MenuChoice choice;
-		
-		Choice(MenuChoice choice) {
-			this.choice = Objects.requireNonNull(choice);
-		}
-		
-		public MenuChoice getChoice() { return choice; }
-	}
-	
 	private final ArrayList<MenuChoice> choices = new ArrayList<MenuChoice>();
 	
 	public void addChoice(MenuChoice choice) {
@@ -57,5 +37,23 @@ public class ConsoleMenu {
 			// reprompt
 			Logger.LogError("invalid choice, select a valid choice pls");
 		}
+	}
+
+	public record MenuChoice(int num, String description) {
+		public MenuChoice {
+			Objects.requireNonNull(description);
+		}
+	}
+
+	enum Choice {
+		START_GAME(new MenuChoice(1, "start game"));
+		
+		private final MenuChoice choice;
+		
+		Choice(MenuChoice choice) {
+			this.choice = Objects.requireNonNull(choice);
+		}
+		
+		public MenuChoice getChoice() { return choice; }
 	}
 }

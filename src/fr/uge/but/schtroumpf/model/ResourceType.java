@@ -2,7 +2,7 @@ package fr.uge.but.schtroumpf.model;
 
 import module java.base;
 
-public enum RessourceType {
+public enum ResourceType {
 	BERRIES(1, "Baies", "Nourriture des Schtroumpfs"),
 	SARSAPARILLA(2, "Salsepareille", "Plante magique (soins, potions)"),
 	GOLD(3, "Or", "Richesse du village"),
@@ -15,7 +15,7 @@ public enum RessourceType {
 	private String displayName;
 	private String description;
 	
-	RessourceType(int code, String displayName, String description) {
+	ResourceType(int code, String displayName, String description) {
 		this.code = code;
 		this.displayName = Objects.requireNonNull(displayName);
 		this.description = Objects.requireNonNull(description);

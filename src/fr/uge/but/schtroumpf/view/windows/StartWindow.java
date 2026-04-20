@@ -1,8 +1,23 @@
 package fr.uge.but.schtroumpf.view.windows;
 
-import fr.uge.but.schtroumpf.view.windows.ConsoleMenu.MenuChoice;
+import fr.uge.but.schtroumpf.view.ConsoleMenu;
+import fr.uge.but.schtroumpf.view.ConsoleMenu.MenuChoice;
 
 public class StartWindow implements Window {
+	private final ConsoleMenu menu = new ConsoleMenu();
+	
+	@Override
+	public void load() {
+		menu.addChoice(new MenuChoice(Choice.START_GAME.code, "Start Game"));
+		menu.addChoice(new MenuChoice(Choice.CONTINUE_GAME.code, "Continue a previous game:Wqa"));
+        menu.addChoice(new MenuChoice(Choice.EXIT.code, "Exit"));
+	}
+	
+	public int getUserChoice() {
+		menu.print();
+		return menu.prompt().num();
+	}
+
 	public enum Choice {
         START_GAME(1),
         CONTINUE_GAME(2),
@@ -18,18 +33,4 @@ public class StartWindow implements Window {
             throw new IllegalArgumentException("invalid code");
         }
     }
-
-	private final ConsoleMenu menu = new ConsoleMenu();
-	
-	public int getUserChoice() {
-		menu.print();
-		return menu.prompt().num();
-	}
-
-	@Override
-	public void load() {
-		menu.addChoice(new MenuChoice(Choice.START_GAME.code, "Start Game"));
-		menu.addChoice(new MenuChoice(Choice.CONTINUE_GAME.code, "Continue a previous game:Wqa"));
-        menu.addChoice(new MenuChoice(Choice.EXIT.code, "Exit"));
-	}
 }

@@ -1,0 +1,79 @@
+package fr.uge.but.schtroumpf.model.characters;
+
+import module java.base;
+
+import fr.uge.but.schtroumpf.model.*;
+import fr.uge.but.schtroumpf.view.Logger;
+
+public class GrandSmurf implements SmurfCharacter {
+	@Override
+	public String getName() { return "Grand Schtroumpf"; }
+
+	@Override
+	public List<CharacterAbility> getAbilities() {
+		// consulter grimoire
+		CharacterAbility checkSpellBook = new CharacterAbility(
+			"Consulter le grimoire (+Savoir, -Moral si échec)",
+			CharacterAbility::canAlwaysExecute,
+			this::executeCheckSpellBook
+		);
+		
+		// Organiser une réunion
+		CharacterAbility planMeeting = new CharacterAbility(
+			"Organiser une réunion (+Moral)",
+			CharacterAbility::canAlwaysExecute,
+			this::executePlanMeeting
+		);
+		
+		// Négocier avec les animaux
+		CharacterAbility talkToAnimals = new CharacterAbility(
+			"Négocier avec les animaux (+Or ou +Défense)",
+			CharacterAbility::canAlwaysExecute,
+			this::executeTalkToAnimals
+		);
+		
+		return List.of(checkSpellBook, planMeeting, talkToAnimals);
+	}
+
+	@Override
+	public int getEnergy() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void updateEnergy(int delta) {
+		// TODO Auto-generated method stub
+	}
+	
+	private List<Effect> executeCheckSpellBook(SmurfVillage village) {
+		final double successChance = 0.5;
+
+		Effect plusKnowledge = new Effect(ResourceType.KNOWLEDGE, 1); 
+		Effect minusMoral = new Effect(ResourceType.MORAL, -1);
+
+		if (GameRandomness.rollChance(successChance)) {
+			Logger.LogDebug("Grand Smurf successfully consulted the grimoire");
+			return List.of(plusKnowledge);
+		}
+		
+		return List.of(minusMoral);
+	}
+
+	private List<Effect> executePlanMeeting(SmurfVillage village) {
+		Logger.LogDebug("Grand Smurf organized a meeting");
+		return List.of(new Effect(ResourceType.MORAL, 2));
+	}
+
+	private List<Effect> executeTalkToAnimals(SmurfVillage village) {
+		final double successChance = 0.5;
+
+		if (GameRandomness.rollChance(successChance)) {
+			Logger.LogTrace("Grand Smurf talked to the animals and got gold");
+			return List.of(new Effect(ResourceType.GOLD, 1));
+		}
+
+		Logger.LogTrace("Grand Smurf talked to the animals and asked for defense");
+		return List.of(new Effect(ResourceType.DEFENSE, 1));
+	}
+}

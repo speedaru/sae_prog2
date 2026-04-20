@@ -3,14 +3,8 @@ package fr.uge.but.schtroumpf.view;
 import module java.base;
 
 public class Logger {
-	public enum LoggerFlag {
-		DEBUG,
-		TRACE,
-		ERROR;
-	}
-	
-	// global loggin level
-	private static HashSet<LoggerFlag> logLevel = new HashSet<LoggerFlag>();
+	// global logging level
+	private static final HashSet<LoggerFlag> logLevel = new HashSet<LoggerFlag>();
 	
 	public static void Init(List<LoggerFlag> flags) {
 		for (LoggerFlag flag : flags) {
@@ -32,5 +26,11 @@ public class Logger {
 		if (flagSet(level)) {
 			IO.println(String.format("%s : %s", level.name(), message));
 		}
+	}
+
+	public enum LoggerFlag {
+		DEBUG,
+		TRACE,
+		ERROR;
 	}
 }

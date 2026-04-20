@@ -17,11 +17,11 @@ public class StartController implements SubController {
 		return handleChoice(choice);
 	}
 	
-	NavigationResult handleChoice(Choice choice) {
+	private NavigationResult handleChoice(Choice choice) {
 		return switch (choice) {
-		case START_GAME -> new NavigationResult(NavigationAction.PUSH, WindowType.GAME_WINDOW);
-		case CONTINUE_GAME -> new NavigationResult(NavigationAction.STAY, null);
-		case EXIT -> new NavigationResult(NavigationAction.EXIT, null);
+			case START_GAME -> new NavigationResult(NavigationAction.PUSH, WindowType.GAME_WINDOW);
+			case CONTINUE_GAME -> new NavigationResult(NavigationAction.STAY, null);
+			case EXIT -> new NavigationResult(NavigationAction.EXIT, null);
 		};
 	}
 }
