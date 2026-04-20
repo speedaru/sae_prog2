@@ -109,7 +109,7 @@ public class SmurfVillage {
 	
 	/** 3 or more crises means lost */
 	public boolean isDefeated() {
-		return checkCrises() == CRISES_LIMIT;
+		return checkCrises() >= CRISES_LIMIT;
 	}
 	
 	public void saveRoundResources() {
