@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox id="ButtonsPanel" layoutX="1030.0" layoutY="5.0" prefHeight="60.0" prefWidth="250.0">
+         <children>
+            <Button id="MysteriousButton" maxHeight="60.0" maxWidth="62.5" mnemonicParsing="false" prefHeight="60.0" prefWidth="62.5" text="?">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Button>
+            <Button id="Encyclopedia" layoutX="10.0" layoutY="10.0" maxHeight="60.0" maxWidth="62.5" mnemonicParsing="false" prefHeight="60.0" prefWidth="62.5" text="Encyclopedie" wrapText="true" />
+            <Button id="UIToggle" layoutX="136.0" layoutY="10.0" maxHeight="60.0" maxWidth="62.5" mnemonicParsing="false" prefHeight="60.0" prefWidth="62.5" text="VueSansUI" wrapText="true" />
+            <Button id="Settings" layoutX="136.0" layoutY="10.0" maxHeight="60.0" maxWidth="62.5" mnemonicParsing="false" prefHeight="60.0" prefWidth="62.5" text="Parametres" wrapText="true" />
+         </children>
+      </HBox>
+      <VBox layoutX="1179.0" layoutY="99.0" prefHeight="200.0" prefWidth="100.0" style="-fx-border-color: black; -fx-border-width: 0.5;">
+         <children>
+            <HBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="17.6" minWidth="98.4" prefHeight="100.0" prefWidth="90.0" style="-fx-background-color: #a67956; -fx-border-color: black; -fx-border-width: 0.5;">
+               <children>
+                  <Label text="Crise: baies" textAlignment="CENTER" />
+               </children>
+            </HBox>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" style="-fx-border-width: 0.5; -fx-border-color: black;">
+               <children>
+                  <Label text="Cause crise:" wrapText="true">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="28.0" layoutY="40.0" text="-manque de baies" textAlignment="CENTER" wrapText="true">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" style="-fx-border-color: black; -fx-border-width: 0.5;">
+               <children>
+                  <Label text="Effets:" wrapText="true">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="42.0" layoutY="39.0" text="-Malus moral (-10%)" textAlignment="CENTER" wrapText="true">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <HBox minHeight="25.6" minWidth="98.4" prefHeight="100.0" prefWidth="200.0" style="-fx-border-width: 0.5; -fx-border-color: black;">
+               <children>
+                  <Button minHeight="16.0" minWidth="32.8" mnemonicParsing="false" text="&lt;-" textAlignment="CENTER" wrapText="true" />
+                  <Button minHeight="16.0" minWidth="32.8" mnemonicParsing="false" text="1" textAlignment="CENTER" wrapText="true" />
+                  <Button minHeight="16.0" minWidth="32.8" mnemonicParsing="false" text="-&gt;" textAlignment="CENTER" wrapText="true" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <VBox alignment="TOP_CENTER" layoutY="75.0" prefHeight="580.0" prefWidth="200.0" style="-fx-border-width: 1; -fx-border-color: BLACK;" AnchorPane.bottomAnchor="56.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="84.0">
+         <children>
+            <Label text="Ressources">
+               <VBox.margin>
+                  <Insets bottom="6.0" />
+               </VBox.margin>
+            </Label>
+            <VBox prefHeight="540.0" prefWidth="198.0" style="-fx-background-color: gainsboro;">
+               <children>
+                  <VBox prefHeight="30.0" prefWidth="90.0">
+                     <VBox.margin>
+                        <Insets left="8.0" right="8.0" />
+                     </VBox.margin>
+                     <children>
+                        <Label text="Baies">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="90.0">
+                           <padding>
+                              <Insets right="2.0" />
+                           </padding>
+                           <children>
+                              <AnchorPane prefHeight="12.0" prefWidth="30.0">
+                                 <children>
+                                    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#a6565600" height="20.0" layoutX="-1.0" layoutY="-1.0" stroke="BLACK" strokeType="OUTSIDE" width="163.0" />
+                                    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#a67956" height="18.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="72.0" />
+                                    <Label layoutX="19.0" text="42067" wrapText="true">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <ImageView fitHeight="10.0" fitWidth="10.0" layoutX="3.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@Sprite-0004.png" />
+                                       </image>
+                                    </ImageView>
+                                 </children>
+                              </AnchorPane>
+                              <Label text="15" textAlignment="CENTER">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets top="2.0" />
+         </padding>
+      </VBox>
+      <Rectangle arcHeight="90.0" arcWidth="90.0" fill="DODGERBLUE" height="100.0" layoutX="-43.0" layoutY="-41.0" stroke="BLACK" strokeType="INSIDE" width="163.0" AnchorPane.leftAnchor="-43.0" AnchorPane.topAnchor="-41.0" />
+      <Label id="Month" layoutX="8.0" layoutY="5.0" text="Mois :" AnchorPane.leftAnchor="8.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label id="Phase" layoutX="7.0" layoutY="25.0" text="Phase :" AnchorPane.leftAnchor="8.0" AnchorPane.topAnchor="25.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <VBox alignment="CENTER" layoutX="244.0" layoutY="84.0" prefHeight="600.0" prefWidth="800.0" style="-fx-border-width: 1; -fx-border-color: BLACK;" AnchorPane.bottomAnchor="36.0" AnchorPane.leftAnchor="244.0" AnchorPane.rightAnchor="236.0" AnchorPane.topAnchor="84.0">
+         <children>
+            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@Sprite-0001.png" />
+               </image>
+            </ImageView>
+         </children></VBox>
+      <Label layoutX="531.0" layoutY="8.0" text="Evenement: Gargamel" textAlignment="CENTER" wrapText="true" AnchorPane.leftAnchor="531.0" AnchorPane.rightAnchor="517.0" AnchorPane.topAnchor="8.0">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

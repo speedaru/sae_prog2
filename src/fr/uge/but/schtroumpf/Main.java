@@ -3,6 +3,7 @@ package fr.uge.but.schtroumpf;
 import module java.base;
 
 import fr.uge.but.schtroumpf.controller.AppController;
+import fr.uge.but.schtroumpf.view.AppWindow;
 import fr.uge.but.schtroumpf.view.Logger;
 import fr.uge.but.schtroumpf.view.Logger.LoggerFlag;;
 
@@ -19,8 +20,8 @@ public class Main {
 		// test logger
 		Logger.LogDebug("hello");
 		
-		// transition control to the global app controller
-		AppController app = new AppController();
-        app.launch();
+		// launch fxml window
+		AppWindow fxmlApp = new AppWindow();
+		fxmlApp.launch();
 	}
 }
