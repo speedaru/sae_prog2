@@ -20,7 +20,7 @@ import fr.uge.but.schtroumpf.model.crises.*;
 import fr.uge.but.schtroumpf.model.phases.*;
 import fr.uge.but.schtroumpf.view.FxmlUtils;
 import fr.uge.but.schtroumpf.view.Logger;
-import fr.uge.but.schtroumpf.view.components.ResourceWidget;
+import fr.uge.but.schtroumpf.view.components.ResourceSidebarWidget;
 
 public class GameController implements WindowSubController {
     private AppController router;
@@ -33,8 +33,7 @@ public class GameController implements WindowSubController {
     @FXML private Label crisisTitleLabel, crisisCauseLabel, crisisEffectsLabel, crisisPageLabel;
     @FXML private Button prevCrisisBtn, nextCrisisBtn;
     
-    private final Map<ResourceType, ResourceWidget> resourceWidgets = new EnumMap<>(ResourceType.class);
-
+    private final Map<ResourceType, ResourceSidebarWidget> resourceSidebarWidgets = new EnumMap<>(ResourceType.class);
     private int currentCrisisPage = 1;
 
     @Override public void setRouter(AppController router) { this.router = router; }
@@ -45,11 +44,10 @@ public class GameController implements WindowSubController {
         
         // init UI
         initResourceWidgets();
-        updateHudResource();
+        updateHudResources();
 
         // load first phase
-        syncPhaseView();
-        game.executePhaseLogic(this); // load initial phase in center
+        executeAndLoadCurrentPhase();
         
         Logger.LogDebug("GameController gui initialized");
     }
@@ -71,7 +69,7 @@ public class GameController implements WindowSubController {
     @FXML void handleMysteriousButton(ActionEvent event) {
         Logger.LogDebug("Secret tunnel trigger! Berries added to reserves.");
         game.getVillage().applyEffect(new Effect(ResourceType.BERRIES, 1));
-        updateHudResource();
+        updateHudResources();
     }
 
     @FXML void handleQuitButton1(ActionEvent event) {
@@ -84,8 +82,30 @@ public class GameController implements WindowSubController {
     @FXML void handleToggleUI(ActionEvent event) { }
     @FXML void handleOpenSettings(ActionEvent event) { }
     
-    /** exposed publicly so phase views can update resources */
-    public void updateHudResource() {
+    /** exposed publicly for phase controllers to call when finished */
+    public void advanceTurn() {
+    	// tell game to go to next phase
+        game.advance();
+
+        // execute and load new phase
+        executeAndLoadCurrentPhase();
+    }
+    
+    // ------------------------- private helpers
+    
+    private void initResourceWidgets() {
+    	if (resourceSidebarWidgets.size() > 0) {
+    		resourceSidebarWidgets.clear();
+    	}
+
+    	for (ResourceType type : ResourceType.values()) {
+            ResourceSidebarWidget widget = new ResourceSidebarWidget(type);
+            resourceSidebarWidgets.put(type, widget);
+            resourcesContainer.getChildren().add(widget);
+        }
+    }
+
+    private void updateHudResources() {
         SmurfVillage village = game.getVillage();
         List<ResourceSnapshot> snapshots = village.getResources();
         List<ResourceSnapshot> deltas = village.getResourcesDiff();
@@ -94,41 +114,26 @@ public class GameController implements WindowSubController {
         	ResourceType type = snap.type();
             int delta = getDeltaForType(deltas, type);
             
-            ResourceWidget widget = resourceWidgets.get(type);
+            ResourceSidebarWidget widget = resourceSidebarWidgets.get(type);
             if (widget != null) {
                 widget.updateState(snap.quantity(), delta);
             }
         }
     }
-    
-    /** exposed publicly for phase views to call when finished */
-    public void advanceTurn() {
-        // 2. Run the single phase step logic through our model state machine
-        game.advance(this);
-
-        // 3. Re-render resources to immediately reflect deltas on the spot
-        updateHudResource();
-
-        // 4. Update the center viewport layout panel to the next phase sequence
-        syncPhaseView();
-    }
-    
-    // ------------------------- private helpers
-    
-    private void initResourceWidgets() {
-    	if (resourceWidgets.size() > 0) {
-    		resourceWidgets.clear();
-    	}
-
-    	for (ResourceType type : ResourceType.values()) {
-            ResourceWidget widget = new ResourceWidget(type);
-            resourceWidgets.put(type, widget);
-            resourcesContainer.getChildren().add(widget);
-        }
-    }
 
     private void updateHudPhaseIndicator(GamePhase phase) {
     	phaseLabel.setText(phase.getType().getDisplayName());
+    }
+    
+    private void executeAndLoadCurrentPhase() {
+        // execute automatic logic before loading the UI view
+        game.executePhaseLogic();
+
+        // 4. Update the center viewport layout panel to the next phase sequence
+        syncPhaseView();
+
+        // 3. Re-render resources to immediately reflect deltas on the spot
+        updateHudResources();
     }
     
     /** swaps center pane to load the current phase */
@@ -155,7 +160,7 @@ public class GameController implements WindowSubController {
 
     	Parent root = FxmlUtils.loadFxmlAndPassController(fxmlFile, this, (loader, masterCtlr) -> {
     		PhaseSubController controller = (PhaseSubController)loader.getController();
-    		controller.setMasterController(masterCtlr, this.game);
+			controller.setMasterController(masterCtlr, this.game);
     	});
 
     	if (root != null) {

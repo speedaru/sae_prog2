@@ -1,8 +1,7 @@
 package fr.uge.but.schtroumpf.model;
 
-import java.util.Objects;
+import java.util.function.BiConsumer;
 
-import fr.uge.but.schtroumpf.controller.gui.windows.GameController;
 import fr.uge.but.schtroumpf.model.phases.GamePhase;
 import fr.uge.but.schtroumpf.model.phases.GamePhaseContext;
 import fr.uge.but.schtroumpf.model.phases.ProductionPhase;
@@ -31,16 +30,8 @@ public class Game {
         Logger.LogDebug("game model initialized, starting month 1");
     }
 
-    public void executePhaseLogic(GameController controller) {
-        Objects.requireNonNull(controller, "controller cannot be null.");
-    	GamePhaseContext ctx = new GamePhaseContext(controller, village, currentRound);
-
-        if (gameState != GameState.RUNNING || currentPhase == null) {
-            Logger.LogWarn("ExecutPhaseLogic called but game is not in a runnable state.");
-            return;
-        }
-
-    	currentPhase.onEnter(ctx);
+    public void executePhaseLogic() {
+    	executePhaseCallback(GamePhase::onEnter);
     }
     
     /**
@@ -51,16 +42,12 @@ public class Game {
      *
      * @param context The context required for the phase execution.
      */
-    public void advance(GameController controller) {
-        Objects.requireNonNull(controller, "controller cannot be null.");
-    	GamePhaseContext ctx = new GamePhaseContext(controller, village, currentRound);
-
-        if (gameState != GameState.RUNNING || currentPhase == null) {
-            Logger.LogWarn("Advance called but game is not in a runnable state.");
-            return;
-        }
-
-        currentPhase.onExit(ctx);
+    public void advance() {
+    	if (!executePhaseCallback(GamePhase::onExit)) {
+    		return; // failed to execute onEnd
+    	}
+    	
+    	// go to next phase
         currentPhase = currentPhase.getNextPhase();
 
         // check if the month (round) has ended
@@ -97,5 +84,19 @@ public class Game {
         Logger.LogDebug("preparing for month %d", currentRound);
         village.saveRoundResources();
         currentPhase = new ProductionPhase();
+    }
+    
+    /** returns true if successfully called callback */
+	private boolean executePhaseCallback(BiConsumer<GamePhase, GamePhaseContext> callback) {
+    	GamePhaseContext ctx = new GamePhaseContext(village, currentRound);
+
+        if (gameState != GameState.RUNNING || currentPhase == null) {
+            Logger.LogWarn("current phase callback called but game is not in a runnable state.");
+            return false;
+        }
+
+        // execute callback
+        callback.accept(currentPhase, ctx);
+        return true;
     }
 }

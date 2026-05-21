@@ -1,35 +1,47 @@
 package fr.uge.but.schtroumpf.controller.gui.phases;
 
+import java.util.Objects;
+
 import fr.uge.but.schtroumpf.controller.PhaseSubController;
 import fr.uge.but.schtroumpf.controller.gui.windows.GameController;
 import fr.uge.but.schtroumpf.model.Game;
-import fr.uge.but.schtroumpf.view.Logger;
+import fr.uge.but.schtroumpf.model.ResourceType;
+import fr.uge.but.schtroumpf.view.components.ResourceSummaryRow;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
-public class ConsumptionPhase implements PhaseSubController {
+public class ProductionPhaseController implements PhaseSubController {
 	private GameController masterController;
-	@SuppressWarnings("unused")
 	private Game game;
 
 	@Override
 	public void setMasterController(GameController masterController, Game game) {
 		this.masterController = masterController;
 		this.game = game;
+
+		// creates resource summary widgets
+		loadResourceRows();
 	}
 
-    @FXML private Label placeholderLabel;
-
     @FXML private VBox resourcesContainer;
-
     @FXML private Button validerButton;
 
     @FXML
     void handleValider(ActionEvent event) {
     	masterController.advanceTurn();
     }
+    
+    public void loadResourceRows() {
+    	Objects.requireNonNull(game, "game was not initialized, please call setMasterController before");
+    	resourcesContainer.getChildren().clear();
 
+    	for (ResourceType type : ResourceType.values()) {
+			ResourceSummaryRow row = new ResourceSummaryRow(type);
+			row.updateDelta(game.getVillage().getResourceDelta(type));
+
+    		resourcesContainer.getChildren().add(row);
+        }
+    }
 }

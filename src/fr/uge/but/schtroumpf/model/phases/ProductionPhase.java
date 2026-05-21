@@ -15,9 +15,6 @@ public class ProductionPhase implements GamePhase {
 			int delta = GameRandomness.randomChoice(1, 3);
 			ctx.village().increaseResource(resourceType, delta);
 		}
-		
-		// refresh resources
-		ctx.masterController().updateHudResource();
 	}
 
 	@Override

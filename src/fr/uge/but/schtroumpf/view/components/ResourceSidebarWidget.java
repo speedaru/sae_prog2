@@ -12,13 +12,13 @@ import fr.uge.but.schtroumpf.model.ResourceType;
 import fr.uge.but.schtroumpf.view.themes.ThemeManager;
 import fr.uge.but.schtroumpf.model.ResourceManager;
 
-public class ResourceWidget extends VBox {
+public class ResourceSidebarWidget extends VBox {
     private final ResourceType type;
     private final Rectangle progressFill;
     private final Label quantityLabel;
     private final Label deltaLabel;
 
-    public ResourceWidget(ResourceType type) {
+    public ResourceSidebarWidget(ResourceType type) {
         this.type = type;
         
         // 1. Configure parent container styling (Matching your FXML attributes)
@@ -40,7 +40,7 @@ public class ResourceWidget extends VBox {
         backgroundTrack.setArcHeight(8.0);
         backgroundTrack.setStroke(Color.web("#4b5563"));
         
-        progressFill = new Rectangle(0.0, 22.0, ThemeManager.getBarColor(type));
+        progressFill = new Rectangle(0.0, 22.0, ThemeManager.getResourceSidebarBarColor(type));
         progressFill.setArcWidth(8.0);
         progressFill.setArcHeight(8.0);
         
@@ -85,6 +85,6 @@ public class ResourceWidget extends VBox {
 
     /** Called when the user flips the color-blind setting */
     public void refreshColors() {
-        progressFill.setFill(ThemeManager.getBarColor(type));
+        progressFill.setFill(ThemeManager.getResourceSidebarBarColor(type));
     }
 }

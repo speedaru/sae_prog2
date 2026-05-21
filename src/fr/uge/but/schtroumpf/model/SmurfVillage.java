@@ -77,6 +77,18 @@ public class SmurfVillage {
 	public int getResourceQuantity(ResourceType resourceType) {
 		return resourceManager.get(resourceType);
 	}
+	
+	public int getResourceDelta(ResourceType resourceType) {
+		int previousRoundQuanity = 0;
+		for (ResourceSnapshot snap : previousRoundResources) {
+			if (snap.type() == resourceType) {
+				previousRoundQuanity = snap.quantity();
+				break;
+			}
+		}
+
+		return resourceManager.get(resourceType) - previousRoundQuanity;
+	}
 
 	public EventHistory getEventFromRound(int round) {
 		for (var eventLog : eventsHistory) {
