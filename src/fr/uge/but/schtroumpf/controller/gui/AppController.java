@@ -13,7 +13,7 @@ import fr.uge.but.schtroumpf.view.AppWindow;
 import fr.uge.but.schtroumpf.view.Logger;
 
 public class AppController {
-    private final Deque<WindowType> stack = new ArrayDeque<>();
+    private final Deque<Parent> windowStack = new ArrayDeque<>();
     private final Scene scene;
 
     public AppController(Scene scene) {
@@ -28,17 +28,17 @@ public class AppController {
     public void navigate(NavigationAction action, WindowType target) {
         switch (action) {
             case PUSH -> {
-                stack.push(target);
+                windowStack.push(createWindow(target));
                 updateView();
             }
             case POP -> {
-                if (!stack.isEmpty()) stack.pop();
-                if (!stack.isEmpty()) updateView();
+                if (!windowStack.isEmpty()) windowStack.pop();
+                if (!windowStack.isEmpty()) updateView();
                 else javafx.application.Platform.exit();
             }
             case REPLACE -> {
-                if (!stack.isEmpty()) stack.pop();
-                stack.push(target);
+                if (!windowStack.isEmpty()) windowStack.pop();
+                windowStack.push(createWindow(target));
                 updateView();
             }
             case EXIT -> javafx.application.Platform.exit();
@@ -47,14 +47,14 @@ public class AppController {
     }
     
     /** loads a fxml window from a window type */
-    private Parent windowFactory(WindowType type) {
-        try {
-			String fxmlPath = switch (type) {
-				case START_WINDOW -> "windows/StartWindow.fxml";
-				case GAME_WINDOW -> "windows/GameWindow.fxml";
-				default -> throw new IllegalArgumentException("Unknown window: " + type);
-			};
+    private Parent createWindow(WindowType type) {
+		String fxmlPath = switch (type) {
+			case START_WINDOW -> "windows/StartWindow.fxml";
+			case GAME_WINDOW -> "windows/GameWindow.fxml";
+			default -> throw new IllegalArgumentException("Unknown window: " + type);
+		};
 
+		try {
 			FXMLLoader loader = new FXMLLoader(AppWindow.class.getResource(fxmlPath));
 			Parent root = loader.load();
 
@@ -67,22 +67,17 @@ public class AppController {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-        } catch (IOException e) {
-        	Logger.LogError("EXPCETIONNNNNN!\n");
-            e.printStackTrace();
-        }
+			
+			return root;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
+		return null;
     }
 
     private void updateView() {
-    	WindowType type = stack.peek();
-    	
-        try {
-
-            scene.setRoot(root);
-        } catch (IOException e) {
-        	Logger.LogError("EXPCETIONNNNNN!\n");
-            e.printStackTrace();
-        }
+		Parent window = windowStack.peek();
+		scene.setRoot(window);
     }
 }

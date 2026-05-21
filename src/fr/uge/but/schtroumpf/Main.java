@@ -2,7 +2,6 @@ package fr.uge.but.schtroumpf;
 
 import module java.base;
 
-import fr.uge.but.schtroumpf.controller.console.AppController;
 import fr.uge.but.schtroumpf.view.AppWindow;
 import fr.uge.but.schtroumpf.view.Logger;
 import fr.uge.but.schtroumpf.view.Logger.LoggerFlag;;
