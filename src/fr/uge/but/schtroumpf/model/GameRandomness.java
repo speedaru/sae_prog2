@@ -13,6 +13,7 @@ public class GameRandomness {
 		return ThreadLocalRandom.current().nextDouble() < odds;
 	}
 	
+	/** @return random int between min included and max excluded */
 	public static int randomChoice(int min, int max) {
 		return ThreadLocalRandom.current().nextInt(min, max);
 	}

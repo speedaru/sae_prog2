@@ -90,7 +90,7 @@ public class SmurfVillage {
 		return resourceManager.get(resourceType) - previousRoundQuanity;
 	}
 
-	public EventHistory getEventFromRound(int round) {
+	public final EventHistory getEventFromRound(int round) {
 		for (var eventLog : eventsHistory) {
 			if (eventLog.round() == round) {
 				return eventLog;
@@ -98,6 +98,10 @@ public class SmurfVillage {
 		}
 		
 		return null;
+	}
+	
+	public final EventHistory getLastEvent() {
+		return eventsHistory.getLast();
 	}
 	
 	/** @return number of resources that are at 0 */

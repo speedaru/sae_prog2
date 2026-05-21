@@ -12,7 +12,7 @@ public class ProductionPhase implements GamePhase {
 		Logger.LogTrace("entered production phase");
 		
 		for (ResourceType resourceType : ResourceType.values()) {
-			int delta = GameRandomness.randomChoice(1, 3);
+			int delta = GameRandomness.randomChoice(1, 4);
 			ctx.village().increaseResource(resourceType, delta);
 		}
 	}

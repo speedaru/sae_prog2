@@ -23,8 +23,6 @@ public class EventPhase implements GamePhase {
 
 		// log event in village history
 		ctx.village().recordEvent(new EventHistory(event.getEventType(), effectsToApply, ctx.currentRound()));
-		
-		// display view and effects that were applied
 	}
 
 	@Override

@@ -26,14 +26,14 @@ public class ProductionPhaseController implements PhaseSubController {
 	}
 
     @FXML private VBox resourcesContainer;
-    @FXML private Button validerButton;
+    @FXML private Button nextPhaseButton;
 
     @FXML
-    void handleValider(ActionEvent event) {
+    void handleNextPhaseButton(ActionEvent event) {
     	masterController.advanceTurn();
     }
     
-    public void loadResourceRows() {
+    private void loadResourceRows() {
     	Objects.requireNonNull(game, "game was not initialized, please call setMasterController before");
     	resourcesContainer.getChildren().clear();
 
