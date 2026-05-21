@@ -1,5 +1,7 @@
 package fr.uge.but.schtroumpf.controller.gui;
 
+import fr.uge.but.schtroumpf.controller.FxmlSubController;
+import fr.uge.but.schtroumpf.view.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -7,7 +9,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 
-public class GameController {
+public class GameController implements FxmlSubController {
+	AppController router;
 
     // === TOP BAR INJECTS ===
     @FXML private Label monthLabel;
@@ -56,8 +59,6 @@ public class GameController {
      */
     @FXML
     public void initialize() {
-        System.out.println("AppController Initialized!");
-
         // Set baseline resource states manually (can be loaded from data models later)
         setResourceProgress(berriesBar, 420.0, 1000.0);
         berriesText.setText("420 / 1000");
@@ -76,20 +77,13 @@ public class GameController {
         moralDeltaLabel.setText("+1%");
 
         updateCrisisDisplay();
+    	Logger.LogDebug("GameController initialized");
     }
 
-    /**
-     * Helper to modify the progress bar fills dynamically in JavaFX.
-     * Maps progress to the maximum width of the indicator bar background (130px wide).
-     */
-    private void setResourceProgress(Rectangle bar, double currentValue, double maxValue) {
-        double maxBgWidth = 130.0;
-        double progressPercentage = currentValue / maxValue;
-        if (progressPercentage > 1.0) progressPercentage = 1.0;
-        if (progressPercentage < 0.0) progressPercentage = 0.0;
-
-        bar.setWidth(maxBgWidth * progressPercentage);
-    }
+	@Override
+	public void setRouter(AppController router) {
+		this.router = router;
+	}
 
     // === HANDLERS FOR ACTIONS & POPUPS ===
 
@@ -133,6 +127,27 @@ public class GameController {
         }
     }
 
+    /**
+     * Public helper that your main class or sub-menus can access to clear out 
+     * the center workspace and load new screens dynamically.
+     */
+    public StackPane getCenterContainer() {
+        return centerContainer;
+    }
+
+    /**
+     * Helper to modify the progress bar fills dynamically in JavaFX.
+     * Maps progress to the maximum width of the indicator bar background (130px wide).
+     */
+    private void setResourceProgress(Rectangle bar, double currentValue, double maxValue) {
+        double maxBgWidth = 130.0;
+        double progressPercentage = currentValue / maxValue;
+        if (progressPercentage > 1.0) progressPercentage = 1.0;
+        if (progressPercentage < 0.0) progressPercentage = 0.0;
+
+        bar.setWidth(maxBgWidth * progressPercentage);
+    }
+
     private void updateCrisisDisplay() {
         crisisPageLabel.setText(currentCrisisPage + " / " + totalCrisisPages);
         
@@ -153,13 +168,5 @@ public class GameController {
                 crisisEffectsLabel.setText("- Coût de réparation de l'or doublé.\n- 5% de chance de perdre de la Sarsaparille.");
                 break;
         }
-    }
-
-    /**
-     * Public helper that your main class or sub-menus can access to clear out 
-     * the center workspace and load new screens dynamically.
-     */
-    public StackPane getCenterContainer() {
-        return centerContainer;
     }
 }
