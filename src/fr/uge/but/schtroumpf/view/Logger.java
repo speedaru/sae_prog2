@@ -16,9 +16,9 @@ public class Logger {
 		return logLevel.contains(flag);
 	}
 	
-	public static void LogDebug(String message) { Log(LoggerFlag.DEBUG, message); }
-	public static void LogTrace(String message) { Log(LoggerFlag.TRACE, message); }
-	public static void LogError(String message) { Log(LoggerFlag.ERROR, message); }
+	public static void LogDebug(String message, Object... args) { Log(LoggerFlag.DEBUG, String.format(message, args)); }
+	public static void LogTrace(String message, Object... args) { Log(LoggerFlag.TRACE, String.format(message, args)); }
+	public static void LogError(String message, Object... args) { Log(LoggerFlag.ERROR, String.format(message, args)); }
 
 	// main logging function, can change to log to file maybe
 	private static void Log(LoggerFlag level, String message) {

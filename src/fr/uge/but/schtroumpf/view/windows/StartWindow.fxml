@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="1024.0" prefHeight="720.0" prefWidth="1280.0" spacing="60.0" style="-fx-background-color: #1a1c1e;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.uge.but.schtroumpf.controller.gui.StartMenuController">
+   <children>
+      
+      <Label text="VILLAGE DES SCHTROUMPFS" textAlignment="CENTER" textFill="#f8fafc">
+         <font>
+            <Font name="System Bold" size="56.0" />
+         </font>
+      </Label>
+      
+      <VBox alignment="CENTER" spacing="20.0">
+         <children>
+            
+            <Button fx:id="newGameButton" mnemonicParsing="false" onAction="#handleNewGame" prefHeight="55.0" prefWidth="340.0" style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand;" text="Nouvelle Partie">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Button>
+            
+            <Button fx:id="loadGameButton" mnemonicParsing="false" onAction="#handleLoadGame" prefHeight="55.0" prefWidth="340.0" style="-fx-background-color: #2d3139; -fx-text-fill: #e2e8f0; -fx-background-radius: 8; -fx-border-color: #4b5563; -fx-border-radius: 8; -fx-border-width: 1; -fx-cursor: hand;" text="Reprendre une Partie">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Button>
+            
+         </children>
+      </VBox>
+   </children>
+   <padding>
+      <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+   </padding>
+</VBox>

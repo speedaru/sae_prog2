@@ -1,5 +1,6 @@
-package fr.uge.but.schtroumpf.controller;
+package fr.uge.but.schtroumpf.controller.console;
 
+import fr.uge.but.schtroumpf.controller.SubController;
 import fr.uge.but.schtroumpf.controller.Navigation.NavigationAction;
 import fr.uge.but.schtroumpf.controller.Navigation.NavigationResult;
 import fr.uge.but.schtroumpf.model.SmurfVillage;

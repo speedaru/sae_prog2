@@ -1,7 +1,8 @@
-package fr.uge.but.schtroumpf.controller;
+package fr.uge.but.schtroumpf.controller.console;
 
 import module java.base;
 
+import fr.uge.but.schtroumpf.controller.SubController;
 import fr.uge.but.schtroumpf.controller.Navigation.NavigationResult;
 import fr.uge.but.schtroumpf.controller.Navigation.WindowType;
 
