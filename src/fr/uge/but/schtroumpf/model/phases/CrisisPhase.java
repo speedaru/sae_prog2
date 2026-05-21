@@ -9,12 +9,12 @@ public class CrisisPhase implements GamePhase {
 	@Override public PhaseType getType() { return PhaseType.CRISIS_PHASE; }
 	
 	@Override
-	public GamePhase execute(GamePhaseContext ctx) {
+	public void onEnter(GamePhaseContext ctx) {
 		Logger.LogTrace("started crisis phase");
 
 		// check if too many crises active
 		if (ctx.village().isDefeated()) {
-			return null;
+			return;
 		}
 		
 		// get active crisis in village
@@ -26,8 +26,15 @@ public class CrisisPhase implements GamePhase {
 		}
 		
 		// display crisis information
+	}
 
+	@Override
+	public void onExit(GamePhaseContext ctx) {
 		Logger.LogTrace("finished crisis phase");
-		return null;
+	}
+
+	@Override
+	public GamePhase getNextPhase() {
+		return null; // end of month
 	}
 }

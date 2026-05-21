@@ -2,6 +2,7 @@ package fr.uge.but.schtroumpf.model;
 
 import java.util.Objects;
 
+import fr.uge.but.schtroumpf.controller.gui.windows.GameController;
 import fr.uge.but.schtroumpf.model.phases.GamePhase;
 import fr.uge.but.schtroumpf.model.phases.GamePhaseContext;
 import fr.uge.but.schtroumpf.model.phases.ProductionPhase;
@@ -30,6 +31,18 @@ public class Game {
         Logger.LogDebug("game model initialized, starting month 1");
     }
 
+    public void executePhaseLogic(GameController controller) {
+        Objects.requireNonNull(controller, "controller cannot be null.");
+    	GamePhaseContext ctx = new GamePhaseContext(controller, village, currentRound);
+
+        if (gameState != GameState.RUNNING || currentPhase == null) {
+            Logger.LogWarn("ExecutPhaseLogic called but game is not in a runnable state.");
+            return;
+        }
+
+    	currentPhase.onEnter(ctx);
+    }
+    
     /**
      * advances the game state by executing the current phase exactly once.
      * this is the core non-blocking "tick" of the game engine. if the execution
@@ -38,16 +51,17 @@ public class Game {
      *
      * @param context The context required for the phase execution.
      */
-    public void advance(GamePhaseContext context) {
-        Objects.requireNonNull(context, "GamePhaseContext cannot be null.");
+    public void advance(GameController controller) {
+        Objects.requireNonNull(controller, "controller cannot be null.");
+    	GamePhaseContext ctx = new GamePhaseContext(controller, village, currentRound);
 
         if (gameState != GameState.RUNNING || currentPhase == null) {
             Logger.LogWarn("Advance called but game is not in a runnable state.");
             return;
         }
 
-        // execute the current phase and get the next one
-        currentPhase = currentPhase.execute(context);
+        currentPhase.onExit(ctx);
+        currentPhase = currentPhase.getNextPhase();
 
         // check if the month (round) has ended
         if (currentPhase == null) {

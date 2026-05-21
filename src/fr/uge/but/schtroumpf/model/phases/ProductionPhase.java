@@ -1,20 +1,32 @@
 package fr.uge.but.schtroumpf.model.phases;
 
+import fr.uge.but.schtroumpf.model.GameRandomness;
+import fr.uge.but.schtroumpf.model.ResourceType;
 import fr.uge.but.schtroumpf.view.Logger;
-import fr.uge.but.schtroumpf.view.phase_views.*;
-import fr.uge.but.schtroumpf.view.phase_views.console.ProductionView;
 
 public class ProductionPhase implements GamePhase {
 	@Override public PhaseType getType() { return PhaseType.PRODUCTION_PHASE; }
 	
 	@Override
-	public GamePhase execute(GamePhaseContext ctx) {
+	public void onEnter(GamePhaseContext ctx) {
 		Logger.LogTrace("entered production phase");
+		
+		for (ResourceType resourceType : ResourceType.values()) {
+			int delta = GameRandomness.randomChoice(1, 3);
+			ctx.village().increaseResource(resourceType, delta);
+		}
+		
+		// refresh resources
+		ctx.masterController().updateHudResource();
+	}
 
-		ProductionView view = new ProductionView();
-		view.display(ctx);
-
+	@Override
+	public void onExit(GamePhaseContext ctx) {
 		Logger.LogTrace("finished production phase");
+	}
+
+	@Override
+	public GamePhase getNextPhase() {
 		return new EventPhase();
 	}
 }

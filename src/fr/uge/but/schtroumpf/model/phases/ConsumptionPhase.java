@@ -7,12 +7,20 @@ public class ConsumptionPhase implements GamePhase {
 	@Override public PhaseType getType() { return PhaseType.CONSUMPTION_PHASE; }
 	
 	@Override
-	public GamePhase execute(GamePhaseContext ctx) {
+	public void onEnter(GamePhaseContext ctx) {
 		Logger.LogTrace("started consumption phase");
 
 		ctx.village().decreaseResource(ResourceType.BERRIES, 2);
 
+	}
+
+	@Override
+	public void onExit(GamePhaseContext ctx) {
 		Logger.LogTrace("finished consumption phase");
+	}
+
+	@Override
+	public GamePhase getNextPhase() {
 		return new CrisisPhase();
 	}
 }

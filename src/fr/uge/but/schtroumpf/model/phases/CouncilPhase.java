@@ -6,14 +6,13 @@ import fr.uge.but.schtroumpf.model.characters.CharacterAbility;
 import fr.uge.but.schtroumpf.model.characters.Effect;
 import fr.uge.but.schtroumpf.model.characters.SmurfCharacter;
 import fr.uge.but.schtroumpf.view.Logger;
-import fr.uge.but.schtroumpf.view.phase_views.*;
 import fr.uge.but.schtroumpf.view.phase_views.console.CouncilView;
 
 public class CouncilPhase implements GamePhase {
 	@Override public PhaseType getType() { return PhaseType.COUNCIL_PHASE; }
 	
 	@Override
-	public GamePhase execute(GamePhaseContext ctx) {
+	public void onEnter(GamePhaseContext ctx) {
 		Logger.LogTrace("started council phase");
 
 		CouncilView view = new CouncilView();
@@ -53,8 +52,15 @@ public class CouncilPhase implements GamePhase {
 			
 			view.displayActionResults(selectedSmurf, chosenAbility, effects);
 		}
-		
+	}
+
+	@Override
+	public void onExit(GamePhaseContext ctx) {
 		Logger.LogTrace("finished council phase");
+	}
+
+	@Override
+	public GamePhase getNextPhase() {
 		return new ConsumptionPhase();
 	}
 }

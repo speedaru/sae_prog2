@@ -11,7 +11,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 public class ConsumptionPhase implements PhaseSubController {
-	@SuppressWarnings("unused")
 	private GameController masterController;
 	@SuppressWarnings("unused")
 	private Game game;
@@ -30,7 +29,7 @@ public class ConsumptionPhase implements PhaseSubController {
 
     @FXML
     void handleValider(ActionEvent event) {
-    	Logger.LogDebug("pressed valider ! going to next phase");
+    	masterController.advanceTurn();
     }
 
 }

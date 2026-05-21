@@ -22,12 +22,6 @@ public class SmurfVillage {
 		councilMembers = createSmurfs();
 	}
 	
-	private static List<SmurfCharacter> createSmurfs() {
-		GrandSmurf grandSmurf = new GrandSmurf();
-		
-		return List.of(grandSmurf);
-	}
-	
 	public List<ResourceSnapshot> getResources() {
 		return resourceManager.getResourcesSnap();
 	}
@@ -124,11 +118,25 @@ public class SmurfVillage {
 		resourceManager.add(effect.resourceType(), effect.delta());
 	}
 	
-	public void decreaseResource(ResourceType resource, int amount) {
+	public void increaseResource(ResourceType resource, int amount) {
 		if (amount < 0) {
 			throw new IllegalArgumentException("cannot decrease negative amount");
 		}
+
+		resourceManager.add(resource, amount);
+	}
+	
+	public void decreaseResource(ResourceType resource, int amount) {
+		if (amount < 0) {
+			throw new IllegalArgumentException("cannot decrease by a negative amount");
+		}
 		
 		resourceManager.add(resource, -amount);
+	}
+	
+	private static List<SmurfCharacter> createSmurfs() {
+		GrandSmurf grandSmurf = new GrandSmurf();
+		
+		return List.of(grandSmurf);
 	}
 }

@@ -1,22 +1,13 @@
 package fr.uge.but.schtroumpf.controller.gui.windows;
 
-import javafx.application.Platform;
+import module java.base;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.shape.Rectangle;
-
-import java.nio.file.Path;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 
 import fr.uge.but.schtroumpf.controller.WindowSubController;
 import fr.uge.but.schtroumpf.controller.Navigation.*;
@@ -26,12 +17,9 @@ import fr.uge.but.schtroumpf.model.*;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
 import fr.uge.but.schtroumpf.model.characters.Effect;
 import fr.uge.but.schtroumpf.model.crises.*;
-import fr.uge.but.schtroumpf.model.events.EventHistory;
 import fr.uge.but.schtroumpf.model.phases.*;
-import fr.uge.but.schtroumpf.view.AppWindow;
 import fr.uge.but.schtroumpf.view.FxmlUtils;
 import fr.uge.but.schtroumpf.view.Logger;
-import fr.uge.but.schtroumpf.view.windows.console.GameWindow;
 import fr.uge.but.schtroumpf.view.components.ResourceWidget;
 
 public class GameController implements WindowSubController {
@@ -59,7 +47,9 @@ public class GameController implements WindowSubController {
         initResourceWidgets();
         updateHudResource();
 
-        syncPhaseView(); // load initial phase in center
+        // load first phase
+        syncPhaseView();
+        game.executePhaseLogic(this); // load initial phase in center
         
         Logger.LogDebug("GameController gui initialized");
     }
@@ -94,7 +84,7 @@ public class GameController implements WindowSubController {
     @FXML void handleToggleUI(ActionEvent event) { }
     @FXML void handleOpenSettings(ActionEvent event) { }
     
-    
+    /** exposed publicly so phase views can update resources */
     public void updateHudResource() {
         SmurfVillage village = game.getVillage();
         List<ResourceSnapshot> snapshots = village.getResources();
@@ -111,13 +101,10 @@ public class GameController implements WindowSubController {
         }
     }
     
+    /** exposed publicly for phase views to call when finished */
     public void advanceTurn() {
-		// 1. Build context passing a window bridge or mock instance to stay compliant
-		// (We will refine the exact windowBridge mapping in the next steps)
-        GamePhaseContext context = new GamePhaseContext(game.getVillage(), game.getCurrentRound());
-
         // 2. Run the single phase step logic through our model state machine
-        game.advance(context);
+        game.advance(this);
 
         // 3. Re-render resources to immediately reflect deltas on the spot
         updateHudResource();
@@ -140,8 +127,8 @@ public class GameController implements WindowSubController {
         }
     }
 
-    private void updateHudPhase(GamePhase phase) {
-    	phaseLabel.setText(String.format("Phase: %s", phase.getType().getDisplayName()));
+    private void updateHudPhaseIndicator(GamePhase phase) {
+    	phaseLabel.setText(phase.getType().getDisplayName());
     }
     
     /** swaps center pane to load the current phase */
@@ -156,7 +143,7 @@ public class GameController implements WindowSubController {
         }
         
         GamePhase currentPhase = game.getCurrentPhase();
-        updateHudPhase(currentPhase);
+        updateHudPhaseIndicator(currentPhase);
 
         Path phaseFxmlFile = currentPhase.getType().getFxmlFile();
         Logger.LogDebug("phase fxml: %s", phaseFxmlFile);
