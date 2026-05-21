@@ -1,6 +1,6 @@
 package fr.uge.but.schtroumpf.view;
 
-import fr.uge.but.schtroumpf.controller.gui.AppController;
+import fr.uge.but.schtroumpf.controller.gui.windows.AppController;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;

@@ -5,9 +5,11 @@ import module java.base;
 import fr.uge.but.schtroumpf.model.events.*;
 import fr.uge.but.schtroumpf.model.characters.*;
 import fr.uge.but.schtroumpf.view.Logger;
-import fr.uge.but.schtroumpf.view.phase_views.EventView;
+import fr.uge.but.schtroumpf.view.phase_views.console.EventView;
 
 public class EventPhase implements GamePhase {
+	@Override public PhaseType getType() { return PhaseType.EVENT_PHASE; }
+	
 	@Override
 	public GamePhase execute(GamePhaseContext ctx) {
 		Logger.LogTrace("started random event phase");
@@ -24,9 +26,6 @@ public class EventPhase implements GamePhase {
 		ctx.village().recordEvent(new EventHistory(event.getEventType(), effectsToApply, ctx.currentRound()));
 		
 		// display view and effects that were applied
-		EventView view = new EventView();
-		view.display(ctx);
-		view.displayEffectsApplied(ctx.window(), effectsToApply);
 		
 		Logger.LogTrace("finished random event phase");
 		return new CouncilPhase();

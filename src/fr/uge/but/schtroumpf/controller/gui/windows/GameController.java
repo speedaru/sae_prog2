@@ -1,8 +1,10 @@
-package fr.uge.but.schtroumpf.controller.gui;
+package fr.uge.but.schtroumpf.controller.gui.windows;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
@@ -10,13 +12,15 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 
+import java.nio.file.Path;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import fr.uge.but.schtroumpf.controller.FxmlSubController;
+import fr.uge.but.schtroumpf.controller.WindowSubController;
 import fr.uge.but.schtroumpf.controller.Navigation.*;
+import fr.uge.but.schtroumpf.controller.PhaseSubController;
 import fr.uge.but.schtroumpf.model.Game;
 import fr.uge.but.schtroumpf.model.*;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
@@ -24,11 +28,13 @@ import fr.uge.but.schtroumpf.model.characters.Effect;
 import fr.uge.but.schtroumpf.model.crises.*;
 import fr.uge.but.schtroumpf.model.events.EventHistory;
 import fr.uge.but.schtroumpf.model.phases.*;
+import fr.uge.but.schtroumpf.view.AppWindow;
+import fr.uge.but.schtroumpf.view.FxmlUtils;
 import fr.uge.but.schtroumpf.view.Logger;
 import fr.uge.but.schtroumpf.view.windows.console.GameWindow;
 import fr.uge.but.schtroumpf.view.components.ResourceWidget;
 
-public class GameController implements FxmlSubController {
+public class GameController implements WindowSubController {
     private AppController router;
     private final Game game = new Game();
 
@@ -49,9 +55,12 @@ public class GameController implements FxmlSubController {
     public void initialize() {
         game.startFirstMonth();
         
+        // init UI
         initResourceWidgets();
-        updateResourceHud();
+        updateHudResource();
 
+        syncPhaseView(); // load initial phase in center
+        
         Logger.LogDebug("GameController gui initialized");
     }
 
@@ -72,7 +81,7 @@ public class GameController implements FxmlSubController {
     @FXML void handleMysteriousButton(ActionEvent event) {
         Logger.LogDebug("Secret tunnel trigger! Berries added to reserves.");
         game.getVillage().applyEffect(new Effect(ResourceType.BERRIES, 1));
-        updateResourceHud();
+        updateHudResource();
     }
 
     @FXML void handleQuitButton1(ActionEvent event) {
@@ -85,13 +94,14 @@ public class GameController implements FxmlSubController {
     @FXML void handleToggleUI(ActionEvent event) { }
     @FXML void handleOpenSettings(ActionEvent event) { }
     
-    public void updateResourceHud() {
+    
+    public void updateHudResource() {
         SmurfVillage village = game.getVillage();
         List<ResourceSnapshot> snapshots = village.getResources();
         List<ResourceSnapshot> deltas = village.getResourcesDiff();
         
         for (var snap : snapshots) {
-        	ResourceType type = snap.resource();
+        	ResourceType type = snap.type();
             int delta = getDeltaForType(deltas, type);
             
             ResourceWidget widget = resourceWidgets.get(type);
@@ -99,6 +109,21 @@ public class GameController implements FxmlSubController {
                 widget.updateState(snap.quantity(), delta);
             }
         }
+    }
+    
+    public void advanceTurn() {
+		// 1. Build context passing a window bridge or mock instance to stay compliant
+		// (We will refine the exact windowBridge mapping in the next steps)
+        GamePhaseContext context = new GamePhaseContext(game.getVillage(), game.getCurrentRound());
+
+        // 2. Run the single phase step logic through our model state machine
+        game.advance(context);
+
+        // 3. Re-render resources to immediately reflect deltas on the spot
+        updateHudResource();
+
+        // 4. Update the center viewport layout panel to the next phase sequence
+        syncPhaseView();
     }
     
     // ------------------------- private helpers
@@ -114,14 +139,58 @@ public class GameController implements FxmlSubController {
             resourcesContainer.getChildren().add(widget);
         }
     }
+
+    private void updateHudPhase(GamePhase phase) {
+    	phaseLabel.setText(String.format("Phase: %s", phase.getType().getDisplayName()));
+    }
+    
+    /** swaps center pane to load the current phase */
+    private void syncPhaseView() {
+    	if (game.getGameState() == Game.GameState.DEFEAT) {
+    		handleDefeat();
+            return;
+        }
+        if (game.getGameState() == Game.GameState.VICTORY) {
+    		handleVictory();
+            return;
+        }
+        
+        GamePhase currentPhase = game.getCurrentPhase();
+        updateHudPhase(currentPhase);
+
+        Path phaseFxmlFile = currentPhase.getType().getFxmlFile();
+        Logger.LogDebug("phase fxml: %s", phaseFxmlFile);
+        loadCenterView(phaseFxmlFile);
+    }
+    
+    private void loadCenterView(Path fxmlFile) {
+    	centerContainer.getChildren().clear();
+
+    	Parent root = FxmlUtils.loadFxmlAndPassController(fxmlFile, this, (loader, masterCtlr) -> {
+    		PhaseSubController controller = (PhaseSubController)loader.getController();
+    		controller.setMasterController(masterCtlr, this.game);
+    	});
+
+    	if (root != null) {
+			centerContainer.getChildren().add(root);
+    	}
+    }
     
     private int getDeltaForType(List<ResourceSnapshot> deltas, ResourceType type) {
     	for (var snap : deltas) {
-    		if (snap.resource() == type) {
+    		if (snap.type() == type) {
     			return snap.quantity();
     		}
     	}
 
     	throw new IllegalStateException(String.format("ressource %s not found", type));
+    }
+    
+    private void handleDefeat() {
+		Logger.LogError("Village defeated. Returning to main menu.");
+    }
+
+    private void handleVictory() {
+		Logger.LogDebug("Victory achieved! Popping back to start window.");
     }
 }

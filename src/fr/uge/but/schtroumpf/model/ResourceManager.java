@@ -3,11 +3,10 @@ package fr.uge.but.schtroumpf.model;
 import module java.base;
 
 public class ResourceManager {
-	/** a resource type paired with its quantity */
-	public record ResourceSnapshot(ResourceType resource, int quantity) { }
+	public record ResourceSnapshot(ResourceType type, int quantity) { }
 
 	// hash map of resource type and quantity
-	private final HashMap<ResourceType, Integer> resources = new HashMap<ResourceType, Integer>();
+	private final ResourceMap resources = new ResourceMap();
 
 	// constants
 	public static final int MAX_QUANTITY = 10;

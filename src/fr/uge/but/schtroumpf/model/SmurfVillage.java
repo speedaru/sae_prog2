@@ -47,11 +47,11 @@ public class SmurfVillage {
 			ResourceSnapshot currentResourceSnap = currentSnap.get(i);
 			
 			// same index should have same resource type
-			if (previousResourceSnap.resource() != currentResourceSnap.resource()) {
+			if (previousResourceSnap.type() != currentResourceSnap.type()) {
 				throw new IllegalStateException("both snapshots should have same resource at same index");
 			}
 			
-			ResourceType type = currentResourceSnap.resource();
+			ResourceType type = currentResourceSnap.type();
 			int delta = currentResourceSnap.quantity() - previousResourceSnap.quantity();
 			diffSnap.add(new ResourceSnapshot(type, delta));
 		}

@@ -1,4 +1,4 @@
-package fr.uge.but.schtroumpf.view.phase_views;
+package fr.uge.but.schtroumpf.view.phase_views.console;
 
 import module java.base;
 
@@ -9,7 +9,7 @@ import fr.uge.but.schtroumpf.view.windows.console.GameWindow;
 public class EventView implements PhaseView {
 	@Override
 	public void display(GamePhaseContext ctx) {
-		ctx.window().displayCurrentEvent(ctx.currentRound(), ctx.village());
+//		ctx.window().displayCurrentEvent(ctx.currentRound(), ctx.village());
 	}
 	
 	public void displayEffectsApplied(GameWindow window, List<Effect> effectsApplied) {

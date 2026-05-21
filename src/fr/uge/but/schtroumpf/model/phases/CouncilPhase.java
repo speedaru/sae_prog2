@@ -7,8 +7,11 @@ import fr.uge.but.schtroumpf.model.characters.Effect;
 import fr.uge.but.schtroumpf.model.characters.SmurfCharacter;
 import fr.uge.but.schtroumpf.view.Logger;
 import fr.uge.but.schtroumpf.view.phase_views.*;
+import fr.uge.but.schtroumpf.view.phase_views.console.CouncilView;
 
 public class CouncilPhase implements GamePhase {
+	@Override public PhaseType getType() { return PhaseType.COUNCIL_PHASE; }
+	
 	@Override
 	public GamePhase execute(GamePhaseContext ctx) {
 		Logger.LogTrace("started council phase");

@@ -34,7 +34,7 @@ public class GameController implements SubController {
 		while (currentPhase != null) {
 			window.displayHud(new HudContext(round, village));
 
-			var ctx = new GamePhaseContext(window, village, round);
+			var ctx = new GamePhaseContext(village, round);
 			currentPhase = currentPhase.execute(ctx);
 			window.newLine();
 		}

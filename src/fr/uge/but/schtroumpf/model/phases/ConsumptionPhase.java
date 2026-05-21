@@ -4,6 +4,8 @@ import fr.uge.but.schtroumpf.model.ResourceType;
 import fr.uge.but.schtroumpf.view.Logger;
 
 public class ConsumptionPhase implements GamePhase {
+	@Override public PhaseType getType() { return PhaseType.CONSUMPTION_PHASE; }
+	
 	@Override
 	public GamePhase execute(GamePhaseContext ctx) {
 		Logger.LogTrace("started consumption phase");
@@ -13,5 +15,4 @@ public class ConsumptionPhase implements GamePhase {
 		Logger.LogTrace("finished consumption phase");
 		return new CrisisPhase();
 	}
-
 }

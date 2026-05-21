@@ -5,7 +5,6 @@ import module java.base;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.events.*;
-import fr.uge.but.schtroumpf.view.windows.Window;
 import fr.uge.but.schtroumpf.model.characters.*;
 import fr.uge.but.schtroumpf.model.crises.*;
 
@@ -80,7 +79,7 @@ public class GameWindow implements Window {
 			String deltaStr = getResourceDeltaStr(diffSnapList.get(i).quantity());
 			
 			IO.println(String.format(
-				"%s : %d%s", snap.resource(), snap.quantity(), deltaStr
+				"%s : %d%s", snap.type(), snap.quantity(), deltaStr
 			));
 		}
 	}

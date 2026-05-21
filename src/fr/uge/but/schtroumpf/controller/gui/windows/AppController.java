@@ -1,9 +1,7 @@
-package fr.uge.but.schtroumpf.controller.gui;
+package fr.uge.but.schtroumpf.controller.gui.windows;
 
 import javafx.scene.Scene;
 import javafx.scene.Parent;
-import javafx.fxml.FXMLLoader;
-import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.EnumMap;
@@ -11,8 +9,8 @@ import java.util.Map;
 
 import fr.uge.but.schtroumpf.controller.*;
 import fr.uge.but.schtroumpf.controller.Navigation.*;
-import fr.uge.but.schtroumpf.view.AppWindow;
-import fr.uge.but.schtroumpf.view.Logger;
+import fr.uge.but.schtroumpf.model.WindowType;
+import fr.uge.but.schtroumpf.view.FxmlUtils;
 
 public class AppController {
     private final Deque<Parent> windowStack = new ArrayDeque<>();
@@ -66,9 +64,6 @@ public class AppController {
     @SuppressWarnings("unused")
 	private void preloadAllWindows() {
 		for (WindowType type : WindowType.values()) {
-			String fxmlFile = type.getFxmlFile();
-            if (fxmlFile == null) continue;
-            
             Parent parsedRoot = compileLayout(type);
             if (parsedRoot != null) {
                 preloadedWindows.put(type, parsedRoot);
@@ -78,28 +73,9 @@ public class AppController {
 
     /** loads a FXML file into memory */
     private Parent compileLayout(WindowType type) {
-		String fxmlPath = type.getFxmlFile();
-
-		try {
-			FXMLLoader loader = new FXMLLoader(AppWindow.class.getResource(fxmlPath));
-			Parent root = loader.load();
-
-			// pass the router down to the newly loaded sub controller
-			try {
-				FxmlSubController controller = (FxmlSubController)loader.getController();
-				controller.setRouter(this);
-			} catch (ClassCastException e) {
-				Logger.LogError("%s controller is not a FxmlSubController", fxmlPath);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			Logger.LogDebug("loaded %s", type);
-			return root;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return null;
+    	return FxmlUtils.loadFxmlAndPassController(type.getFxmlFile(), this, (loader, masterController) -> {
+			WindowSubController controller = (WindowSubController)loader.getController();
+			controller.setRouter(masterController);
+    	});
     }
 }

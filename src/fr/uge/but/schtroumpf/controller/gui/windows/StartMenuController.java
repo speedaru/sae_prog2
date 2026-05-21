@@ -1,13 +1,13 @@
-package fr.uge.but.schtroumpf.controller.gui;
+package fr.uge.but.schtroumpf.controller.gui.windows;
 
-import fr.uge.but.schtroumpf.controller.FxmlSubController;
+import fr.uge.but.schtroumpf.controller.WindowSubController;
 import fr.uge.but.schtroumpf.controller.Navigation.NavigationAction;
-import fr.uge.but.schtroumpf.controller.Navigation.WindowType;
+import fr.uge.but.schtroumpf.model.WindowType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-public class StartMenuController implements FxmlSubController {
+public class StartMenuController implements WindowSubController {
     @FXML private Button newGameButton;
     @FXML private Button loadGameButton;
     

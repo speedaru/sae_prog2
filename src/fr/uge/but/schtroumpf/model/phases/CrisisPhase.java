@@ -4,9 +4,10 @@ import module java.base;
 
 import fr.uge.but.schtroumpf.model.crises.*;
 import fr.uge.but.schtroumpf.view.Logger;
-import fr.uge.but.schtroumpf.view.phase_views.*;
 
 public class CrisisPhase implements GamePhase {
+	@Override public PhaseType getType() { return PhaseType.CRISIS_PHASE; }
+	
 	@Override
 	public GamePhase execute(GamePhaseContext ctx) {
 		Logger.LogTrace("started crisis phase");
@@ -25,9 +26,6 @@ public class CrisisPhase implements GamePhase {
 		}
 		
 		// display crisis information
-		CrisisView view = new CrisisView();
-		view.display(ctx);
-		view.displayActiveCrises(ctx.window(), activeCrises);
 
 		Logger.LogTrace("finished crisis phase");
 		return null;
