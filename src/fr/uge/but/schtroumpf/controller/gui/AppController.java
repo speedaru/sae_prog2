@@ -34,8 +34,11 @@ public class AppController {
     public void navigate(NavigationAction action, WindowType target) {
         switch (action) {
             case PUSH -> {
+//            	long start = System.nanoTime();
 //                windowStack.push(preloadedWindows.get(target));
                 windowStack.push(compileLayout(target));
+//            	long end = System.nanoTime();
+//            	Logger.LogDebug("time to push window (%s): %.3fms", target.name(), (end - start) / 1_000_000.f);
                 updateWindow();
             }
             case POP -> {
@@ -86,12 +89,12 @@ public class AppController {
 				FxmlSubController controller = (FxmlSubController)loader.getController();
 				controller.setRouter(this);
 			} catch (ClassCastException e) {
-				Logger.LogError("%s controller is not a FxmlSubController\n", fxmlPath);
+				Logger.LogError("%s controller is not a FxmlSubController", fxmlPath);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
-			Logger.LogDebug("loaded %s\n", type);
+			Logger.LogDebug("loaded %s", type);
 			return root;
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -4,7 +4,7 @@ import module java.base;
 
 import fr.uge.but.schtroumpf.model.characters.Effect;
 import fr.uge.but.schtroumpf.model.phases.GamePhaseContext;
-import fr.uge.but.schtroumpf.view.windows.GameWindow;
+import fr.uge.but.schtroumpf.view.windows.console.GameWindow;
 
 public class EventView implements PhaseView {
 	@Override

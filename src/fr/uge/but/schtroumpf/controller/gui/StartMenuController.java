@@ -13,6 +13,8 @@ public class StartMenuController implements FxmlSubController {
     
     private AppController router;
 
+    @Override public void setRouter(AppController router) { this.router = router; }
+
     @FXML
     public void initialize() {
         System.out.println("Start Menu Loaded Successfully.");
@@ -28,9 +30,4 @@ public class StartMenuController implements FxmlSubController {
         System.out.println("Loading previous save state...");
         // Add your save parsing initialization here
     }
-
-	@Override
-	public void setRouter(AppController router) {
-		this.router = router;
-	}
 }

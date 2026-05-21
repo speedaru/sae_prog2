@@ -1,10 +1,11 @@
-package fr.uge.but.schtroumpf.view.windows;
+package fr.uge.but.schtroumpf.view.windows.console;
 
 import module java.base;
 
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.events.*;
+import fr.uge.but.schtroumpf.view.windows.Window;
 import fr.uge.but.schtroumpf.model.characters.*;
 import fr.uge.but.schtroumpf.model.crises.*;
 

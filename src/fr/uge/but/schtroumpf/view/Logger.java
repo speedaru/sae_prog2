@@ -17,6 +17,7 @@ public class Logger {
 	}
 	
 	public static void LogDebug(String message, Object... args) { Log(LoggerFlag.DEBUG, String.format(message, args)); }
+	public static void LogWarn(String message, Object... args) { Log(LoggerFlag.WARNING, String.format(message, args)); }
 	public static void LogTrace(String message, Object... args) { Log(LoggerFlag.TRACE, String.format(message, args)); }
 	public static void LogError(String message, Object... args) { Log(LoggerFlag.ERROR, String.format(message, args)); }
 
@@ -30,6 +31,7 @@ public class Logger {
 
 	public enum LoggerFlag {
 		DEBUG,
+		WARNING,
 		TRACE,
 		ERROR;
 	}

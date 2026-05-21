@@ -1,7 +1,8 @@
-package fr.uge.but.schtroumpf.view.windows;
+package fr.uge.but.schtroumpf.view.windows.console;
 
 import fr.uge.but.schtroumpf.view.ConsoleMenu;
 import fr.uge.but.schtroumpf.view.ConsoleMenu.MenuChoice;
+import fr.uge.but.schtroumpf.view.windows.Window;
 
 public class StartWindow implements Window {
 	private final ConsoleMenu menu = new ConsoleMenu();

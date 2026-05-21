@@ -5,8 +5,8 @@ import fr.uge.but.schtroumpf.controller.Navigation.NavigationAction;
 import fr.uge.but.schtroumpf.controller.Navigation.NavigationResult;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.phases.*;
-import fr.uge.but.schtroumpf.view.windows.GameWindow;
-import fr.uge.but.schtroumpf.view.windows.GameWindow.*;
+import fr.uge.but.schtroumpf.view.windows.console.GameWindow;
+import fr.uge.but.schtroumpf.view.windows.console.GameWindow.*;
 
 public class GameController implements SubController {
 	// constants

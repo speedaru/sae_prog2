@@ -1,172 +1,127 @@
 package fr.uge.but.schtroumpf.controller.gui;
 
-import fr.uge.but.schtroumpf.controller.FxmlSubController;
-import fr.uge.but.schtroumpf.view.Logger;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import fr.uge.but.schtroumpf.controller.FxmlSubController;
+import fr.uge.but.schtroumpf.controller.Navigation.*;
+import fr.uge.but.schtroumpf.model.Game;
+import fr.uge.but.schtroumpf.model.*;
+import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
+import fr.uge.but.schtroumpf.model.characters.Effect;
+import fr.uge.but.schtroumpf.model.crises.*;
+import fr.uge.but.schtroumpf.model.events.EventHistory;
+import fr.uge.but.schtroumpf.model.phases.*;
+import fr.uge.but.schtroumpf.view.Logger;
+import fr.uge.but.schtroumpf.view.windows.console.GameWindow;
+import fr.uge.but.schtroumpf.view.components.ResourceWidget;
+
 public class GameController implements FxmlSubController {
-	AppController router;
+    private AppController router;
+    private final Game game = new Game();
 
-    // === TOP BAR INJECTS ===
-    @FXML private Label monthLabel;
-    @FXML private Label phaseLabel;
-    @FXML private Label eventLabel;
-    @FXML private Button mysteriousButton;
-    @FXML private Button encyclopediaButton;
-    @FXML private Button uiToggleButton;
-    @FXML private Button settingsButton;
+    @FXML private Label monthLabel, phaseLabel, eventLabel;
+    @FXML private Button mysteriousButton, encyclopediaButton, uiToggleButton, settingsButton, quitButton1;
+    @FXML private FlowPane resourcesContainer;
+    @FXML private StackPane centerContainer;
+    @FXML private Label crisisTitleLabel, crisisCauseLabel, crisisEffectsLabel, crisisPageLabel;
+    @FXML private Button prevCrisisBtn, nextCrisisBtn;
+    
+    private final Map<ResourceType, ResourceWidget> resourceWidgets = new EnumMap<>(ResourceType.class);
 
-    // === RESOURCES BAR INJECTS ===
-    @FXML private Rectangle berriesBar;
-    @FXML private Label berriesText;
-    @FXML private Label berriesDeltaLabel;
-
-    @FXML private Rectangle sarsaparillaBar;
-    @FXML private Label sarsaparillaText;
-    @FXML private Label sarsaparillaDeltaLabel;
-
-    @FXML private Rectangle goldBar;
-    @FXML private Label goldText;
-    @FXML private Label goldDeltaLabel;
-
-    @FXML private Rectangle moralBar;
-    @FXML private Label moralText;
-    @FXML private Label moralDeltaLabel;
-
-    // === CENTER INJECTS ===
-    @FXML private StackPane centerContainer; // Swap sub-panels inside this layout
-
-    // === CRISIS PANEL INJECTS ===
-    @FXML private Label crisisTitleLabel;
-    @FXML private Label crisisCauseLabel;
-    @FXML private Label crisisEffectsLabel;
-    @FXML private Label crisisPageLabel;
-    @FXML private Button prevCrisisBtn;
-    @FXML private Button nextCrisisBtn;
-
-    // Track active crisis pagination index
     private int currentCrisisPage = 1;
-    private final int totalCrisisPages = 3;
 
-    /**
-     * Initializes the controller class. This method is automatically called
-     * after the FXML file has been loaded.
-     */
+    @Override public void setRouter(AppController router) { this.router = router; }
+
     @FXML
     public void initialize() {
-        // Set baseline resource states manually (can be loaded from data models later)
-        setResourceProgress(berriesBar, 420.0, 1000.0);
-        berriesText.setText("420 / 1000");
-        berriesDeltaLabel.setText("+15");
+        game.startFirstMonth();
+        
+        initResourceWidgets();
+        updateResourceHud();
 
-        setResourceProgress(sarsaparillaBar, 525.0, 1000.0);
-        sarsaparillaText.setText("525 / 1000");
-        sarsaparillaDeltaLabel.setText("-5");
-
-        setResourceProgress(goldBar, 150.0, 1000.0);
-        goldText.setText("150 / 1000");
-        goldDeltaLabel.setText("+2");
-
-        setResourceProgress(moralBar, 60.0, 100.0);
-        moralText.setText("60%");
-        moralDeltaLabel.setText("+1%");
-
-        updateCrisisDisplay();
-    	Logger.LogDebug("GameController initialized");
+        Logger.LogDebug("GameController gui initialized");
     }
 
-	@Override
-	public void setRouter(AppController router) {
-		this.router = router;
-	}
-
-    // === HANDLERS FOR ACTIONS & POPUPS ===
-
-    @FXML
-    void handleMysteriousButton(ActionEvent event) {
-        System.out.println("Mysterious action trigger!");
-        // Add secret mechanics here
-    }
-
-    @FXML
-    void handleOpenEncyclopedia(ActionEvent event) {
-        System.out.println("Opening Encyclopedia pane...");
-        // Logic to load Encyclopedia subwindow FXML and replace children in centerContainer
-    }
-
-    @FXML
-    void handleToggleUI(ActionEvent event) {
-        System.out.println("Toggling UI display mode...");
-    }
-
-    @FXML
-    void handleOpenSettings(ActionEvent event) {
-        System.out.println("Opening settings dialog...");
-    }
-
-    // === CRISIS PAGINATION HANDLERS ===
-
-    @FXML
-    void handlePrevCrisis(ActionEvent event) {
+    @FXML void handlePrevCrisis(ActionEvent event) {
         if (currentCrisisPage > 1) {
             currentCrisisPage--;
-            updateCrisisDisplay();
         }
     }
 
-    @FXML
-    void handleNextCrisis(ActionEvent event) {
-        if (currentCrisisPage < totalCrisisPages) {
+    @FXML void handleNextCrisis(ActionEvent event) {
+        // re-calculate total pages on each click to be safe
+        long totalPages = Stream.of(CrisisType.values()).filter(t -> t.isActive(game.getVillage())).count();
+        if (currentCrisisPage < totalPages) {
             currentCrisisPage++;
-            updateCrisisDisplay();
         }
     }
 
-    /**
-     * Public helper that your main class or sub-menus can access to clear out 
-     * the center workspace and load new screens dynamically.
-     */
-    public StackPane getCenterContainer() {
-        return centerContainer;
+    @FXML void handleMysteriousButton(ActionEvent event) {
+        Logger.LogDebug("Secret tunnel trigger! Berries added to reserves.");
+        game.getVillage().applyEffect(new Effect(ResourceType.BERRIES, 1));
+        updateResourceHud();
     }
 
-    /**
-     * Helper to modify the progress bar fills dynamically in JavaFX.
-     * Maps progress to the maximum width of the indicator bar background (130px wide).
-     */
-    private void setResourceProgress(Rectangle bar, double currentValue, double maxValue) {
-        double maxBgWidth = 130.0;
-        double progressPercentage = currentValue / maxValue;
-        if (progressPercentage > 1.0) progressPercentage = 1.0;
-        if (progressPercentage < 0.0) progressPercentage = 0.0;
-
-        bar.setWidth(maxBgWidth * progressPercentage);
+    @FXML void handleQuitButton1(ActionEvent event) {
+        Logger.LogDebug("Click quit button, going back to start window");
+        router.navigate(NavigationAction.POP, null);
     }
 
-    private void updateCrisisDisplay() {
-        crisisPageLabel.setText(currentCrisisPage + " / " + totalCrisisPages);
+    // unused handlers
+    @FXML void handleOpenEncyclopedia(ActionEvent event) { }
+    @FXML void handleToggleUI(ActionEvent event) { }
+    @FXML void handleOpenSettings(ActionEvent event) { }
+    
+    public void updateResourceHud() {
+        SmurfVillage village = game.getVillage();
+        List<ResourceSnapshot> snapshots = village.getResources();
+        List<ResourceSnapshot> deltas = village.getResourcesDiff();
         
-        switch (currentCrisisPage) {
-            case 1:
-                crisisTitleLabel.setText("CRISE : BAIES");
-                crisisCauseLabel.setText("- Manque de baies criant dans les réserves du village.");
-                crisisEffectsLabel.setText("- Malus de moral généralisé (-10%)\n- Risque de famine accru à la fin du cycle.");
-                break;
-            case 2:
-                crisisTitleLabel.setText("CRISE : MAUDITE");
-                crisisCauseLabel.setText("- Présence suspecte de pièges à proximité de la clairière.");
-                crisisEffectsLabel.setText("- -15% de vitesse de récolte générale.\n- Impossibilité d'envoyer des explorateurs.");
-                break;
-            case 3:
-                crisisTitleLabel.setText("CRISE : ORAGE");
-                crisisCauseLabel.setText("- Intempéries dévastatrices sur les toits des habitations.");
-                crisisEffectsLabel.setText("- Coût de réparation de l'or doublé.\n- 5% de chance de perdre de la Sarsaparille.");
-                break;
+        for (var snap : snapshots) {
+        	ResourceType type = snap.resource();
+            int delta = getDeltaForType(deltas, type);
+            
+            ResourceWidget widget = resourceWidgets.get(type);
+            if (widget != null) {
+                widget.updateState(snap.quantity(), delta);
+            }
         }
+    }
+    
+    // ------------------------- private helpers
+    
+    private void initResourceWidgets() {
+    	if (resourceWidgets.size() > 0) {
+    		resourceWidgets.clear();
+    	}
+
+    	for (ResourceType type : ResourceType.values()) {
+            ResourceWidget widget = new ResourceWidget(type);
+            resourceWidgets.put(type, widget);
+            resourcesContainer.getChildren().add(widget);
+        }
+    }
+    
+    private int getDeltaForType(List<ResourceSnapshot> deltas, ResourceType type) {
+    	for (var snap : deltas) {
+    		if (snap.resource() == type) {
+    			return snap.quantity();
+    		}
+    	}
+
+    	throw new IllegalStateException(String.format("ressource %s not found", type));
     }
 }

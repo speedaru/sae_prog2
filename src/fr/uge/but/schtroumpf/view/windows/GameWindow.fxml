@@ -4,10 +4,10 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="1024.0" prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #1a1c1e;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.uge.but.schtroumpf.controller.gui.GameController">
@@ -94,6 +94,11 @@
                         <Font size="11.0" />
                      </font>
                   </Button>
+                  <Button fx:id="quitButton1" mnemonicParsing="false" onAction="#handleQuitButton1" prefHeight="45.0" prefWidth="90.0" style="-fx-background-color: darkred; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand;" text="Quitter" textAlignment="CENTER" wrapText="true">
+                     <font>
+                        <Font size="11.0" />
+                     </font>
+                  </Button>
                </children>
             </HBox>
          </children>
@@ -112,151 +117,7 @@
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            
-            <!-- Resource List Container -->
-            <VBox spacing="12.0" VBox.vgrow="ALWAYS">
-               <children>
-                  
-                  <!-- RESOURCE 1: Baies -->
-                  <VBox spacing="4.0" style="-fx-background-color: #2d3139; -fx-padding: 10; -fx-background-radius: 8;">
-                     <children>
-                        <Label text="Baies" textFill="#e2e8f0">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                           <children>
-                              <StackPane alignment="CENTER_LEFT" prefHeight="24.0" prefWidth="130.0">
-                                 <children>
-                                    <Rectangle arcHeight="8.0" arcWidth="8.0" fill="#1e1e24" height="24.0" stroke="#4b5563" strokeType="INSIDE" width="130.0" />
-                                    <!-- Dynamic Fill of the resource progress -->
-                                    <Rectangle fx:id="berriesBar" arcHeight="8.0" arcWidth="8.0" fill="#ef4444" height="22.0" strokeType="INSIDE" strokeWidth="0.0" width="75.0" />
-                                    <Label fx:id="berriesText" text="420 / 1000" textFill="WHITE">
-                                       <padding>
-                                          <Insets left="8.0" />
-                                       </padding>
-                                       <font>
-                                          <Font name="System Bold" size="11.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </StackPane>
-                              <!-- Resource delta output -->
-                              <Label fx:id="berriesDeltaLabel" text="+15" textFill="#10b981">
-                                 <font>
-                                    <Font name="System Bold" size="13.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-                  
-                  <!-- RESOURCE 2: Sarsaparille -->
-                  <VBox spacing="4.0" style="-fx-background-color: #2d3139; -fx-padding: 10; -fx-background-radius: 8;">
-                     <children>
-                        <Label text="Sarsaparille" textFill="#e2e8f0">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                           <children>
-                              <StackPane alignment="CENTER_LEFT" prefHeight="24.0" prefWidth="130.0">
-                                 <children>
-                                    <Rectangle arcHeight="8.0" arcWidth="8.0" fill="#1e1e24" height="24.0" stroke="#4b5563" strokeType="INSIDE" width="130.0" />
-                                    <Rectangle fx:id="sarsaparillaBar" arcHeight="8.0" arcWidth="8.0" fill="#10b981" height="22.0" strokeType="INSIDE" strokeWidth="0.0" width="95.0" />
-                                    <Label fx:id="sarsaparillaText" text="525 / 1000" textFill="WHITE">
-                                       <padding>
-                                          <Insets left="8.0" />
-                                       </padding>
-                                       <font>
-                                          <Font name="System Bold" size="11.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </StackPane>
-                              <Label fx:id="sarsaparillaDeltaLabel" text="-5" textFill="#ef4444">
-                                 <font>
-                                    <Font name="System Bold" size="13.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-
-                  <!-- RESOURCE 3: Or -->
-                  <VBox spacing="4.0" style="-fx-background-color: #2d3139; -fx-padding: 10; -fx-background-radius: 8;">
-                     <children>
-                        <Label text="Or" textFill="#e2e8f0">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                           <children>
-                              <StackPane alignment="CENTER_LEFT" prefHeight="24.0" prefWidth="130.0">
-                                 <children>
-                                    <Rectangle arcHeight="8.0" arcWidth="8.0" fill="#1e1e24" height="24.0" stroke="#4b5563" strokeType="INSIDE" width="130.0" />
-                                    <Rectangle fx:id="goldBar" arcHeight="8.0" arcWidth="8.0" fill="#f59e0b" height="22.0" strokeType="INSIDE" strokeWidth="0.0" width="30.0" />
-                                    <Label fx:id="goldText" text="150 / 1000" textFill="WHITE">
-                                       <padding>
-                                          <Insets left="8.0" />
-                                       </padding>
-                                       <font>
-                                          <Font name="System Bold" size="11.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </StackPane>
-                              <Label fx:id="goldDeltaLabel" text="+2" textFill="#10b981">
-                                 <font>
-                                    <Font name="System Bold" size="13.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-
-                  <!-- RESOURCE 4: Moral -->
-                  <VBox spacing="4.0" style="-fx-background-color: #2d3139; -fx-padding: 10; -fx-background-radius: 8;">
-                     <children>
-                        <Label text="Moral" textFill="#e2e8f0">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                           <children>
-                              <StackPane alignment="CENTER_LEFT" prefHeight="24.0" prefWidth="130.0">
-                                 <children>
-                                    <Rectangle arcHeight="8.0" arcWidth="8.0" fill="#1e1e24" height="24.0" stroke="#4b5563" strokeType="INSIDE" width="130.0" />
-                                    <Rectangle fx:id="moralBar" arcHeight="8.0" arcWidth="8.0" fill="#6366f1" height="22.0" strokeType="INSIDE" strokeWidth="0.0" width="60.0" />
-                                    <Label fx:id="moralText" text="60%" textFill="WHITE">
-                                       <padding>
-                                          <Insets left="8.0" />
-                                       </padding>
-                                       <font>
-                                          <Font name="System Bold" size="11.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </StackPane>
-                              <Label fx:id="moralDeltaLabel" text="+1%" textFill="#10b981">
-                                 <font>
-                                    <Font name="System Bold" size="13.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-                  
-               </children>
-            </VBox>
+            <FlowPane fx:id="resourcesContainer" hgap="10.0" prefHeight="85.0" prefWidth="208.0" vgap="10.0" />
          </children>
       </VBox>
    </left>

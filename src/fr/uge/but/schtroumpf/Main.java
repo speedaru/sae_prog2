@@ -11,6 +11,7 @@ public class Main {
 		// init logger
 		List<LoggerFlag> flags = List.of(
 				LoggerFlag.DEBUG,
+				LoggerFlag.WARNING,
 				LoggerFlag.ERROR,
 				LoggerFlag.TRACE
 		);

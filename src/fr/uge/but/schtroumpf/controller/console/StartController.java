@@ -4,8 +4,8 @@ import fr.uge.but.schtroumpf.controller.SubController;
 import fr.uge.but.schtroumpf.controller.Navigation.NavigationAction;
 import fr.uge.but.schtroumpf.controller.Navigation.NavigationResult;
 import fr.uge.but.schtroumpf.controller.Navigation.WindowType;
-import fr.uge.but.schtroumpf.view.windows.StartWindow;
-import fr.uge.but.schtroumpf.view.windows.StartWindow.Choice;
+import fr.uge.but.schtroumpf.view.windows.console.StartWindow;
+import fr.uge.but.schtroumpf.view.windows.console.StartWindow.Choice;
 
 public class StartController implements SubController {
 	private final StartWindow window = new StartWindow();
