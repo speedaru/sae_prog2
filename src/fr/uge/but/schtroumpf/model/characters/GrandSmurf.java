@@ -12,40 +12,47 @@ public class GrandSmurf implements SmurfCharacter {
 		energy = 10;
 	}
 	
-	@Override
-	public String getName() { return "Grand Schtroumpf"; }
+	@Override public SmurfType getType() { return SmurfType.GRAND_SMURF; }
+	@Override public String getName() { return "Grand Schtroumpf"; }
 
 	@Override
 	public List<CharacterAbility> getAbilities() {
 		// consulter grimoire
 		CharacterAbility checkSpellBook = new CharacterAbility(
-			"Consulter le grimoire (+Savoir, -Moral si échec)",
+			"Consulter le grimoire",
+			"+Savoir, -Moral si échec",
 			2,
+			List.of(),
 			this::executeCheckSpellBook
 		);
 		
 		// Organiser une réunion
 		CharacterAbility planMeeting = new CharacterAbility(
-			"Organiser une réunion (+Moral)",
+			"Organiser une réunion",
+			"+Moral",
 			3,
+			List.of(),
 			this::executePlanMeeting
 		);
 		
 		// Négocier avec les animaux
 		CharacterAbility talkToAnimals = new CharacterAbility(
-			"Négocier avec les animaux (+Or ou +Défense)",
+			"Négocier avec les animaux",
+			"+Or ou +Défense",
 			1,
+			List.of(),
 			this::executeTalkToAnimals
 		);
 		
 		return List.of(checkSpellBook, planMeeting, talkToAnimals);
 	}
 
-	@Override
-	public int getEnergy() { return energy; }
+	@Override public int getEnergy() { return energy; }
 
 	@Override
-	public void updateEnergy(int delta) { energy += delta; }
+	public void updateEnergy(int delta) {
+		energy = Math.clamp(energy + delta, 0, getMaxEnergy());
+	}
 	
 	@Override
 	public String toString() { return getName(); }

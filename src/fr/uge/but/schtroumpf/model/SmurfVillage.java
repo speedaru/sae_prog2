@@ -70,6 +70,33 @@ public class SmurfVillage {
 		return List.copyOf(available);
 	}
 	
+	public SmurfCharacter getCouncilMember(SmurfType type) {
+		for (SmurfCharacter smurf : councilMembers) {
+			if (smurf.getType() == type) {
+				return smurf;
+			}
+		}
+		throw new IllegalStateException(String.format("%s is not a part of the smurf council", type));
+	}
+	
+	public List<CharacterAbility> getAbilitiesFor(SmurfType type) {
+		for (SmurfCharacter smurf : councilMembers) {
+			if (smurf.getType() == type) {
+				return smurf.getAbilities();
+			}
+		}
+		throw new IllegalStateException(String.format("%s is not a part of the smurf council", type));
+	}
+
+	public List<CharacterAbility> getAvailableAbilitiesFor(SmurfType type) {
+		for (SmurfCharacter smurf : councilMembers) {
+			if (smurf.getType() == type) {
+				return smurf.getAvailableAbilities();
+			}
+		}
+		throw new IllegalStateException(String.format("%s is not a part of the smurf council", type));
+	}
+	
 	public List<EventHistory> getHistory() {
 		return List.copyOf(eventsHistory);
 	}
@@ -117,6 +144,17 @@ public class SmurfVillage {
 		return depletedResourceCount;
 	}
 	
+	/** checks if the village has enough of each resource specified */
+	public boolean verifyResources(List<ResourceSnapshot> resourcesRequired) {
+		for (ResourceSnapshot req : resourcesRequired) {
+			// not enough of required resource
+			if (resourceManager.get(req.type()) < req.quantity()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	/** 3 or more crises means lost */
 	public boolean isDefeated() {
 		return checkCrises() >= CRISES_LIMIT;
@@ -132,6 +170,27 @@ public class SmurfVillage {
 	
 	public void applyEffect(Effect effect) {
 		resourceManager.add(effect.resourceType(), effect.delta());
+	}
+
+	public void applyEffects(List<Effect> effects) {
+		for (Effect effect : effects) {
+			resourceManager.add(effect.resourceType(), effect.delta());
+		}
+	}
+	
+	/**
+	 * @param type council member smurf type
+	 */
+	public void executeCouncilMemberAbility(SmurfType type, CharacterAbility ability) {
+		SmurfCharacter councilMember = getCouncilMember(type);
+		if (councilMember.canExecute(ability)) {
+			int abilityCost = ability.energyCost();
+
+			// do ability logic then decrease smurf energy
+			List<Effect> effectsToApply = ability.actionLogic().apply(this);
+			applyEffects(effectsToApply);
+			councilMember.updateEnergy(-abilityCost);
+		}
 	}
 	
 	public void increaseResource(ResourceType resource, int amount) {
@@ -149,6 +208,8 @@ public class SmurfVillage {
 		
 		resourceManager.add(resource, -amount);
 	}
+	
+	// ------------------------- private helpers
 	
 	private static List<SmurfCharacter> createSmurfs() {
 		GrandSmurf grandSmurf = new GrandSmurf();

@@ -3,8 +3,10 @@ package fr.uge.but.schtroumpf.model.characters;
 import module java.base;
 
 public interface SmurfCharacter {
+	SmurfType getType();
 	String getName();
 	int getEnergy();
+	default int getMaxEnergy() { return 10; }
 	void updateEnergy(int delta);
 	List<CharacterAbility> getAbilities();
 	
@@ -23,5 +25,9 @@ public interface SmurfCharacter {
 		}
 		
 		return List.copyOf(availableAbilities);
+	}
+	
+	default String getSpritePath() {
+		return null;
 	}
 }

@@ -2,6 +2,7 @@ package fr.uge.but.schtroumpf.model.characters;
 
 import module java.base;
 
+import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 
 /**
@@ -10,8 +11,10 @@ import fr.uge.but.schtroumpf.model.SmurfVillage;
  * @param actionLogic the code that runs when selected that returns a list of effects
  */
 public record CharacterAbility(
+    String name,
     String description,
     int energyCost,
+    List<ResourceSnapshot> requiredResources,
     Function<SmurfVillage, List<Effect>> actionLogic
 )
 {

@@ -81,6 +81,22 @@ public class GameController implements WindowSubController {
     @FXML void handleOpenEncyclopedia(ActionEvent event) { }
     @FXML void handleToggleUI(ActionEvent event) { }
     @FXML void handleOpenSettings(ActionEvent event) { }
+
+    public void updateHudResources() {
+        SmurfVillage village = game.getVillage();
+        List<ResourceSnapshot> snapshots = village.getResources();
+        List<ResourceSnapshot> deltas = village.getResourcesDiff();
+        
+        for (var snap : snapshots) {
+        	ResourceType type = snap.type();
+            int delta = getDeltaForType(deltas, type);
+            
+            ResourceSidebarWidget widget = resourceSidebarWidgets.get(type);
+            if (widget != null) {
+                widget.updateState(snap.quantity(), delta);
+            }
+        }
+    }
     
     /** exposed publicly for phase controllers to call when finished */
     public void advanceTurn() {
@@ -102,22 +118,6 @@ public class GameController implements WindowSubController {
             ResourceSidebarWidget widget = new ResourceSidebarWidget(type);
             resourceSidebarWidgets.put(type, widget);
             resourcesContainer.getChildren().add(widget);
-        }
-    }
-
-    private void updateHudResources() {
-        SmurfVillage village = game.getVillage();
-        List<ResourceSnapshot> snapshots = village.getResources();
-        List<ResourceSnapshot> deltas = village.getResourcesDiff();
-        
-        for (var snap : snapshots) {
-        	ResourceType type = snap.type();
-            int delta = getDeltaForType(deltas, type);
-            
-            ResourceSidebarWidget widget = resourceSidebarWidgets.get(type);
-            if (widget != null) {
-                widget.updateState(snap.quantity(), delta);
-            }
         }
     }
 
