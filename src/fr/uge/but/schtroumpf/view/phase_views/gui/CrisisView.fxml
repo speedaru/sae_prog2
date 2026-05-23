@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #1a1c1e; -fx-background-radius: 12; -fx-border-color: #3f444c; -fx-border-width: 2; -fx-border-radius: 12;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.uge.but.schtroumpf.controller.gui.phases.CrisisPhaseController">
+   
+   <!-- Header Area: Title -->
+   <top>
+      <VBox alignment="CENTER" spacing="5.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Verification des crises" textFill="#f8fafc">
+               <font>
+                  <Font name="System Bold" size="32.0" />
+               </font>
+            </Label>
+            <!-- Decorative line underneath the title -->
+            <HBox alignment="CENTER" />
+         </children>
+         <padding>
+            <Insets bottom="10.0" top="30.0" />
+         </padding>
+      </VBox>
+   </top>
+
+   <!-- Center Area: Clean Dynamic Container Wrapper -->
+   <center>
+      <VBox alignment="CENTER" fillWidth="false" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+         </padding>
+      </VBox>
+   </center>
+
+   <!-- Bottom Area: Validation Button aligned to the right -->
+   <bottom>
+      <HBox alignment="CENTER" prefHeight="70.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="nextPhaseButton" mnemonicParsing="false" onAction="#handleNextPhaseButton" prefHeight="45.0" prefWidth="160.0" style="-fx-background-color: #10b981; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand;" text="Continuer">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Button>
+         </children>
+         <padding>
+            <Insets bottom="25.0" right="20.0" />
+         </padding>
+      </HBox>
+   </bottom>
+</BorderPane>

@@ -88,7 +88,7 @@ public class Game {
     
     /** returns true if successfully called callback */
 	private boolean executePhaseCallback(BiConsumer<GamePhase, GamePhaseContext> callback) {
-    	GamePhaseContext ctx = new GamePhaseContext(village, currentRound);
+    	GamePhaseContext ctx = new GamePhaseContext(this, village, currentRound);
 
         if (gameState != GameState.RUNNING || currentPhase == null) {
             Logger.LogWarn("current phase callback called but game is not in a runnable state.");

@@ -124,6 +124,10 @@ public class GameController implements WindowSubController {
     private void updateHudPhaseIndicator(GamePhase phase) {
     	phaseLabel.setText(phase.getType().getDisplayName());
     }
+
+    private void updateHudRoundIndicator(int round) {
+    	phaseLabel.setText(String.format("%d (%s)", round, getMonthFromNumber(round)));
+    }
     
     private void executeAndLoadCurrentPhase() {
         // execute automatic logic before loading the UI view
@@ -131,6 +135,7 @@ public class GameController implements WindowSubController {
 
         // 4. Update the center viewport layout panel to the next phase sequence
         syncPhaseView();
+        updateHudRoundIndicator(game.getCurrentRound());
 
         // 3. Re-render resources to immediately reflect deltas on the spot
         updateHudResources();
@@ -176,6 +181,25 @@ public class GameController implements WindowSubController {
     	}
 
     	throw new IllegalStateException(String.format("ressource %s not found", type));
+    }
+    
+    /** January is 1 */
+    private String getMonthFromNumber(int month) {
+    	return switch (month) {
+    	case 1 -> "Janvier";
+    	case 2 -> "Fevrier";
+    	case 3 -> "Mars";
+    	case 4 -> "Avril";
+    	case 5 -> "Mai";
+    	case 6 -> "Juin";
+    	case 7 -> "Juillet";
+    	case 8 -> "Aout";
+    	case 9 -> "Septembre";
+    	case 10 -> "Octobre";
+    	case 11 -> "Novembre";
+    	case 12 -> "Decembre";
+		default -> throw new IllegalArgumentException("Unexpected value: " + month);
+    	};
     }
     
     private void handleDefeat() {

@@ -10,17 +10,21 @@ public class ResourceManager {
 
 	// constants
 	public static final int MAX_QUANTITY = 10;
-	
-	/** add or decrease resources, to decrease just set quantity to a negative value */
-	public void add(ResourceType type, int quantity) {
+
+	public void set(ResourceType type, int quantity) { 
 		// if resource doesn't exist create it with a quantity of 0
 		if (!resources.containsKey(type)) {
 			resources.put(type, 0);
 		}
 		
 		// max out resource at MAX_QUANTITY
-		int newQuantity = Math.clamp(resources.get(type) + quantity, 0, MAX_QUANTITY);
+		int newQuantity = Math.clamp(quantity, 0, MAX_QUANTITY);
 		resources.put(type, newQuantity);
+	}
+	
+	/** add or decrease resources, to decrease just set quantity to a negative value */
+	public void add(ResourceType type, int quantity) {
+		set(type, resources.getOrDefault(type, 0) + quantity);
 	}
 	
 	/** get the quantity of a resource */

@@ -13,7 +13,7 @@ public class ProductionPhase implements GamePhase {
 		
 		for (ResourceType resourceType : ResourceType.values()) {
 			int delta = GameRandomness.randomChoice(1, 4);
-			ctx.village().increaseResource(resourceType, delta);
+			ctx.village().updateResource(resourceType, delta);
 		}
 	}
 

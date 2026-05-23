@@ -1,0 +1,50 @@
+package fr.uge.but.schtroumpf.model.phases.rules;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import fr.uge.but.schtroumpf.model.SmurfVillage;
+import fr.uge.but.schtroumpf.model.phases.ConsumptionRuleResult;
+import fr.uge.but.schtroumpf.model.ResourceType;
+import fr.uge.but.schtroumpf.model.characters.Effect;
+
+public class FoodRule implements ConsumptionRule {
+    @Override
+    public ConsumptionRuleResult evaluate(SmurfVillage village, int turnNumber) {
+        int population = village.getAvailableSmurfs().size();
+        
+        // Balanced scaling consumption step rate to respect the max 10 storage cap
+        int foodRequired = Math.max(1, population / 3);
+        int currentBerries = village.getResourceQuantity(ResourceType.BERRIES);
+
+        List<Effect> appliedEffects = new ArrayList<>();
+
+        if (currentBerries >= foodRequired) {
+            // Normal operation path: deduct resource stock
+            village.updateResource(ResourceType.BERRIES, -foodRequired);
+            appliedEffects.add(new Effect(ResourceType.BERRIES, -foodRequired));
+
+            return new ConsumptionRuleResult(
+                "Rationnement Alimentaire",
+                appliedEffects,
+                false,
+                ""
+            );
+        } else {
+            // Famine strike path: drain whatever partial berries are remaining to 0
+            village.setResourceQuantity(ResourceType.BERRIES, 0);
+            appliedEffects.add(new Effect(ResourceType.BERRIES, -currentBerries));
+
+            // Instantly penalize village state parameters due to starvation
+            village.updateResource(ResourceType.MORAL, -2);
+            appliedEffects.add(new Effect(ResourceType.MORAL, -2));
+
+            return new ConsumptionRuleResult(
+                "Rationnement Alimentaire",
+                appliedEffects,
+                true,
+                "⚠️ FAMINE : Le village a manqué de Baies pour nourrir la population ! (-2 Moral)"
+            );
+        }
+    }
+}

@@ -1,16 +1,45 @@
 package fr.uge.but.schtroumpf.model.phases;
 
-import fr.uge.but.schtroumpf.model.ResourceType;
+import java.util.ArrayList;
+import java.util.List;
+
+import fr.uge.but.schtroumpf.model.Game;
+import fr.uge.but.schtroumpf.model.SmurfVillage;
+import fr.uge.but.schtroumpf.model.phases.rules.*;
 import fr.uge.but.schtroumpf.view.Logger;
 
 public class ConsumptionPhase implements GamePhase {
-	@Override public PhaseType getType() { return PhaseType.CONSUMPTION_PHASE; }
+	private final List<ConsumptionRule> rules = new ArrayList<>();
+	private ConsumptionReport currentReport;
+
+	public ConsumptionPhase() {
+		rules.add(new FoodRule());
+		rules.add(new OverpopulationRule());
+        rules.add(new WinterHeatingRule());
+        rules.add(new InfrastructureDecayRule());
+	}
 	
 	@Override
 	public void onEnter(GamePhaseContext ctx) {
-		Logger.LogTrace("started consumption phase");
+		Game game = ctx.game();
+        SmurfVillage village = game.getVillage();
+        int currentRound = ctx.currentRound();
+        
+        List<ConsumptionRuleResult> results = new ArrayList<>();
+        List<String> crises = new ArrayList<>();
 
-		ctx.village().decreaseResource(ResourceType.BERRIES, 2);
+        // Execute the rule engine loops sequentially
+        for (ConsumptionRule rule : rules) {
+            ConsumptionRuleResult res = rule.evaluate(village, currentRound);
+            results.add(res);
+            if (res.crisisTriggered()) {
+                crises.add(res.crisisMessage());
+            }
+        }
+
+        // Compile the generic summary report for the waiting View layer
+        String season = determineSeason(currentRound);
+        this.currentReport = new ConsumptionReport(currentRound, season, results, crises);
 	}
 
 	@Override
@@ -18,8 +47,18 @@ public class ConsumptionPhase implements GamePhase {
 		Logger.LogTrace("finished consumption phase");
 	}
 
-	@Override
-	public GamePhase getNextPhase() {
-		return new CrisisPhase();
+	@Override public PhaseType getType() { return PhaseType.CONSUMPTION_PHASE; }
+	@Override public GamePhase getNextPhase() { return new CrisisPhase(); }
+	
+	public ConsumptionReport getCurrentReport() { return this.currentReport; }
+	
+	private String determineSeason(int currentRound) {
+		return switch (currentRound / 3) {
+		case 0 -> "Spring";
+		case 1 -> "Summer";
+		case 2 -> "Autumn";
+		case 3 -> "Winter";
+		default -> throw new IllegalArgumentException("Unexpected value: " + currentRound % 3);
+		};
 	}
 }

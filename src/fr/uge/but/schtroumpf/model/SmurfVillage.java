@@ -198,22 +198,19 @@ public class SmurfVillage {
         return result;
 	}
 	
-	public void increaseResource(ResourceType resource, int amount) {
-		if (amount < 0) {
-			throw new IllegalArgumentException("cannot decrease negative amount");
-		}
-
+	public void updateResource(ResourceType resource, int amount) {
 		resourceManager.add(resource, amount);
 	}
-	
-	public void decreaseResource(ResourceType resource, int amount) {
-		if (amount < 0) {
-			throw new IllegalArgumentException("cannot decrease by a negative amount");
+
+	public void setResourceQuantity(ResourceType resource, int amount) {
+		int MAX = ResourceManager.MAX_QUANTITY;
+		if (0 > amount || amount > MAX) {
+			throw new IllegalArgumentException(String.format("amount (%d) must be > 0 and < %d", amount, MAX));
 		}
 		
-		resourceManager.add(resource, -amount);
+		resourceManager.set(resource, amount);
 	}
-	
+
 	// ------------------------- private helpers
 	
 	private static List<SmurfCharacter> createSmurfs() {
