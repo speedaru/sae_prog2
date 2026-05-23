@@ -13,6 +13,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+
+import java.nio.file.Path;
 import java.util.Objects;
 
 /**
@@ -37,10 +39,7 @@ public class SmurfDetailCard extends VBox {
         this.setSpacing(10);
         this.setStyle(
             "-fx-background-color: #202225; " +
-            "-fx-background-radius: 8; " +
-            "-fx-border-color: #3f444c; " +
-            "-fx-border-width: 1.5; " +
-            "-fx-border-radius: 8;"
+            "-fx-background-radius: 8; "
         );
 
         // HBox unifiant le portrait à gauche et la zone textuelle à droite
@@ -96,6 +95,10 @@ public class SmurfDetailCard extends VBox {
         this.getChildren().add(profileLayout);
     }
 
+    public void updateEnergy(int newEnergy, int maxEnergy) {
+        this.energyLabel.setText("Énergie : " + newEnergy + " / " + maxEnergy + " ⚡");
+    }
+
     /**
      * Réécrit dynamiquement les valeurs d'identité de la carte lors d'un changement de contexte.
      * * @param name Nom du Schtroumpf.
@@ -106,7 +109,7 @@ public class SmurfDetailCard extends VBox {
     public void updateData(String name, String description, int currentEnergy, int maxEnergy) {
         this.nameLabel.setText(Objects.requireNonNull(name, "Le nom ne peut pas être nul."));
         this.roleLabel.setText(Objects.requireNonNull(description, "La description ne peut pas être nulle."));
-        this.energyLabel.setText("Énergie : " + currentEnergy + " / " + maxEnergy + " ⚡");
+		updateEnergy(currentEnergy, maxEnergy);
         
         // Alerte visuelle de l'indicateur textuel d'énergie en cas d'épuisement total
         if (currentEnergy <= 0) {
@@ -120,8 +123,10 @@ public class SmurfDetailCard extends VBox {
      * Modifie le portrait de la fiche à partir d'une image chargée.
      * * @param portrait Image du portrait.
      */
-    public void setPortrait(Image portrait) {
-        this.portraitView.setImage(portrait);
+    public void setPortrait(Path portraitPath) {
+    	if (portraitPath != null) {
+			this.portraitView.setImage(new Image(portraitPath.toUri().toString()));
+    	}
     }
 
     /**

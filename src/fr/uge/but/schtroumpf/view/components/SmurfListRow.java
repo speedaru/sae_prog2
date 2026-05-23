@@ -5,14 +5,18 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+
+import java.nio.file.Path;
 import java.util.Objects;
 
 import fr.uge.but.schtroumpf.model.characters.SmurfCharacter;
+import fr.uge.but.schtroumpf.model.characters.SmurfType;
 
 /**
  * Représente une ligne interactive et stylisée pour l'affichage d'un membre du conseil
@@ -20,7 +24,7 @@ import fr.uge.but.schtroumpf.model.characters.SmurfCharacter;
  * * Conçu spécifiquement pour être hautement lisible, notamment pour Thierry (accessibilité daltonisme)
  * en évitant toute dépendance exclusive à des indicateurs de couleur abstraits.
  */
-public class SmurfListRow extends HBox {
+public class SmurfListRow extends BorderPane {
     private final SmurfCharacter smurf;
     private final ImageView avatarView;
     private final Label nameLabel;
@@ -35,11 +39,6 @@ public class SmurfListRow extends HBox {
         super();
         this.smurf = Objects.requireNonNull(smurf, "Le modèle de données du Schtroumpf ne peut pas être nul.");
 
-        // Configuration structurelle du conteneur
-        this.setAlignment(Pos.CENTER_LEFT);
-        this.setPadding(new Insets(8, 12, 8, 12));
-        this.setSpacing(12);
-        
         // Style de base - Thème sombre premium
         this.setStyle(
             "-fx-background-color: #202225; " +
@@ -49,6 +48,9 @@ public class SmurfListRow extends HBox {
             "-fx-border-radius: 6; " +
             "-fx-cursor: hand;"
         );
+        
+        HBox left = createHBox();
+        HBox right = createHBox();
 
         // Avatar de prévisualisation (24x24)
         this.avatarView = new ImageView();
@@ -56,21 +58,25 @@ public class SmurfListRow extends HBox {
         this.avatarView.setFitHeight(24);
         this.avatarView.setPreserveRatio(true);
         this.avatarView.setSmooth(true);
-        loadAvatar(smurf.getSpritePath());
+        SmurfType type = smurf.getType();
+        loadAvatar(type.getSpritePath());
 
         // Nom du personnage (Prend tout l'espace restant pour l'alignement)
-        this.nameLabel = new Label(smurf.getName());
+        this.nameLabel = new Label(smurf.getType().getName());
         this.nameLabel.setTextFill(Color.web("#f1f5f9"));
         this.nameLabel.setFont(Font.font("System", FontWeight.BOLD, 12));
         HBox.setHgrow(this.nameLabel, Priority.ALWAYS);
+
+        left.getChildren().addAll(this.avatarView, this.nameLabel);
+        this.setLeft(left);
 
         // Indicateur d'énergie explicite en texte brut (Thierry-friendly)
         this.energyLabel = new Label();
         this.energyLabel.setFont(Font.font("System", FontWeight.BOLD, 11));
         updateEnergyDisplay(smurf.getEnergy(), smurf.getMaxEnergy());
 
-        // Assemblage des composants dans le graphe de scène
-        this.getChildren().addAll(this.avatarView, this.nameLabel, this.energyLabel);
+        right.getChildren().add(this.energyLabel);
+        this.setRight(right);
 
         // Vérification automatique de l'état d'épuisement initial
         if (smurf.getEnergy() <= 0) {
@@ -138,17 +144,30 @@ public class SmurfListRow extends HBox {
     public SmurfCharacter getSmurf() {
         return this.smurf;
     }
+    
+    private HBox createHBox() {
+        HBox hbox = new HBox();
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        hbox.setPadding(new Insets(8, 8, 8, 8));
+        hbox.setSpacing(6);
+        return hbox;
+    }
 
     private void updateEnergyDisplay(int current, int max) {
         this.energyLabel.setText(current + " / " + max + " ⚡");
     }
 
-    private void loadAvatar(String spritePath) {
-        if (spritePath == null || spritePath.trim().isEmpty()) {
+    private void loadAvatar(Path spritePath) {
+    	if (spritePath == null) {
+    		return;
+    	}
+
+    	String path = spritePath.toUri().toString();
+        if (spritePath == null || path.trim().isEmpty()) {
             return;
         }
         try {
-            Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(spritePath)));
+            Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path)));
             this.avatarView.setImage(image);
         } catch (Exception e) {
             // Fallback silencieux en cas d'absence de l'image de sprite

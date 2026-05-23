@@ -11,7 +11,6 @@ public class ConsumptionPhase implements GamePhase {
 		Logger.LogTrace("started consumption phase");
 
 		ctx.village().decreaseResource(ResourceType.BERRIES, 2);
-
 	}
 
 	@Override

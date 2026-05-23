@@ -1,33 +1,23 @@
 package fr.uge.but.schtroumpf.model.characters;
 
-import module java.base;
+import java.util.List;
+
+import fr.uge.but.schtroumpf.model.SmurfVillage;
 
 public interface SmurfCharacter {
-	SmurfType getType();
-	String getName();
-	int getEnergy();
-	default int getMaxEnergy() { return 10; }
-	void updateEnergy(int delta);
-	List<CharacterAbility> getAbilities();
-	
-	default boolean canExecute(CharacterAbility ability) {
-		return getEnergy() >= ability.energyCost();
-	}
-	
-	default List<CharacterAbility> getAvailableAbilities() {
-		List<CharacterAbility> abilities = getAbilities();
-		ArrayList<CharacterAbility> availableAbilities = new ArrayList<CharacterAbility>();
-		
-		for (CharacterAbility ability : abilities) {
-			if (canExecute(ability)) {
-				availableAbilities.add(ability);
-			}
-		}
-		
-		return List.copyOf(availableAbilities);
-	}
-	
-	default String getSpritePath() {
-		return null;
-	}
+    SmurfType getType();
+    
+    int getEnergy();
+    void updateEnergy(int delta);
+    default int getMaxEnergy() { return 10; }
+
+    // Dynamic attributes tracking (Sagesse, Individual Moral, etc. as required by PDF)
+    int getAttribute(CharacterAttribute attrib);
+    void updateAttribute(CharacterAttribute attrib, int delta);
+
+    List<CharacterAbility> getAbilities();
+    
+    default boolean hasEnoughEnergy(CharacterAbility ability) { return getEnergy() >= ability.energyCost(); }
+    default boolean hasRequiredResources(SmurfVillage village, CharacterAbility ability) { return village.verifyResources(ability.requiredResources()); }
+    default boolean canExecute(SmurfVillage village, CharacterAbility ability) { return hasEnoughEnergy(ability) && hasRequiredResources(village, ability); }
 }

@@ -6,26 +6,26 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+
+import java.util.List;
 import java.util.Objects;
 
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility;
+import fr.uge.but.schtroumpf.model.characters.Effect;
 
 /**
- * Widget d'accordéon réutilisable représentant une compétence ou capacité active.
- * Il gère son propre état d'expansion fluide pour dévoiler ses prérequis d'activation
- * sans nécessiter de modale ou de modification de la taille globale de l'interface.
+ * Interactive accordion widget representing a council member's active ability.
+ * Optimized with dynamic text boundary wrappers to prevent window expansion.
  */
 public class AbilityAccordionWidget extends VBox {
 
-    /**
-     * callback interface passed by controller
-     */
     @FunctionalInterface
     public interface AbilityActivationListener {
         void onActivate(CharacterAbility targetAbility);
@@ -40,10 +40,6 @@ public class AbilityAccordionWidget extends VBox {
 
     private AbilityActivationListener activationListener;
 
-    /**
-     * Crée une carte d'accordéon interactive pour une compétence donnée.
-     * * @param ability Le modèle de la compétence (non nul).
-     */
     public AbilityAccordionWidget(CharacterAbility ability) {
         super();
         this.ability = Objects.requireNonNull(ability, "La compétence ne peut pas être nulle.");
@@ -52,29 +48,35 @@ public class AbilityAccordionWidget extends VBox {
         this.setStyle(
             "-fx-background-color: transparent; " +
             "-fx-border-color: #3f444c; " +
-            "-fx-border-width: 0 0 1 0;" // Ligne de séparation basse
+            "-fx-border-width: 0 0 1 0;" 
         );
 
         // ==========================================
-        // 1. Ligne Principale (Always Visible Outer Row)
+        // 1. Always Visible Header Row
         // ==========================================
-        HBox outerRow = new HBox();
-        outerRow.setAlignment(Pos.CENTER_LEFT);
+        BorderPane outerRow = new BorderPane();
         outerRow.setPadding(new Insets(10, 12, 10, 12));
-        outerRow.setSpacing(10);
         outerRow.setStyle(
             "-fx-background-color: #2d3139; " +
             "-fx-background-radius: 6 6 0 0; " +
             "-fx-cursor: hand;"
         );
 
-        // Nom de l'action
+        HBox outerRowLeft = createOuterRow();
+        HBox outerRowRight = createOuterRow();
+
+        this.chevronLabel = new Label("▼");
+        this.chevronLabel.setTextFill(Color.web("#94a3b8"));
+        this.chevronLabel.setFont(Font.font("System", FontWeight.BOLD, 10));
+
         Label nameLabel = new Label(ability.name());
         nameLabel.setTextFill(Color.WHITE);
         nameLabel.setFont(Font.font("System", FontWeight.BOLD, 12));
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
 
-        // Badge de coût en énergie (Lisibilité Thierry)
+        outerRowLeft.getChildren().addAll(this.chevronLabel, nameLabel);
+        outerRow.setLeft(outerRowLeft);
+
         Label costBadge = new Label(ability.energyCost() + " ⚡");
         costBadge.setTextFill(Color.web("#3b82f6"));
         costBadge.setFont(Font.font("System", FontWeight.BOLD, 11));
@@ -84,156 +86,111 @@ public class AbilityAccordionWidget extends VBox {
             "-fx-background-radius: 4;"
         );
 
-        // Flèche de déploiement (Chevron)
-        this.chevronLabel = new Label("▼");
-        this.chevronLabel.setTextFill(Color.web("#94a3b8"));
-        this.chevronLabel.setFont(Font.font("System", FontWeight.BOLD, 10));
-
-        // Bouton d'action Vert "Activer"
         this.activateButton = new Button("Activer");
         this.activateButton.setMinSize(75, 26);
         this.activateButton.setPrefSize(75, 26);
         this.activateButton.setMaxSize(75, 26);
-        this.activateButton.setStyle(
-            "-fx-background-color: #10b981; " +
-            "-fx-text-fill: white; " +
-            "-fx-background-radius: 4; " +
-            "-fx-font-weight: bold; " +
-            "-fx-font-size: 10px; " +
-            "-fx-cursor: hand;"
-        );
+        setActivationAllowed(true, "Activer");
 
-        // Liaison du clic d'activation
         this.activateButton.setOnAction(_ -> {
             if (this.activationListener != null) {
                 this.activationListener.onActivate(this.ability);
             }
         });
 
-        outerRow.getChildren().addAll(this.chevronLabel, nameLabel, costBadge, this.activateButton);
+        outerRowRight.getChildren().addAll(costBadge, this.activateButton);
+        outerRow.setRight(outerRowRight);
 
         // ==========================================
-        // 2. Panneau de Détails Caché (Collapsed Sub-Panel)
+        // 2. Collapsible Details Dropdown Panel
         // ==========================================
         this.detailsContainer = new VBox();
-        this.detailsContainer.setSpacing(8);
-        this.detailsContainer.setPadding(new Insets(10, 12, 10, 24)); // Renfoncement léger
+        this.detailsContainer.setSpacing(4);
+        this.detailsContainer.setPadding(new Insets(5, 6, 5, 12)); 
         this.detailsContainer.setStyle(
             "-fx-background-color: #1a1c1e; " +
             "-fx-background-radius: 0 0 6 6;"
         );
 
-        // Rendre le composant invisible et non-géré par le Layout d'origine
         this.detailsContainer.setVisible(false);
         this.detailsContainer.managedProperty().bind(this.detailsContainer.visibleProperty());
 
-        // Descriptif narratif
+        // Narrative Description Label
         this.descriptionLabel = new Label(ability.description());
         this.descriptionLabel.setTextFill(Color.web("#cbd5e1"));
         this.descriptionLabel.setFont(Font.font("System", 11));
         this.descriptionLabel.setWrapText(true);
+        
+        // CRITICAL FIX: Forces text wrapping vertically based on parent width bounds
+        this.descriptionLabel.maxWidthProperty().bind(this.widthProperty().subtract(40));
 
-        // Conteneur interne accueillant les ResourceSummaryRow de manière dynamique
         this.effectsListContainer = new VBox();
-        this.effectsListContainer.setSpacing(4);
+        this.effectsListContainer.setSpacing(0);
 
         this.detailsContainer.getChildren().addAll(this.descriptionLabel, this.effectsListContainer);
-
-        // Assemblage global
         this.getChildren().addAll(outerRow, this.detailsContainer);
 
         // ==========================================
-        // 3. Mécanisme d'ouverture Accordéon
+        // 3. Interactive Toggling Filter Mechanics
         // ==========================================
         this.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-            // Empêche le déploiement de l'accordéon si l'utilisateur clique sur le bouton "Activer"
             if (isClickTargetingNode(event, this.activateButton)) {
                 return;
             }
             toggleAccordionState();
             event.consume();
         });
+
+        // Auto-populate the resource summary changes lists right on instantiation
+        populateEffectsDisplay(ability);
     }
 
     /**
-     * Remplit et génère dynamiquement la liste d'impact de ressources
-     * en instanciant le composant partagé ResourceSummaryRow.
-     * * @param effects list of ability descriptions
+     * Rebuilds the internal resource modification list view.
      */
-    public void setAbilityDescription(String description) {
-    	Objects.requireNonNull(description, "description can't be null");
+    public void populateEffectsDisplay(CharacterAbility ability) {
+        Objects.requireNonNull(ability, "L'abilité ne peut pas être nulle.");
         this.effectsListContainer.getChildren().clear();
 
-		try {
-			// Instanciation directe de la rangée de ressource partagée par votre projet
-			// Note: Si votre ResourceSummaryRow prend un type 'ResourceType' énuméré dans son constructeur, 
-			// effectuez simplement la conversion de type ici (ex: ResourceType.valueOf(effect.getResourceType())).
-			
-			// Exemple générique assumant un constructeur (String) ou équivalent :
-			// ResourceSummaryRow row = new ResourceSummaryRow(effect.getResourceType());
-			// row.updateDelta(effect.getDelta());
-			// this.effectsListContainer.getChildren().add(row);
-			
-			// Fallback graphique local sécurisé au cas où la classe externe présenterait une autre signature :
-			HBox fallbackRow = new HBox();
-			fallbackRow.setAlignment(Pos.CENTER_LEFT);
-			fallbackRow.setSpacing(8);
-			
-			Label valLabel = new Label("+-");
-			valLabel.setFont(Font.font("System", FontWeight.BOLD, 11));
-//			valLabel.setTextFill(effect.getDelta() ? Color.web("#10b981") : Color.web("#ef4444"));
+        List<Effect> primaryEffects = ability.primaryEffects();
+        for (Effect effect : primaryEffects) {
+            ResourceSummaryRow row = new ResourceSummaryRow(effect.resourceType());
+            row.updateDelta(effect.delta());
+            this.effectsListContainer.getChildren().add(row);
+        }
+    }
 
-			Label resLabel = new Label(description);
-			resLabel.setTextFill(Color.web("#f1f5f9"));
-			resLabel.setFont(Font.font("System", 11));
-
-			fallbackRow.getChildren().addAll(valLabel, resLabel);
-			this.effectsListContainer.getChildren().add(fallbackRow);
-
-		} catch (Exception ex) {
-			System.err.println("[AbilityAccordionWidget] Échec de l'injection d'effet: " + ex.getMessage());
-		}
-	}
-
-    /**
-     * Enregistre un écouteur d'événement d'activation auprès du widget.
-     */
     public void setOnAbilityActivated(AbilityActivationListener listener) {
         this.activationListener = listener;
     }
 
-    /**
-     * Permet d'activer ou de désactiver le bouton de commande selon l'évaluation
-     * des ressources et prérequis calculés par le moteur du contrôleur.
-     */
     public void setActivationAllowed(boolean allowed, String lockReason) {
         if (allowed) {
             this.activateButton.setDisable(false);
             this.activateButton.setText("Activer");
             this.activateButton.setStyle(
-                "-fx-background-color: #10b981; " +
-                "-fx-text-fill: white; " +
-                "-fx-background-radius: 4; " +
-                "-fx-font-weight: bold; " +
-                "-fx-font-size: 10px; " +
-                "-fx-cursor: hand;"
+                "-fx-background-color: #10b981; -fx-text-fill: white; -fx-background-radius: 4; " +
+                "-fx-font-weight: bold; -fx-font-size: 10px; -fx-cursor: hand;"
             );
         } else {
             this.activateButton.setDisable(true);
             this.activateButton.setText(lockReason != null ? lockReason : "Verrouillé");
             this.activateButton.setStyle(
-                "-fx-background-color: #4b5563; " +
-                "-fx-text-fill: #94a3b8; " +
-                "-fx-background-radius: 4; " +
-                "-fx-font-weight: bold; " +
-                "-fx-font-size: 9px; " +
-                "-fx-cursor: not-allowed;"
+                "-fx-background-color: #4b5563; -fx-text-fill: #94a3b8; -fx-background-radius: 4; " +
+                "-fx-font-weight: bold; -fx-font-size: 9px; -fx-cursor: not-allowed;"
             );
         }
     }
 
     public CharacterAbility getAbility() {
         return this.ability;
+    }
+
+    private HBox createOuterRow() {
+        HBox hbox = new HBox();
+        hbox.setSpacing(10);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
     }
 
     private void toggleAccordionState() {

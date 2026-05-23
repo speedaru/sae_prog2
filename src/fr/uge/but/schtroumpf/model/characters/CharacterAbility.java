@@ -6,24 +6,44 @@ import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 
 /**
- * @param description display text for the ability
- * @param canExecute condition to check if the action is available
- * @param actionLogic the code that runs when selected that returns a list of effects
+ * represents an ability that can be executed by a smurf character
+ *
+ * @param name display name
+ * @param description ability description (can also contain info like "-1 moral on failure")
+ * @param energyCost energy cost to use the ability
+ * @param requiredResources amount of required resources by the village to use the ability
+ * @param primaryEffects primary effects that the ability has on the village
+ * @param actionLogic callback to execute the logic of the ability, returns a list of effects that should applied
  */
 public record CharacterAbility(
     String name,
     String description,
     int energyCost,
     List<ResourceSnapshot> requiredResources,
-    Function<SmurfVillage, List<Effect>> actionLogic
+	List<Effect> primaryEffects,
+    Function<SmurfVillage, AbilityResult> actionLogic
 )
 {
-	public static boolean canAlwaysExecute(SmurfCharacter village) {
-		return true;
+	/**
+	 * Structural categories to drive frontend presentation layer styles.
+	 */
+	public enum AbilityResultType {
+	    SUCCESS,
+	    FAILURE,
+	    NEUTRAL
 	}
+
+	/**
+	 * Rich outcome payload returned directly by an action execution.
+	 */
+	public record AbilityResult(
+	    AbilityResultType type,
+	    String message,
+	    List<Effect> effectsToApply
+	) {}
 	
 	@Override
 	public String toString() {
-		return String.format("%s (%d energie)", description, energyCost);
+		return String.format("%s (%d ⚡)", description, energyCost);
 	}
 }

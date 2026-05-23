@@ -1,7 +1,7 @@
 package fr.uge.but.schtroumpf.view.themes;
 
 import fr.uge.but.schtroumpf.model.ResourceType;
-
+import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResultType;
 import javafx.scene.paint.Color;
 
 public class ThemeManager {
@@ -13,6 +13,21 @@ public class ThemeManager {
 
     public static Color getResourceSummaryTextColor(ResourceType type) {
     	return getResourceThemeColor(type);
+    }
+    
+    public static Color getAbilityResultTypeColor(AbilityResultType resType) {
+    	if (currentTheme == ResourceTheme.COLOR_BLIND) {
+    		return switch (resType) {
+    		case SUCCESS -> Color.ALICEBLUE;
+    		case FAILURE -> Color.ALICEBLUE;
+    		case NEUTRAL -> Color.ALICEBLUE;
+    		};    
+    	}
+		return switch (resType) {
+		case SUCCESS -> Color.web("#10b981"); // Tailwind Vibrant Emerald Green
+		case FAILURE -> Color.web("#ef4444"); // Tailwind Clear Contrast Red
+		case NEUTRAL -> Color.web("#3b82f6"); // Strategy Soft Alert Blue
+		};    
     }
 
     private static Color getResourceThemeColor(ResourceType type) {

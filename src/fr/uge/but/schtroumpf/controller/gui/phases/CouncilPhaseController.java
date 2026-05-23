@@ -6,16 +6,21 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.Label;
 
 import fr.uge.but.schtroumpf.controller.PhaseSubController;
 import fr.uge.but.schtroumpf.controller.gui.windows.GameController;
 import fr.uge.but.schtroumpf.model.Game;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility;
+import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
 import fr.uge.but.schtroumpf.model.characters.SmurfCharacter;
+import fr.uge.but.schtroumpf.model.characters.SmurfType;
+import fr.uge.but.schtroumpf.view.Logger;
 import fr.uge.but.schtroumpf.view.components.AbilityAccordionWidget;
 import fr.uge.but.schtroumpf.view.components.SmurfDetailCard;
 import fr.uge.but.schtroumpf.view.components.SmurfListRow;
+import fr.uge.but.schtroumpf.view.themes.ThemeManager;
 
 public class CouncilPhaseController implements PhaseSubController {
 	private GameController masterController;
@@ -24,11 +29,17 @@ public class CouncilPhaseController implements PhaseSubController {
     @FXML private VBox detailAbilitiesContainer, detailPanelContent, emptyPlaceholderCard, smurfsListContainer;
     @FXML private HBox detailCardContainer;
     @FXML private Button finishButton;
+    @FXML private Label statusFeedbackLabel;
     
 	 // View State Layers
     private final SmurfDetailCard detailHeaderCard = new SmurfDetailCard();
     private final List<SmurfListRow> renderedRows = new ArrayList<>();
     private SmurfListRow currentlySelectedRow = null;
+    private HashMap<String, AbilityAccordionWidget> abilityRows = new HashMap<>(); // ability name / ability widget
+    
+    // ability result feedback
+    private int abilityResultSameMsgCounter = 0;
+    private String abilityResultLastMsg;
 
 	@Override
 	public void setMasterController(GameController masterController, Game game) {
@@ -61,6 +72,7 @@ public class CouncilPhaseController implements PhaseSubController {
 
         // Fetch your array list of council characters from your backing model layer
         List<SmurfCharacter> councilMembers = game.getVillage().getAvailableSmurfs();
+        Logger.LogDebug("council members: %d", councilMembers.size());
 
         for (SmurfCharacter member : councilMembers) {
             SmurfListRow rowWidget = new SmurfListRow(member);
@@ -91,9 +103,10 @@ public class CouncilPhaseController implements PhaseSubController {
         detailPanelContent.setVisible(true);
 
         // 4. Update the detail card headers with the Smurf's active properties
-        var smurf = selectedRow.getSmurf();
-        detailHeaderCard.updateData(smurf.getName(), "smurf role", smurf.getEnergy(), smurf.getMaxEnergy());
-        detailHeaderCard.setPortrait(smurf.getSpritePath());
+        SmurfCharacter smurf = selectedRow.getSmurf();
+        SmurfType smurfType = smurf.getType();
+        detailHeaderCard.updateData(smurfType.getName(), smurfType.getRoleDescription(), smurf.getEnergy(), smurf.getMaxEnergy());
+        detailHeaderCard.setPortrait(smurf.getType().getSpritePath());
 
         // 5. Populate actionable ability loops
         loadAbilitiesForSelectedMember(smurf);
@@ -103,32 +116,55 @@ public class CouncilPhaseController implements PhaseSubController {
      * Generates accordion panels dynamically based on character configuration metrics.
      */
     private void loadAbilitiesForSelectedMember(SmurfCharacter smurf) {
-        detailAbilitiesContainer.getChildren().clear();
+    	SmurfVillage village = game.getVillage();
+        List<CharacterAbility> characterAbilities = village.getAbilitiesFor(smurf.getType());
 
-        // Fetch abilities tied to this character type from your engine logic rules
-        List<CharacterAbility> characterAbilities = game.getVillage().getAbilitiesFor(smurf.getType());
+        // clear container and rows list
+        detailAbilitiesContainer.getChildren().clear();
+        abilityRows.clear();
 
         for (CharacterAbility ability : characterAbilities) {
             AbilityAccordionWidget abilityWidget = new AbilityAccordionWidget(ability);
 
-            // Fetch dynamic resource impacts list (internally reuses your ResourceSummaryRow!)
-            abilityWidget.setAbilityDescription(ability.description());
+            abilityWidget.populateEffectsDisplay(ability);
 
-            // --- Preconditions Check (Strict rule enforcement) ---
-            boolean hasRequiredResources = game.getVillage().verifyResources(ability.requiredResources());
-
-            if (!smurf.canExecute(ability)) {
+            if (!smurf.hasEnoughEnergy(ability)) {
                 abilityWidget.setActivationAllowed(false, "Énergie Insuffisante");
-            } else if (!hasRequiredResources) {
+            } else if (!smurf.hasRequiredResources(village, ability)) {
                 abilityWidget.setActivationAllowed(false, "Ressources Manquantes");
             } else {
                 abilityWidget.setActivationAllowed(true, "Activer");
             }
 
             // Bind the click action confirmation callback hook
-            abilityWidget.setOnAbilityActivated(_ -> executeAbility(smurf, ability));
+            abilityWidget.setOnAbilityActivated(_ -> {
+            	executeAbility(smurf, ability);
+            	updateAbilityRows(smurf); // disable some rows if not enough energy now
+            });
 
             detailAbilitiesContainer.getChildren().add(abilityWidget);
+            abilityRows.put(ability.name(), abilityWidget);
+        }
+    }
+    
+    /** reevaluates  */
+    private void updateAbilityRows(SmurfCharacter smurf) {
+    	SmurfVillage village = game.getVillage();
+        List<CharacterAbility> characterAbilities = village.getAbilitiesFor(smurf.getType());
+
+        // re-evaluate ability based on new energy
+        for (CharacterAbility ability : characterAbilities) {
+            AbilityAccordionWidget abilityWidget = abilityRows.getOrDefault(ability.name(), null);
+            if (abilityWidget == null) continue;
+            
+            // only update button state
+            if (!smurf.hasEnoughEnergy(ability)) {
+                abilityWidget.setActivationAllowed(false, "Énergie Insuffisante");
+            } else if (!smurf.hasRequiredResources(village, ability)) {
+                abilityWidget.setActivationAllowed(false, "Ressources Manquantes");
+            } else {
+                abilityWidget.setActivationAllowed(true, "Activer");
+            }
         }
     }
 
@@ -138,7 +174,24 @@ public class CouncilPhaseController implements PhaseSubController {
     private void executeAbility(SmurfCharacter smurf, CharacterAbility ability) {
     	SmurfVillage village = game.getVillage();
 
-    	village.executeCouncilMemberAbility(smurf.getType(), ability);
+    	if (!smurf.canExecute(village, ability)) {
+    		return;
+    	}
+    	
+    	AbilityResult result = village.executeCouncilMemberAbility(smurf, ability);
+    	
+		// update ability status indicator
+		if (result.message().equals(abilityResultLastMsg)) {
+			// Safe, clean numeric multiplier stacking
+			abilityResultSameMsgCounter++;
+			statusFeedbackLabel.setText(String.format("%s (x%d)", result.message(), abilityResultSameMsgCounter + 1));
+		} else {
+			// Fresh text message context tracking reset
+			statusFeedbackLabel.setText(result.message());
+			abilityResultLastMsg = result.message();
+			abilityResultSameMsgCounter = 0;
+		}
+		statusFeedbackLabel.setTextFill(ThemeManager.getAbilityResultTypeColor(result.type()));
 
         // 2. RE-SYNC GLOBAL SIDEBAR HUD INDICATORS ON THE SPOT (Bars and deltas re-render)
         masterController.updateHudResources();
@@ -146,13 +199,8 @@ public class CouncilPhaseController implements PhaseSubController {
         // 3. Read back fresh updated variables directly out of memory
         int newEnergyAmount = village.getCouncilMember(smurf.getType()).getEnergy();
 
-        // 4. Update row values text layout safely
+        // update energy indicators
         currentlySelectedRow.updateEnergy(newEnergyAmount, smurf.getMaxEnergy());
-
-        // 5. Update right profile card metrics
-        detailHeaderCard.updateData(smurf.getName(), "smurf role", newEnergyAmount, smurf.getMaxEnergy());
-
-        // 6. Loop refresh: Immediately re-evaluate lock conditions on all active buttons
-        loadAbilitiesForSelectedMember(smurf);
+        detailHeaderCard.updateEnergy(newEnergyAmount, smurf.getMaxEnergy());
     }
 }

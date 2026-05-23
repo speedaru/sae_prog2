@@ -4,6 +4,7 @@ import module java.base;
 
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
 import fr.uge.but.schtroumpf.model.characters.*;
+import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
 import fr.uge.but.schtroumpf.model.events.*;
 
 public class SmurfVillage {
@@ -88,14 +89,14 @@ public class SmurfVillage {
 		throw new IllegalStateException(String.format("%s is not a part of the smurf council", type));
 	}
 
-	public List<CharacterAbility> getAvailableAbilitiesFor(SmurfType type) {
-		for (SmurfCharacter smurf : councilMembers) {
-			if (smurf.getType() == type) {
-				return smurf.getAvailableAbilities();
-			}
-		}
-		throw new IllegalStateException(String.format("%s is not a part of the smurf council", type));
-	}
+//	public List<CharacterAbility> getAvailableAbilitiesFor(SmurfType type) {
+//		for (SmurfCharacter smurf : councilMembers) {
+//			if (smurf.getType() == type) {
+//				return smurf.getAvailableAbilities();
+//			}
+//		}
+//		throw new IllegalStateException(String.format("%s is not a part of the smurf council", type));
+//	}
 	
 	public List<EventHistory> getHistory() {
 		return List.copyOf(eventsHistory);
@@ -181,16 +182,20 @@ public class SmurfVillage {
 	/**
 	 * @param type council member smurf type
 	 */
-	public void executeCouncilMemberAbility(SmurfType type, CharacterAbility ability) {
-		SmurfCharacter councilMember = getCouncilMember(type);
-		if (councilMember.canExecute(ability)) {
-			int abilityCost = ability.energyCost();
+	public AbilityResult executeCouncilMemberAbility(SmurfCharacter smurf, CharacterAbility ability) {
+        if (!smurf.canExecute(this, ability)) {
+            throw new IllegalStateException("Action processing denied: Preconditions or energy thresholds unmet.");
+        }
 
-			// do ability logic then decrease smurf energy
-			List<Effect> effectsToApply = ability.actionLogic().apply(this);
-			applyEffects(effectsToApply);
-			councilMember.updateEnergy(-abilityCost);
-		}
+        // consume energy
+        smurf.updateEnergy(-ability.energyCost());
+
+        // calculate logic and apply effects
+        AbilityResult result = ability.actionLogic().apply(this);
+        this.applyEffects(result.effectsToApply());
+
+        // return result so controller can display result in feedback label
+        return result;
 	}
 	
 	public void increaseResource(ResourceType resource, int amount) {
