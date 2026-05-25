@@ -47,17 +47,17 @@ public class ConsumptionPhase implements GamePhase {
 		Logger.LogTrace("finished consumption phase");
 	}
 
-	@Override public PhaseType getType() { return PhaseType.CONSUMPTION_PHASE; }
+	@Override public GamePhaseType getType() { return GamePhaseType.CONSUMPTION_PHASE; }
 	@Override public GamePhase getNextPhase() { return new CrisisPhase(); }
 	
 	public ConsumptionReport getCurrentReport() { return this.currentReport; }
 	
 	private String determineSeason(int currentRound) {
 		return switch (currentRound / 3) {
-		case 0 -> "Spring";
-		case 1 -> "Summer";
-		case 2 -> "Autumn";
-		case 3 -> "Winter";
+		case 0 -> "Praiontemps";
+		case 1 -> "Ete";
+		case 2 -> "Autaumn";
+		case 3 -> "Hyver";
 		default -> throw new IllegalArgumentException("Unexpected value: " + currentRound % 3);
 		};
 	}

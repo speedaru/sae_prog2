@@ -4,9 +4,14 @@ import module java.base;
 
 import fr.uge.but.schtroumpf.model.ResourceType;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
+import fr.uge.but.schtroumpf.model.crises.Crises.*;
 
 public enum CrisisType {
-	FAMINE(1, ResourceType.BERRIES, "Famine", "moins d’actions aux prochains tours, ou moins de ressources aux prochains tours");
+	FAMINE(1, ResourceType.BERRIES, "Famine", "moins d’actions aux prochains tours, ou moins de ressources aux prochains tours"),
+	EPIDEMIC(2, ResourceType.SARSAPARILLA, "Épidémie", "La salsepareille manque ! Les Schtroumpfs sont malades et leurs actions physiques sont deux fois moins efficaces."),
+    REVOLT(3, ResourceType.MORAL, "Révolte", "Le moral est à zéro. Les Schtroumpfs contestent l'autorité ; les chances de succès des compétences sont réduites de 25%."),
+    MASSIVE_ATTACK(4, ResourceType.DEFENSE, "Attaque Massive", "Les fortifications sont détruites ! Le village subit des pillages constants, drainant de l'Or chaque mois."),
+    DARK_AGES(5, ResourceType.KNOWLEDGE, "Oubli des Recettes", "Le savoir est perdu. Les Schtroumpfs oubrient les techniques agricoles, bloquant la production passive de nourriture.");
 	
 	private final int code;
 	private final ResourceType cause;
@@ -37,16 +42,20 @@ public enum CrisisType {
 	public ResourceType getCause() { return cause; }
 	public String getName() { return name; }
 	public String getDescription() { return description; }
-	
-	public boolean isActive(SmurfVillage village) {
-		return village.getResourceQuantity(cause) == 0;
+
+	/** returns true if crisis cause resource is at 0 */
+	public boolean shouldTrigger(SmurfVillage village) {
+		return village.getResourceQuantity(this.cause) == 0;
 	}
 	
+	/** factory */
 	public static Crisis getCrisis(CrisisType type) {
 		return switch (type) {
 			case FAMINE -> new FamineCrisis();
-
-			default -> throw new IllegalArgumentException("invalid type"); 
+			case EPIDEMIC -> new EpidemicCrisis();
+			case REVOLT -> new RevoltCrisis();
+			case MASSIVE_ATTACK -> new MassiveAttackCrisis();
+			case DARK_AGES -> new DarkAgesCrisis();
 		};
 	}
 }

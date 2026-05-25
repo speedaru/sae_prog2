@@ -2,6 +2,7 @@ package fr.uge.but.schtroumpf.model;
 
 import module java.base;
 
+/** should only be used through hooks in SmurfVillage to apply modifiers */
 public class GameRandomness {
 	/**
 	 * @param odds chance that function returns true, between 0 and 1 

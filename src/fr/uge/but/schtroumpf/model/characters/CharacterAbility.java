@@ -20,7 +20,7 @@ public record CharacterAbility(
     String description,
     int energyCost,
     List<ResourceSnapshot> requiredResources,
-	List<Effect> primaryEffects,
+	List<ResourceEffect> primaryEffects, // for UI, not logic
     Function<SmurfVillage, AbilityResult> actionLogic
 )
 {
@@ -39,7 +39,7 @@ public record CharacterAbility(
 	public record AbilityResult(
 	    AbilityResultType type,
 	    String message,
-	    List<Effect> effectsToApply
+	    List<ResourceEffect> effectsToApply
 	) {}
 	
 	@Override

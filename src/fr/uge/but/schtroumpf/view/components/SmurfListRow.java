@@ -15,6 +15,7 @@ import javafx.scene.text.FontWeight;
 import java.nio.file.Path;
 import java.util.Objects;
 
+import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.characters.SmurfCharacter;
 import fr.uge.but.schtroumpf.model.characters.SmurfType;
 
@@ -30,12 +31,15 @@ public class SmurfListRow extends BorderPane {
     private final Label nameLabel;
     private final Label energyLabel;
     private boolean isExhausted = false;
+    
+    private final Color labelColor = Color.WHITE;
+    private final Color exhaustedLabelColor = Color.web("#ef4444");
 
     /**
      * Construit une ligne réactive pour un Schtroumpf donné.
      * * @param smurf Le modèle de données du Schtroumpf (non nul).
      */
-    public SmurfListRow(SmurfCharacter smurf) {
+    public SmurfListRow(SmurfVillage village, SmurfCharacter smurf) {
         super();
         this.smurf = Objects.requireNonNull(smurf, "Le modèle de données du Schtroumpf ne peut pas être nul.");
 
@@ -63,7 +67,7 @@ public class SmurfListRow extends BorderPane {
 
         // Nom du personnage (Prend tout l'espace restant pour l'alignement)
         this.nameLabel = new Label(smurf.getType().getName());
-        this.nameLabel.setTextFill(Color.web("#f1f5f9"));
+        this.nameLabel.setTextFill(labelColor);
         this.nameLabel.setFont(Font.font("System", FontWeight.BOLD, 12));
         HBox.setHgrow(this.nameLabel, Priority.ALWAYS);
 
@@ -73,15 +77,14 @@ public class SmurfListRow extends BorderPane {
         // Indicateur d'énergie explicite en texte brut (Thierry-friendly)
         this.energyLabel = new Label();
         this.energyLabel.setFont(Font.font("System", FontWeight.BOLD, 11));
-        updateEnergyDisplay(smurf.getEnergy(), smurf.getMaxEnergy());
+        this.energyLabel.setTextFill(labelColor);
+        updateEnergyDisplay(smurf.getEnergy(), village.getDynamicMaxEnergy(smurf));
 
         right.getChildren().add(this.energyLabel);
         this.setRight(right);
 
         // Vérification automatique de l'état d'épuisement initial
-        if (smurf.getEnergy() <= 0) {
-            setExhaustedState(true);
-        }
+		setExhaustedState(smurf.getEnergy());
     }
 
     /**
@@ -89,7 +92,7 @@ public class SmurfListRow extends BorderPane {
      */
     public void updateEnergy(int currentEnergy, int maxEnergy) {
         updateEnergyDisplay(currentEnergy, maxEnergy);
-        setExhaustedState(currentEnergy <= 0);
+        setExhaustedState(currentEnergy);
     }
 
     /**
@@ -106,8 +109,6 @@ public class SmurfListRow extends BorderPane {
                 "-fx-border-radius: 6; " +
                 "-fx-cursor: hand;"
             );
-            this.nameLabel.setTextFill(Color.WHITE);
-            this.energyLabel.setTextFill(Color.WHITE);
         } else {
             // Restaure le thème sombre par défaut tout en respectant l'état d'épuisement
             this.setStyle(
@@ -118,8 +119,6 @@ public class SmurfListRow extends BorderPane {
                 "-fx-border-radius: 6; " +
                 "-fx-cursor: hand;"
             );
-            this.nameLabel.setTextFill(Color.web("#f1f5f9"));
-            this.energyLabel.setTextFill(this.isExhausted ? Color.web("#ef4444") : Color.web("#94a3b8"));
         }
     }
 
@@ -127,14 +126,14 @@ public class SmurfListRow extends BorderPane {
      * Applique une opacité réduite pour indiquer visuellement un état épuisé (0 énergie)
      * tout en maintenant la ligne pleinement sélectionnable pour consulter la fiche.
      */
-    public void setExhaustedState(boolean exhausted) {
-        this.isExhausted = exhausted;
-        if (exhausted) {
+    public void setExhaustedState(int energy) {
+        this.isExhausted = energy <= 0;
+        if (this.isExhausted) {
             this.setOpacity(0.45);
-            this.energyLabel.setTextFill(Color.web("#ef4444")); // Rouge vif de contraste
+            this.energyLabel.setTextFill(exhaustedLabelColor); // Rouge vif de contraste
         } else {
             this.setOpacity(1.0);
-            this.energyLabel.setTextFill(Color.web("#94a3b8")); // Couleur de texte adoucie
+            this.energyLabel.setTextFill(labelColor); // Couleur de texte adoucie
         }
     }
 

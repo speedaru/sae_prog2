@@ -3,8 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -60,32 +58,7 @@
                   </Label>
                   
                   <!-- Container where you will inject positive effects programmatically -->
-                  <VBox fx:id="positiveEffectsContainer" spacing="8.0" VBox.vgrow="ALWAYS">
-                     <children>
-                        
-                        <!-- Template Row: +1 Baies -->
-                        <HBox alignment="CENTER_LEFT" prefHeight="35.0" spacing="10.0" style="-fx-background-color: #2d3139; -fx-background-radius: 6; -fx-padding: 0 10 0 10;">
-                           <children>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@Sprite-0004.png" />
-                                 </image>
-                              </ImageView>
-                              <Label text="+1" textFill="#10b981">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label text="Baies" textFill="#f1f5f9">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </HBox>
-                        
-                     </children>
-                  </VBox>
+                  <VBox fx:id="positiveEffectsContainer" spacing="8.0" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
             
@@ -102,28 +75,7 @@
                   </Label>
                   
                   <!-- Container where you will inject negative effects programmatically -->
-                  <VBox fx:id="negativeEffectsContainer" spacing="8.0" VBox.vgrow="ALWAYS">
-                     <children>
-                        
-                        <!-- Template Row: -1 Défense -->
-                        <HBox alignment="CENTER_LEFT" prefHeight="35.0" spacing="10.0" style="-fx-background-color: #2d3139; -fx-background-radius: 6; -fx-padding: 0 10 0 10;">
-                           <children>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
-                              <Label text="-1" textFill="#ef4444">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label text="Défense" textFill="#f1f5f9">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </HBox>
-                        
-                     </children>
-                  </VBox>
+                  <VBox fx:id="negativeEffectsContainer" spacing="8.0" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
             

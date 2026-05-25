@@ -13,15 +13,15 @@ public class SarsaparillaStorm implements GameEvent {
 	@Override public GameEventType getEventType() { return GameEventType.SARSAPARILLA_STORM; }
 
 	@Override
-	public List<Effect> trigger(SmurfVillage village) {
-		List<Effect> impacts = new ArrayList<Effect>();
+	public List<ResourceEffect> trigger(SmurfVillage village) {
+		List<ResourceEffect> impacts = new ArrayList<ResourceEffect>();
 		
 		// always lose tools
-		impacts.add(new Effect(ResourceType.TOOLS, -1));
+		impacts.add(new ResourceEffect(ResourceType.TOOLS, -1));
 		
 		// if knowledge is high then study storm
 		if (village.getResourceQuantity(ResourceType.KNOWLEDGE) >= REQUIRED_KNOWLEDGE) {
-			impacts.add(new Effect(ResourceType.KNOWLEDGE, 1));
+			impacts.add(new ResourceEffect(ResourceType.KNOWLEDGE, 1));
 		}
 		
 		return impacts;

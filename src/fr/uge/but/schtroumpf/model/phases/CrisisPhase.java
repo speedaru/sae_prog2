@@ -2,30 +2,28 @@ package fr.uge.but.schtroumpf.model.phases;
 
 import module java.base;
 
+import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.crises.*;
 import fr.uge.but.schtroumpf.view.Logger;
 
 public class CrisisPhase implements GamePhase {
-	@Override public PhaseType getType() { return PhaseType.CRISIS_PHASE; }
+	@Override public GamePhaseType getType() { return GamePhaseType.CRISIS_PHASE; }
 	
 	@Override
 	public void onEnter(GamePhaseContext ctx) {
 		Logger.LogTrace("started crisis phase");
+		SmurfVillage village = ctx.village();
 
-		// check if too many crises active
-		if (ctx.village().isDefeated()) {
-			return;
-		}
-		
 		// get active crisis in village
 		List<Crisis> activeCrises = new ArrayList<Crisis>();
 		for (CrisisType crisisType : CrisisType.values()) {
-			if (crisisType.isActive(ctx.village())) {
+			if (crisisType.shouldTrigger(village)) {
 				activeCrises.add(CrisisType.getCrisis(crisisType));
+				Logger.LogDebug("triggered %s crisis", crisisType.name());
 			}
 		}
 		
-		// display crisis information
+		village.setActiveCrises(activeCrises);
 	}
 
 	@Override

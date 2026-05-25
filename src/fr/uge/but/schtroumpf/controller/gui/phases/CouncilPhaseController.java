@@ -74,8 +74,9 @@ public class CouncilPhaseController implements PhaseSubController {
         List<SmurfCharacter> councilMembers = game.getVillage().getAvailableSmurfs();
         Logger.LogDebug("council members: %d", councilMembers.size());
 
+        SmurfVillage village = game.getVillage();
         for (SmurfCharacter member : councilMembers) {
-            SmurfListRow rowWidget = new SmurfListRow(member);
+            SmurfListRow rowWidget = new SmurfListRow(village, member);
             
             // Set up click actions to register selection changes cleanly
             rowWidget.setOnMouseClicked(_ -> selectCouncilMember(rowWidget));
@@ -105,7 +106,8 @@ public class CouncilPhaseController implements PhaseSubController {
         // 4. Update the detail card headers with the Smurf's active properties
         SmurfCharacter smurf = selectedRow.getSmurf();
         SmurfType smurfType = smurf.getType();
-        detailHeaderCard.updateData(smurfType.getName(), smurfType.getRoleDescription(), smurf.getEnergy(), smurf.getMaxEnergy());
+        int finalMaxEnergy = game.getVillage().getDynamicMaxEnergy(smurf);
+        detailHeaderCard.updateData(smurfType.getName(), smurfType.getRoleDescription(), smurf.getEnergy(), finalMaxEnergy);
         detailHeaderCard.setPortrait(smurf.getType().getSpritePath());
 
         // 5. Populate actionable ability loops
@@ -117,7 +119,7 @@ public class CouncilPhaseController implements PhaseSubController {
      */
     private void loadAbilitiesForSelectedMember(SmurfCharacter smurf) {
     	SmurfVillage village = game.getVillage();
-        List<CharacterAbility> characterAbilities = village.getAbilitiesFor(smurf.getType());
+        List<CharacterAbility> characterAbilities = village.getCouncilMember(smurf.getType()).getAbilities();
 
         // clear container and rows list
         detailAbilitiesContainer.getChildren().clear();
@@ -150,7 +152,7 @@ public class CouncilPhaseController implements PhaseSubController {
     /** reevaluates  */
     private void updateAbilityRows(SmurfCharacter smurf) {
     	SmurfVillage village = game.getVillage();
-        List<CharacterAbility> characterAbilities = village.getAbilitiesFor(smurf.getType());
+        List<CharacterAbility> characterAbilities = village.getCouncilMember(smurf.getType()).getAbilities();
 
         // re-evaluate ability based on new energy
         for (CharacterAbility ability : characterAbilities) {
@@ -200,7 +202,9 @@ public class CouncilPhaseController implements PhaseSubController {
         int newEnergyAmount = village.getCouncilMember(smurf.getType()).getEnergy();
 
         // update energy indicators
-        currentlySelectedRow.updateEnergy(newEnergyAmount, smurf.getMaxEnergy());
-        detailHeaderCard.updateEnergy(newEnergyAmount, smurf.getMaxEnergy());
+        int maxEnergy = village.getDynamicMaxEnergy(smurf);
+        currentlySelectedRow.updateEnergy(newEnergyAmount, maxEnergy);
+        Logger.LogDebug("updated energy to %d", newEnergyAmount);
+        detailHeaderCard.updateEnergy(newEnergyAmount, maxEnergy);
     }
 }

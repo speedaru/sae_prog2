@@ -31,11 +31,11 @@ public class GameWindow implements Window {
 		}
 	}
 	
-	public void displayEffectsApplied(List<Effect> effects) {
+	public void displayEffectsApplied(List<ResourceEffect> resourceEffects) {
 		IO.println(SEPARATOR);
 		IO.println("Effets appliques sur le village:");
 
-		for (Effect effect : effects) {
+		for (ResourceEffect effect : resourceEffects) {
 			IO.println(effect);
 		}
 	}

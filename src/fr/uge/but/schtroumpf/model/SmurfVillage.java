@@ -6,216 +6,222 @@ import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
 import fr.uge.but.schtroumpf.model.characters.*;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
 import fr.uge.but.schtroumpf.model.events.*;
+import fr.uge.but.schtroumpf.view.Logger;
+import fr.uge.but.schtroumpf.model.crises.*;
 
 public class SmurfVillage {
-	private final static int CRISES_LIMIT = 3; // 3+ crises = lose
+	public final static int MAX_CRISES = 3; // 3+ crises = lose
 	
 	private final ResourceManager resourceManager = new ResourceManager();
 	private List<ResourceSnapshot> previousRoundResources;
 	private List<SmurfCharacter> councilMembers;
 	private ArrayList<EventHistory> eventsHistory = new ArrayList<EventHistory>();
 	
+	// modifier engine and crisis state
+	private final List<Crisis> activeCrises = new ArrayList<>();
+    private VillageModifierContext modifiers = new VillageModifierContext();
+//    private boolean gameLost = false;
+	
 	public SmurfVillage() {
-		// set arbitrary quantities
-		resourceManager.add(ResourceType.BERRIES, 9);
-		resourceManager.add(ResourceType.GOLD, 7);
-		
 		councilMembers = createSmurfs();
 	}
 	
-	public List<ResourceSnapshot> getResources() {
-		return resourceManager.getResourcesSnap();
-	}
+	// ------------------------- resource management -------------------------
 
-	/** get a list of resources snapshot of by how much each resource increased/decreased */
-	public List<ResourceSnapshot> getResourcesDiff() {
-		var diffSnap = new ArrayList<ResourceSnapshot>();
-		var currentSnap = resourceManager.getResourcesSnap();
-		
-		// previous snap null
-		if (previousRoundResources == null) {
-			return currentSnap;
-		}
-		
-		for (int i = 0 ; i < previousRoundResources.size(); i++) {
-			ResourceSnapshot previousResourceSnap = previousRoundResources.get(i);
-			ResourceSnapshot currentResourceSnap = currentSnap.get(i);
-			
-			// same index should have same resource type
-			if (previousResourceSnap.type() != currentResourceSnap.type()) {
-				throw new IllegalStateException("both snapshots should have same resource at same index");
-			}
-			
-			ResourceType type = currentResourceSnap.type();
-			int delta = currentResourceSnap.quantity() - previousResourceSnap.quantity();
-			diffSnap.add(new ResourceSnapshot(type, delta));
-		}
-		
-		return List.copyOf(diffSnap);
-	}
+    public List<ResourceSnapshot> getResources() {
+        return resourceManager.getResourcesSnap();
+    }
 
-	public List<SmurfCharacter> getCouncilMembers() {
-		return List.copyOf(councilMembers);
-	}
-	
-	public List<SmurfCharacter> getAvailableSmurfs() {
-		ArrayList<SmurfCharacter> available = new ArrayList<SmurfCharacter>();
-		
-		for (SmurfCharacter smurf : councilMembers) {
-			// smurf is available if has at least 1 energy
-			if (smurf.getEnergy() >= 1) {
-				available.add(smurf);
-			}
-		}
-		
-		return List.copyOf(available);
-	}
-	
-	public SmurfCharacter getCouncilMember(SmurfType type) {
-		for (SmurfCharacter smurf : councilMembers) {
-			if (smurf.getType() == type) {
-				return smurf;
-			}
-		}
-		throw new IllegalStateException(String.format("%s is not a part of the smurf council", type));
-	}
-	
-	public List<CharacterAbility> getAbilitiesFor(SmurfType type) {
-		for (SmurfCharacter smurf : councilMembers) {
-			if (smurf.getType() == type) {
-				return smurf.getAbilities();
-			}
-		}
-		throw new IllegalStateException(String.format("%s is not a part of the smurf council", type));
-	}
+    public int getResourceQuantity(ResourceType resourceType) {
+        return resourceManager.get(resourceType);
+    }
 
-//	public List<CharacterAbility> getAvailableAbilitiesFor(SmurfType type) {
-//		for (SmurfCharacter smurf : councilMembers) {
-//			if (smurf.getType() == type) {
-//				return smurf.getAvailableAbilities();
-//			}
-//		}
-//		throw new IllegalStateException(String.format("%s is not a part of the smurf council", type));
-//	}
-	
-	public List<EventHistory> getHistory() {
-		return List.copyOf(eventsHistory);
-	}
-	
-	public int getResourceQuantity(ResourceType resourceType) {
-		return resourceManager.get(resourceType);
-	}
-	
-	public int getResourceDelta(ResourceType resourceType) {
-		int previousRoundQuanity = 0;
-		for (ResourceSnapshot snap : previousRoundResources) {
-			if (snap.type() == resourceType) {
-				previousRoundQuanity = snap.quantity();
-				break;
-			}
-		}
+    public void updateResource(ResourceType resource, int amount) {
+        resourceManager.add(resource, amount);
+    }
 
-		return resourceManager.get(resourceType) - previousRoundQuanity;
-	}
-
-	public final EventHistory getEventFromRound(int round) {
-		for (var eventLog : eventsHistory) {
-			if (eventLog.round() == round) {
-				return eventLog;
-			}
-		}
-		
-		return null;
-	}
-	
-	public final EventHistory getLastEvent() {
-		return eventsHistory.getLast();
-	}
-	
-	/** @return number of resources that are at 0 */
-	public int checkCrises() {
-		int depletedResourceCount = 0;
-		
-		for (var resource : resourceManager.getResourcesSnap()) {
-			if (resource.quantity() == 0) {
-				depletedResourceCount += 1;
-			}
-		}
-
-		return depletedResourceCount;
-	}
-	
-	/** checks if the village has enough of each resource specified */
-	public boolean verifyResources(List<ResourceSnapshot> resourcesRequired) {
-		for (ResourceSnapshot req : resourcesRequired) {
-			// not enough of required resource
-			if (resourceManager.get(req.type()) < req.quantity()) {
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	/** 3 or more crises means lost */
-	public boolean isDefeated() {
-		return checkCrises() >= CRISES_LIMIT;
-	}
-	
-	public void saveRoundResources() {
-		previousRoundResources = resourceManager.getResourcesSnap();
-	}
-	
-	public void recordEvent(EventHistory recordedEvent) {
-		eventsHistory.add(recordedEvent);
-	}
-	
-	public void applyEffect(Effect effect) {
-		resourceManager.add(effect.resourceType(), effect.delta());
-	}
-
-	public void applyEffects(List<Effect> effects) {
-		for (Effect effect : effects) {
-			resourceManager.add(effect.resourceType(), effect.delta());
-		}
-	}
-	
-	/**
-	 * @param type council member smurf type
-	 */
-	public AbilityResult executeCouncilMemberAbility(SmurfCharacter smurf, CharacterAbility ability) {
-        if (!smurf.canExecute(this, ability)) {
-            throw new IllegalStateException("Action processing denied: Preconditions or energy thresholds unmet.");
+    public void setResourceQuantity(ResourceType resource, int amount) {
+        int max = ResourceManager.MAX_QUANTITY;
+        if (amount < 0 || amount > max) {
+            throw new IllegalArgumentException(String.format("Amount (%d) must be between 0 and %d", amount, max));
         }
+        resourceManager.set(resource, amount);
+    }
 
-        // consume energy
-        smurf.updateEnergy(-ability.energyCost());
+    /** replaced by the hooked version in modifier engine */
+//    public void applyEffects(List<ResourceEffect> resourceEffects) {
+//        for (ResourceEffect effect : resourceEffects) {
+//            updateResource(effect.resourceType(), effect.delta());
+//        }
+//    }
 
-        // calculate logic and apply effects
+    public boolean verifyResources(List<ResourceSnapshot> resourcesRequired) {
+        return resourcesRequired.stream()
+            .allMatch(req -> resourceManager.get(req.type()) >= req.quantity());
+    }
+
+	// ------------------------- smurf council management -------------------------
+
+    public List<SmurfCharacter> getCouncilMembers() {
+        return List.copyOf(councilMembers);
+    }
+
+    public List<SmurfCharacter> getAvailableSmurfs() {
+        return councilMembers.stream()
+            .filter(smurf -> smurf.getEnergy() >= 1)
+            .toList();
+    }
+
+    public SmurfCharacter getCouncilMember(SmurfType type) {
+        return councilMembers.stream()
+            .filter(smurf -> smurf.getType() == type)
+            .findFirst()
+            .orElseThrow(() -> new IllegalStateException(type + " is not in the council."));
+    }
+
+    public AbilityResult executeCouncilMemberAbility(SmurfCharacter smurf, CharacterAbility ability) {
+        if (!smurf.canExecute(this, ability)) {
+            throw new IllegalStateException("Action processing denied: Preconditions unmet.");
+        }
+        smurf.updateEnergy(this, -ability.energyCost());
+        
         AbilityResult result = ability.actionLogic().apply(this);
         this.applyEffects(result.effectsToApply());
-
-        // return result so controller can display result in feedback label
         return result;
-	}
-	
-	public void updateResource(ResourceType resource, int amount) {
-		resourceManager.add(resource, amount);
-	}
+    }
 
-	public void setResourceQuantity(ResourceType resource, int amount) {
-		int MAX = ResourceManager.MAX_QUANTITY;
-		if (0 > amount || amount > MAX) {
-			throw new IllegalArgumentException(String.format("amount (%d) must be > 0 and < %d", amount, MAX));
-		}
-		
-		resourceManager.set(resource, amount);
-	}
+	// ------------------------- round and snapshot tracking -------------------------
 
-	// ------------------------- private helpers
-	
-	private static List<SmurfCharacter> createSmurfs() {
-		GrandSmurf grandSmurf = new GrandSmurf();
-		
-		return List.of(grandSmurf);
-	}
+    public void saveRoundResources() {
+        previousRoundResources = resourceManager.getResourcesSnap();
+    }
+
+    public List<ResourceSnapshot> getResourcesDiff() {
+        if (previousRoundResources == null) return getResources();
+
+        var currentSnap = resourceManager.getResourcesSnap();
+        var diffSnap = new ArrayList<ResourceSnapshot>();
+
+        for (int i = 0; i < currentSnap.size(); i++) {
+            ResourceType type = currentSnap.get(i).type();
+            int delta = currentSnap.get(i).quantity() - previousRoundResources.get(i).quantity();
+            diffSnap.add(new ResourceSnapshot(type, delta));
+        }
+        return diffSnap;
+    }
+
+    public int getResourceDelta(ResourceType resourceType) {
+        if (previousRoundResources == null) return 0;
+        
+        int previousQty = previousRoundResources.stream()
+            .filter(snap -> snap.type() == resourceType)
+            .map(ResourceSnapshot::quantity)
+            .findFirst()
+            .orElse(0);
+            
+        return resourceManager.get(resourceType) - previousQty;
+    }
+
+	// ------------------------- history and events -------------------------
+
+    public void recordEvent(EventHistory recordedEvent) {
+        eventsHistory.add(recordedEvent);
+    }
+
+    public List<EventHistory> getHistory() {
+        return List.copyOf(eventsHistory);
+    }
+
+    public EventHistory getEventFromRound(int round) {
+        return eventsHistory.stream()
+            .filter(e -> e.round() == round)
+            .findFirst()
+            .orElse(null);
+    }
+
+    public EventHistory getLastEvent() {
+        return eventsHistory.isEmpty() ? null : eventsHistory.getLast();
+    }
+    
+	// ------------------------- hooks for modifier engine -------------------------
+
+    /**
+     * replaces standard GameRandomness.rollChance
+     * applies active crisis penalties to random roll
+     */
+    public boolean rollChance(double baseChance) {
+        double finalChance = baseChance + modifiers.getSuccessChanceBonus();
+        finalChance = Math.clamp(finalChance, 0, 1);
+        return GameRandomness.rollChance(finalChance);
+    }
+
+    /** intercepts effect applications to apply efficiency multipliers */
+    public void applyEffects(List<ResourceEffect> resourceEffects) {
+        for (ResourceEffect effect : resourceEffects) {
+            int delta = effect.delta();
+
+            // apply active modifier for positive effects
+            if (delta > 0) {
+                delta = (int)Math.floor(delta * modifiers.getEfficiencyMultiplier());
+            }
+
+            // block berries production during DarkAgesCrisis
+            if (effect.resourceType() == ResourceType.BERRIES
+            		&& delta > 0
+            		&& modifiers.isPassiveFoodProductionBlocked()
+            ) {
+            	continue;
+            }
+
+            updateResource(effect.resourceType(), delta);
+        }
+    }
+    
+    public void rechargeSmurfEnergy(SmurfCharacter smurf, int baseRate) {
+    	int finalRate = baseRate + modifiers.getEnergyRechargeRateDelta();
+    	finalRate = Math.max(1, finalRate); // always at least 1
+    	
+    	smurf.updateEnergy(this, finalRate);
+    	Logger.LogDebug("recharged %s energy by %d (+%d modifier)", smurf, finalRate, modifiers.getEnergyRechargeRateDelta());
+    }
+
+    /** determines dynamic max energy of a smurf based on active debuffs */
+    public int getDynamicMaxEnergy(SmurfCharacter smurf) {
+        int finalMax = smurf.getBaseMaxEnergy() + modifiers.getMaxEnergyDelta();
+        return Math.max(1, finalMax); // always at least 1 max energy
+    }
+
+	// ------------------------- crisis and end conditions -------------------------
+
+    /** recalculates active crises and modifiers */
+    public void setActiveCrises(List<Crisis> crises) {
+        activeCrises.clear();
+        activeCrises.addAll(crises);
+
+        // recalculate all modifiers
+        VillageModifierContext freshContext = new VillageModifierContext();
+        
+        for (Crisis crisis : activeCrises) {
+            // apply passive buffs/debuffs
+            crisis.applyModifiers(freshContext);
+            
+            // apply immediate resource changes
+            crisis.applyImmediateEffects(this);
+        }
+
+        this.modifiers = freshContext;
+    }
+
+    public List<Crisis> getActiveCrises() { return List.copyOf(activeCrises); }
+
+    /** must be called when crises are up to date, after checkAndUpdateCrises() */
+    public boolean isDefeated() {
+        return activeCrises.size() >= MAX_CRISES;
+    }
+
+	// ------------------------- private helpers -------------------------
+
+    private static List<SmurfCharacter> createSmurfs() {
+        return List.of(new GrandSmurf());
+    }
 }

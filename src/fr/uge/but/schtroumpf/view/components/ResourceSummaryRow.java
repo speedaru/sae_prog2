@@ -50,7 +50,7 @@ public class ResourceSummaryRow extends HBox {
 
         // 4. Structural Resource Identity Label
         this.nameLabel = new Label(type.getDisplayName());
-        this.nameLabel.setTextFill(ThemeManager.getResourceSummaryTextColor(type));
+        this.nameLabel.setTextFill(ThemeManager.getResourceColor(type));
         this.nameLabel.setFont(Font.font("System", FontWeight.BOLD, 14.0));
 
         // 5. Build layout children node hierarchy

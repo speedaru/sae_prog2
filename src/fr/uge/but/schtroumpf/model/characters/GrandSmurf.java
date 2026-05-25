@@ -20,8 +20,9 @@ public class GrandSmurf implements SmurfCharacter {
 	@Override public int getEnergy() { return energy; }
 
 	@Override
-	public void updateEnergy(int delta) {
-		energy = Math.clamp(energy + delta, 0, getMaxEnergy());
+	public void updateEnergy(SmurfVillage village, int delta) {
+		final int finalMaxEnergy = village.getDynamicMaxEnergy(this);
+		energy = Math.clamp(energy + delta, 0, finalMaxEnergy);
 	}
 
 	@Override public int getAttribute(CharacterAttribute attrib) { return attributes.getOrDefault(attrib, 0); }
@@ -42,8 +43,8 @@ public class GrandSmurf implements SmurfCharacter {
 				new ResourceSnapshot(ResourceType.MORAL, 1)
 			),
 			List.of(
-				new Effect(ResourceType.KNOWLEDGE, 1),
-				new Effect(ResourceType.MORAL, -1)
+				new ResourceEffect(ResourceType.KNOWLEDGE, 1),
+				new ResourceEffect(ResourceType.MORAL, -1)
 			),
 			this::executeCheckSpellBook
 		);
@@ -55,7 +56,7 @@ public class GrandSmurf implements SmurfCharacter {
 			3,
 			List.of(),
 			List.of(
-				new Effect(ResourceType.MORAL, 2)
+				new ResourceEffect(ResourceType.MORAL, 2)
 			),
 			this::executePlanMeeting
 		);
@@ -68,8 +69,8 @@ public class GrandSmurf implements SmurfCharacter {
 			1,
 			List.of(),
 			List.of(
-				new Effect(ResourceType.GOLD, 1),
-				new Effect(ResourceType.DEFENSE, 1)
+				new ResourceEffect(ResourceType.GOLD, 1),
+				new ResourceEffect(ResourceType.DEFENSE, 1)
 			),
 			this::executeTalkToAnimals
 		);
@@ -83,10 +84,10 @@ public class GrandSmurf implements SmurfCharacter {
 	
 	private AbilityResult executeCheckSpellBook(SmurfVillage village) {
 		// base success chance on wisdom level
-		final double successChance = Math.max(1.0, 0.5 + (getAttribute(CharacterAttribute.WISDOM) * 0.05));
+		final double successChance = Math.min(1.0, 0.5 + (getAttribute(CharacterAttribute.WISDOM) * 0.05));
 
-		Effect plusKnowledge = new Effect(ResourceType.KNOWLEDGE, 1); 
-		Effect minusMoral = new Effect(ResourceType.MORAL, -1);
+		ResourceEffect plusKnowledge = new ResourceEffect(ResourceType.KNOWLEDGE, 1); 
+		ResourceEffect minusMoral = new ResourceEffect(ResourceType.MORAL, -1);
 
 		if (GameRandomness.rollChance(successChance)) {
 			Logger.LogDebug("Grand Smurf successfully consulted the grimoire");
@@ -108,7 +109,7 @@ public class GrandSmurf implements SmurfCharacter {
 
 	private AbilityResult executePlanMeeting(SmurfVillage village) {
 		Logger.LogDebug("Grand Smurf organized a meeting");
-		Effect plusMoral = new Effect(ResourceType.MORAL, 2);
+		ResourceEffect plusMoral = new ResourceEffect(ResourceType.MORAL, 2);
 		return new AbilityResult(
 			AbilityResultType.NEUTRAL,
 			"Le Grand Schtroumpf a reuni le village " + plusMoral,
@@ -119,8 +120,8 @@ public class GrandSmurf implements SmurfCharacter {
 	private AbilityResult executeTalkToAnimals(SmurfVillage village) {
 		final double successChance = 0.5;
 
-		Effect plusGold = new Effect(ResourceType.GOLD, 1);
-		Effect plusDefense = new Effect(ResourceType.DEFENSE, 1);
+		ResourceEffect plusGold = new ResourceEffect(ResourceType.GOLD, 1);
+		ResourceEffect plusDefense = new ResourceEffect(ResourceType.DEFENSE, 1);
 
 		String resMessage = "Le Grand Schtroumpf a parle aux animaux de la foret ";
 		if (GameRandomness.rollChance(successChance)) {

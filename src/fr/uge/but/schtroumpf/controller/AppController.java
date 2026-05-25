@@ -1,4 +1,4 @@
-package fr.uge.but.schtroumpf.controller.gui.windows;
+package fr.uge.but.schtroumpf.controller;
 
 import javafx.scene.Scene;
 import javafx.scene.Parent;
@@ -7,7 +7,6 @@ import java.util.Deque;
 import java.util.EnumMap;
 import java.util.Map;
 
-import fr.uge.but.schtroumpf.controller.*;
 import fr.uge.but.schtroumpf.controller.Navigation.*;
 import fr.uge.but.schtroumpf.model.WindowType;
 import fr.uge.but.schtroumpf.view.FxmlUtils;

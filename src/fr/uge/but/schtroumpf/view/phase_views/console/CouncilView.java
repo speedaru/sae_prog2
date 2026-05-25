@@ -40,10 +40,10 @@ public class CouncilView implements PhaseView {
 		menu.print();
 	}
 	
-	public void displayActionResults(SmurfCharacter selectedSmurf, CharacterAbility choseAbility, List<Effect> effects) {
+	public void displayActionResults(SmurfCharacter selectedSmurf, CharacterAbility choseAbility, List<ResourceEffect> resourceEffects) {
 		IO.println(String.format("Consequences de %s sur le village:", choseAbility.description()));
 		
-		for (Effect effect : effects) {
+		for (ResourceEffect effect : resourceEffects) {
 			IO.println(effect);
 		}
 		

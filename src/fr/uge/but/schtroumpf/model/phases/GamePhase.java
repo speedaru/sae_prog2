@@ -1,7 +1,7 @@
 package fr.uge.but.schtroumpf.model.phases;
 
 public interface GamePhase {
-	PhaseType getType();
+	GamePhaseType getType();
 	
 	/** triggered automatically when this phase becomes active */
     void onEnter(GamePhaseContext ctx);

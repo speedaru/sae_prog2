@@ -11,11 +11,12 @@ import javafx.scene.layout.StackPane;
 
 import fr.uge.but.schtroumpf.controller.WindowSubController;
 import fr.uge.but.schtroumpf.controller.Navigation.*;
+import fr.uge.but.schtroumpf.controller.AppController;
 import fr.uge.but.schtroumpf.controller.PhaseSubController;
 import fr.uge.but.schtroumpf.model.Game;
 import fr.uge.but.schtroumpf.model.*;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
-import fr.uge.but.schtroumpf.model.characters.Effect;
+import fr.uge.but.schtroumpf.model.characters.ResourceEffect;
 import fr.uge.but.schtroumpf.model.crises.*;
 import fr.uge.but.schtroumpf.model.phases.*;
 import fr.uge.but.schtroumpf.view.FxmlUtils;
@@ -60,7 +61,7 @@ public class GameController implements WindowSubController {
 
     @FXML void handleNextCrisis(ActionEvent event) {
         // re-calculate total pages on each click to be safe
-        long totalPages = Stream.of(CrisisType.values()).filter(t -> t.isActive(game.getVillage())).count();
+        long totalPages = Stream.of(CrisisType.values()).filter(t -> t.shouldTrigger(game.getVillage())).count();
         if (currentCrisisPage < totalPages) {
             currentCrisisPage++;
         }
@@ -68,7 +69,7 @@ public class GameController implements WindowSubController {
 
     @FXML void handleMysteriousButton(ActionEvent event) {
         Logger.LogDebug("Secret tunnel trigger! Berries added to reserves.");
-        game.getVillage().applyEffect(new Effect(ResourceType.BERRIES, 1));
+        game.getVillage().applyEffects(List.of(new ResourceEffect(ResourceType.BERRIES, 1)));
         updateHudResources();
     }
 

@@ -11,7 +11,7 @@ import javafx.scene.layout.VBox;
 import fr.uge.but.schtroumpf.controller.PhaseSubController;
 import fr.uge.but.schtroumpf.controller.gui.windows.GameController;
 import fr.uge.but.schtroumpf.model.Game;
-import fr.uge.but.schtroumpf.model.characters.Effect;
+import fr.uge.but.schtroumpf.model.characters.ResourceEffect;
 import fr.uge.but.schtroumpf.model.events.EventHistory;
 import fr.uge.but.schtroumpf.view.components.ResourceSummaryRow;
 
@@ -47,7 +47,7 @@ public class EventPhaseController implements PhaseSubController {
     	
     	eventNameLabel.setText(lastEvent.eventType().getTitle());
 
-		List<Effect> effectsApplied = lastEvent.effectsApplied();
+		List<ResourceEffect> effectsApplied = lastEvent.effectsApplied();
 
     	positiveEffectsContainer.getChildren().clear();
     	negativeEffectsContainer.getChildren().clear();

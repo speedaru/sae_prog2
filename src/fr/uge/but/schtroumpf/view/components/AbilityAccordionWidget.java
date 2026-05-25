@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Objects;
 
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility;
-import fr.uge.but.schtroumpf.model.characters.Effect;
+import fr.uge.but.schtroumpf.model.characters.ResourceEffect;
 
 /**
  * Interactive accordion widget representing a council member's active ability.
@@ -152,8 +152,8 @@ public class AbilityAccordionWidget extends VBox {
         Objects.requireNonNull(ability, "L'abilité ne peut pas être nulle.");
         this.effectsListContainer.getChildren().clear();
 
-        List<Effect> primaryEffects = ability.primaryEffects();
-        for (Effect effect : primaryEffects) {
+        List<ResourceEffect> primaryEffects = ability.primaryEffects();
+        for (ResourceEffect effect : primaryEffects) {
             ResourceSummaryRow row = new ResourceSummaryRow(effect.resourceType());
             row.updateDelta(effect.delta());
             this.effectsListContainer.getChildren().add(row);

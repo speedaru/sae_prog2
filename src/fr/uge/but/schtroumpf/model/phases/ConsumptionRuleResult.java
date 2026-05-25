@@ -2,11 +2,11 @@ package fr.uge.but.schtroumpf.model.phases;
 
 import java.util.List;
 
-import fr.uge.but.schtroumpf.model.characters.Effect;
+import fr.uge.but.schtroumpf.model.characters.ResourceEffect;
 
 public record ConsumptionRuleResult(
 	String ruleName,
-	List<Effect> effectsApplied,
+	List<ResourceEffect> effectsApplied,
 	boolean crisisTriggered,
 	String crisisMessage
 ) {}

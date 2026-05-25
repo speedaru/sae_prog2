@@ -7,7 +7,7 @@ import fr.uge.but.schtroumpf.model.characters.*;
 import fr.uge.but.schtroumpf.view.Logger;
 
 public class EventPhase implements GamePhase {
-	@Override public PhaseType getType() { return PhaseType.EVENT_PHASE; }
+	@Override public GamePhaseType getType() { return GamePhaseType.EVENT_PHASE; }
 	
 	@Override
 	public void onEnter(GamePhaseContext ctx) {
@@ -16,13 +16,13 @@ public class EventPhase implements GamePhase {
 		GameEvent event = RandomEventGenerator.nextEvent();
 		
 		// get and apply event effects
-		List<Effect> effectsToApply = event.trigger(ctx.village());
-		for (Effect effect : effectsToApply) {
-			ctx.village().applyEffect(effect);
-		}
+		List<ResourceEffect> effectsToApply = event.trigger(ctx.village());
+		ctx.village().applyEffects(effectsToApply);
 
 		// log event in village history
-		ctx.village().recordEvent(new EventHistory(event.getEventType(), effectsToApply, ctx.currentRound()));
+		ctx.village().recordEvent(
+				new EventHistory(event.getEventType(), effectsToApply, ctx.currentRound())
+		);
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package fr.uge.but.schtroumpf.controller.gui.windows;
 
+import fr.uge.but.schtroumpf.controller.AppController;
 import fr.uge.but.schtroumpf.controller.WindowSubController;
 import fr.uge.but.schtroumpf.controller.Navigation.NavigationAction;
 import fr.uge.but.schtroumpf.model.WindowType;

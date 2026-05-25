@@ -11,7 +11,7 @@ public class ThemeManager {
     	return getResourceThemeColor(type);
     }
 
-    public static Color getResourceSummaryTextColor(ResourceType type) {
+    public static Color getResourceColor(ResourceType type) {
     	return getResourceThemeColor(type);
     }
     

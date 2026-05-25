@@ -6,7 +6,7 @@ import java.util.List;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.phases.ConsumptionRuleResult;
 import fr.uge.but.schtroumpf.model.ResourceType;
-import fr.uge.but.schtroumpf.model.characters.Effect;
+import fr.uge.but.schtroumpf.model.characters.ResourceEffect;
 
 public class FoodRule implements ConsumptionRule {
     @Override
@@ -17,12 +17,12 @@ public class FoodRule implements ConsumptionRule {
         int foodRequired = Math.max(1, population / 3);
         int currentBerries = village.getResourceQuantity(ResourceType.BERRIES);
 
-        List<Effect> appliedEffects = new ArrayList<>();
+        List<ResourceEffect> appliedEffects = new ArrayList<>();
 
         if (currentBerries >= foodRequired) {
             // Normal operation path: deduct resource stock
             village.updateResource(ResourceType.BERRIES, -foodRequired);
-            appliedEffects.add(new Effect(ResourceType.BERRIES, -foodRequired));
+            appliedEffects.add(new ResourceEffect(ResourceType.BERRIES, -foodRequired));
 
             return new ConsumptionRuleResult(
                 "Rationnement Alimentaire",
@@ -33,11 +33,11 @@ public class FoodRule implements ConsumptionRule {
         } else {
             // Famine strike path: drain whatever partial berries are remaining to 0
             village.setResourceQuantity(ResourceType.BERRIES, 0);
-            appliedEffects.add(new Effect(ResourceType.BERRIES, -currentBerries));
+            appliedEffects.add(new ResourceEffect(ResourceType.BERRIES, -currentBerries));
 
             // Instantly penalize village state parameters due to starvation
             village.updateResource(ResourceType.MORAL, -2);
-            appliedEffects.add(new Effect(ResourceType.MORAL, -2));
+            appliedEffects.add(new ResourceEffect(ResourceType.MORAL, -2));
 
             return new ConsumptionRuleResult(
                 "Rationnement Alimentaire",

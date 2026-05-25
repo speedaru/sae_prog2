@@ -3,7 +3,7 @@ package fr.uge.but.schtroumpf.model.phases;
 import fr.uge.but.schtroumpf.view.Logger;
 
 public class CouncilPhase implements GamePhase {
-	@Override public PhaseType getType() { return PhaseType.COUNCIL_PHASE; }
+	@Override public GamePhaseType getType() { return GamePhaseType.COUNCIL_PHASE; }
 	
 	@Override
 	public void onEnter(GamePhaseContext ctx) {

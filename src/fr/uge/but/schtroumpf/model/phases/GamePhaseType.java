@@ -2,7 +2,7 @@ package fr.uge.but.schtroumpf.model.phases;
 
 import java.nio.file.Path;
 
-public enum PhaseType {
+public enum GamePhaseType {
 	PRODUCTION_PHASE(1, "Production", Path.of("phase_views/gui/ProductionView.fxml")),
 	EVENT_PHASE(2, "Evenement aleatoire", Path.of("phase_views/gui/EventView.fxml")),
 	COUNCIL_PHASE(3, "Conseil", Path.of("phase_views/gui/CouncilView.fxml")),
@@ -13,7 +13,7 @@ public enum PhaseType {
 	private String displayName;
 	private Path fxmlFile;
 	
-	PhaseType(int code, String displayName, Path fxmlFile) {
+	GamePhaseType(int code, String displayName, Path fxmlFile) {
 		this.code = code;
 		this.displayName = displayName;
 		this.fxmlFile = fxmlFile;
@@ -21,7 +21,7 @@ public enum PhaseType {
 	
 	@Override
 	public String toString() {
-		return String.format("PhaseType: %s", this.name());
+		return String.format("GamePhaseType: %s", this.name());
 	}
 	
 	public int getCode() { return code; }

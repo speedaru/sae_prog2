@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import fr.uge.but.schtroumpf.controller.PhaseSubController;
 import fr.uge.but.schtroumpf.controller.gui.windows.GameController;
 import fr.uge.but.schtroumpf.model.Game;
-import fr.uge.but.schtroumpf.model.characters.Effect;
+import fr.uge.but.schtroumpf.model.characters.ResourceEffect;
 import fr.uge.but.schtroumpf.model.phases.ConsumptionPhase;
 import fr.uge.but.schtroumpf.model.phases.ConsumptionReport;
 import fr.uge.but.schtroumpf.model.phases.ConsumptionRuleResult;
@@ -79,7 +79,7 @@ public class ConsumptionPhaseController implements PhaseSubController {
             consumptionEffectsContainer.getChildren().add(ruleHeaderLabel);
 
             // Dynamically instantiate rows for every modified item inside the rule
-            for (Effect effect : result.effectsApplied()) {
+            for (ResourceEffect effect : result.effectsApplied()) {
                 ResourceSummaryRow row = new ResourceSummaryRow(effect.resourceType());
                 row.updateDelta(effect.delta());
                 consumptionEffectsContainer.getChildren().add(row);
@@ -108,7 +108,7 @@ public class ConsumptionPhaseController implements PhaseSubController {
             // Populate the separate penalty tracker below the text area for explicit visual feedback
             for (ConsumptionRuleResult result : report.ruleResults()) {
                 if (result.crisisTriggered()) {
-                    for (Effect effect : result.effectsApplied()) {
+                    for (ResourceEffect effect : result.effectsApplied()) {
                         // Highlight only negative impacts in the crisis panel tracking list
                         if (effect.delta() < 0) {
                             ResourceSummaryRow penaltyRow = new ResourceSummaryRow(effect.resourceType());
