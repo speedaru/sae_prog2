@@ -9,6 +9,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+
+import java.nio.file.Path;
+
 import fr.uge.but.schtroumpf.model.ResourceType;
 import fr.uge.but.schtroumpf.view.themes.ThemeManager;
 
@@ -28,7 +31,7 @@ public class ResourceSummaryRow extends HBox {
         // 1. Configure parent row container constraints matching your FXML properties
         this.setAlignment(Pos.CENTER_LEFT);
         this.setPrefHeight(30.0);
-        this.setSpacing(8.0);
+        this.setSpacing(0.0);
         this.setPadding(new Insets(0, 15.0, 0, 15.0));
 
         // 2. Instantiate and configure the Resource Icon Graphic
@@ -78,17 +81,13 @@ public class ResourceSummaryRow extends HBox {
      * Tries to locate graphic image indicators inside your build paths.
      */
     private void loadIconResource() {
-        try {
-            // Assumes images are named lowercase matching your identifiers, e.g., "berries.png"
-            String resourcePath = "/icons/" + type.name().toLowerCase() + ".png";
-            var url = getClass().getResource(resourcePath);
-            
-            if (url != null) {
-                resourceIconImage.setImage(new Image(url.toExternalForm()));
-            }
-        } catch (Exception e) {
-            // Fails silently to prevent crash logs if assets are missing during early dev steps
-            resourceIconImage.setImage(null);
-        }
+		// Assumes images are named lowercase matching your identifiers, e.g., "berries.png"
+		String resource = "src/main/resources/icons/" + type.name().toLowerCase() + ".png";
+		Path path = Path.of(resource);
+		try {
+			resourceIconImage.setImage(new Image(path.toUri().toString()));
+		} catch (Exception e) {
+			resourceIconImage.setImage(null);
+		}
     }
 }

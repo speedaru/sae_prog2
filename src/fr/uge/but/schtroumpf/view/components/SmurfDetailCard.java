@@ -128,22 +128,4 @@ public class SmurfDetailCard extends VBox {
 			this.portraitView.setImage(new Image(portraitPath.toUri().toString()));
     	}
     }
-
-    /**
-     * Modifie le portrait à partir d'un chemin d'accès absolu ou relatif aux ressources.
-     * * @param imagePath Chemin d'accès de l'image.
-     */
-    public void setPortrait(String imagePath) {
-        if (imagePath == null || imagePath.trim().isEmpty()) {
-            this.portraitView.setImage(null);
-            return;
-        }
-        try {
-            Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-            this.portraitView.setImage(img);
-        } catch (Exception e) {
-            System.err.println("[SmurfDetailCard] Impossible d'associer l'image de portrait: " + imagePath);
-            this.portraitView.setImage(null);
-        }
-    }
 }

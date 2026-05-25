@@ -157,20 +157,8 @@ public class SmurfListRow extends BorderPane {
     }
 
     private void loadAvatar(Path spritePath) {
-    	if (spritePath == null) {
-    		return;
+    	if (spritePath != null) {
+			this.avatarView.setImage(new Image(spritePath.toUri().toString()));
     	}
-
-    	String path = spritePath.toUri().toString();
-        if (spritePath == null || path.trim().isEmpty()) {
-            return;
-        }
-        try {
-            Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path)));
-            this.avatarView.setImage(image);
-        } catch (Exception e) {
-            // Fallback silencieux en cas d'absence de l'image de sprite
-            System.err.println("[SmurfListRow] Impossible de charger l'avatar à l'adresse: " + spritePath);
-        }
     }
 }

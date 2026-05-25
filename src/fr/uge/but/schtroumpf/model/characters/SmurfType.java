@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 public enum SmurfType {
-	GRAND_SMURF(1, "Grand Schtroumpf", "gardien du village", null),
+	GRAND_SMURF(1, "Grand Schtroumpf", "gardien du village", Path.of("src/main/resources/sprites/grand_smurf.png")),
 	OLD_SMURF(2, "Vieux Schtroumpf", "vieux con", null),
 	SMURFETTE(3, "Schtroumpfette", "tana 92i", null);
 

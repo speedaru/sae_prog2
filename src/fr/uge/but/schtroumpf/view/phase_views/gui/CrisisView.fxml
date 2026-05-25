@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #1a1c1e; -fx-background-radius: 12; -fx-border-color: #3f444c; -fx-border-width: 2; -fx-border-radius: 12;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.uge.but.schtroumpf.controller.gui.phases.CrisisPhaseController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #1a1c1e; -fx-background-radius: 12; -fx-border-color: #3f444c; -fx-border-width: 2; -fx-border-radius: 12;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.uge.but.schtroumpf.controller.gui.phases.CrisisPhaseController">
    
    <top>
       <VBox alignment="CENTER" spacing="6.0" BorderPane.alignment="CENTER">
@@ -97,23 +97,29 @@
       </StackPane>
    </center>
 
+   <!-- UPDATED: Button is now 45px high, bold 16, Emerald Green, centered exactly like EventView -->
    <bottom>
-      <VBox alignment="CENTER" spacing="8.0" BorderPane.alignment="CENTER">
+      <VBox alignment="CENTER" prefHeight="75.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="nextMonthButton" mnemonicParsing="false" onAction="#handleNextMonth" prefHeight="35.0" prefWidth="250.0" style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;" text="Commencer le mois suivant">
+            <Button fx:id="nextMonthButton" mnemonicParsing="false" onAction="#handleNextMonth" prefHeight="45.0" prefWidth="280.0" style="-fx-background-color: #10b981; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand;" text="Commencer le mois suivant">
                <font>
-                  <Font name="System Bold" size="13.0" />
+                  <Font name="System Bold" size="16.0" />
                </font>
             </Button>
             
             <HBox fx:id="gameOverButtonsBox" alignment="CENTER" managed="false" spacing="15.0" visible="false">
                <children>
-                  <Button mnemonicParsing="false" onAction="#handleQuit" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: transparent; -fx-border-color: #ef4444; -fx-text-fill: #ef4444; -fx-background-radius: 6; -fx-border-radius: 6; -fx-cursor: hand;" text="Quitter" />
+                  <!-- Styled Quitter button for Game Over, slightly adjusted to match the 45px height -->
+                  <Button mnemonicParsing="false" onAction="#handleQuit" prefHeight="45.0" prefWidth="140.0" style="-fx-background-color: transparent; -fx-border-color: #ef4444; -fx-text-fill: #ef4444; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-width: 2; -fx-cursor: hand;" text="Quitter">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Button>
                </children>
             </HBox>
          </children>
          <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="10.0" />
+            <Insets bottom="20.0" />
          </padding>
       </VBox>
    </bottom>

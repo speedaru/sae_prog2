@@ -10,7 +10,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #1a1c1e; -fx-background-radius: 12; -fx-border-radius: 12;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.uge.but.schtroumpf.controller.gui.phases.CouncilPhaseController">
+<!-- ADDED: -fx-border-color: #3f444c; -fx-border-width: 2; to match Production/Event -->
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #1a1c1e; -fx-background-radius: 12; -fx-border-color: #3f444c; -fx-border-width: 2; -fx-border-radius: 12;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.uge.but.schtroumpf.controller.gui.phases.CouncilPhaseController">
    
    <top>
       <VBox alignment="CENTER" spacing="6.0" BorderPane.alignment="CENTER">
@@ -84,8 +85,9 @@
       </HBox>
    </center>
 
+   <!-- UPDATED: Button is now 45px high, bold 16, Emerald Green, centered exactly like EventView -->
    <bottom>
-      <VBox alignment="CENTER" spacing="10.0" BorderPane.alignment="CENTER">
+      <VBox alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
          <children>
             
             <HBox alignment="CENTER" minHeight="30.0" prefHeight="30.0" style="-fx-background-color: #1a1c1e; -fx-background-radius: 6; -fx-border-color: #2d3139; -fx-border-width: 1; -fx-border-radius: 6;">
@@ -103,16 +105,16 @@
             
             <HBox alignment="CENTER">
                <children>
-                  <Button fx:id="finishButton" mnemonicParsing="false" onAction="#handleFinish" prefHeight="35.0" prefWidth="200.0" style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;" text="Terminer le Conseil">
+                  <Button fx:id="finishButton" mnemonicParsing="false" onAction="#handleFinish" prefHeight="45.0" prefWidth="220.0" style="-fx-background-color: #10b981; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand;" text="Terminer le Conseil">
                      <font>
-                        <Font name="System Bold" size="13.0" />
+                        <Font name="System Bold" size="16.0" />
                      </font>
                   </Button>
                </children>
             </HBox>
          </children>
          <padding>
-            <Insets bottom="12.0" left="20.0" right="20.0" top="5.0" />
+            <Insets bottom="20.0" left="20.0" right="20.0" top="5.0" />
          </padding>
       </VBox>
    </bottom>
