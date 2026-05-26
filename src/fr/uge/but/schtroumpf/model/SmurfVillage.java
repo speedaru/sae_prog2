@@ -227,7 +227,8 @@ public class SmurfVillage {
 	private static List<SmurfCharacter> createSmurfs() {
 		return List.of(
 			new GrandSmurf(),
-			new HandySmurf()
+			new HandySmurf(),
+			new Smurfette()
 		);
 	}
 }

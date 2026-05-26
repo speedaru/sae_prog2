@@ -1,6 +1,8 @@
 package fr.uge.but.schtroumpf.model.phases;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import fr.uge.but.schtroumpf.model.GameRandomness;
 import fr.uge.but.schtroumpf.model.ResourceType;
@@ -10,8 +12,8 @@ import fr.uge.but.schtroumpf.model.characters.SmurfCharacter;
 import fr.uge.but.schtroumpf.view.Logger;
 
 public class ProductionPhase implements GamePhase {
-	final int BASE_ENERGY_RECHARGE_RATE = 3;
-
+	final int BASE_ENERGY_RECHARGE_RATE = 1;
+	final int MAX_RESOURCE_GAIN = 4;
 	@Override public GamePhaseType getType() { return GamePhaseType.PRODUCTION_PHASE; }
 	
 	@Override
@@ -21,9 +23,14 @@ public class ProductionPhase implements GamePhase {
 		
 		// generate resources
 		var resourceGenerationEffects = new ArrayList<ResourceEffect>();
-		for (ResourceType resourceType : ResourceType.values()) {
-			int delta = GameRandomness.randomChoice(1, 2);
-			resourceGenerationEffects.add(new ResourceEffect(resourceType, delta));
+		int resource_to_gain= MAX_RESOURCE_GAIN;
+		List<ResourceType> types = new ArrayList<>(Arrays.asList(ResourceType.values()));
+		while(resource_to_gain>0) {
+			ResourceType type= types.get(GameRandomness.randomChoice(0,types.size()));
+			types.remove(type);
+			int delta = GameRandomness.randomChoice(1, Math.min(2, resource_to_gain)+1);
+			resourceGenerationEffects.add(new ResourceEffect(type,delta));
+			resource_to_gain -= delta;
 		}
 		
 		// apply generation effects

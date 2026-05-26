@@ -38,6 +38,9 @@ public class ProductionPhaseController implements PhaseSubController {
     	resourcesContainer.getChildren().clear();
 
     	for (ResourceType type : ResourceType.values()) {
+    		if(game.getVillage().getResourceDelta(type)==0) {
+    			continue;
+    		}
 			ResourceSummaryRow row = new ResourceSummaryRow(type);
 			row.updateDelta(game.getVillage().getResourceDelta(type));
 
