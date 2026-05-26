@@ -9,7 +9,7 @@ public enum SmurfType {
 
 	SMURFETTE(3, "Schtroumpfette", "Support emotionnel du village", null),
 	HANDY_SMURF(4, "Brico Schtroumpf", "artisan du village", Path.of("src/main/resources/sprites/handy_smurf.png")), 
-	GLUTTON_SMURF(5, "Schtroumpf Gourmand", "biblical levels of gluttony", Path.of("src/main/resources/sprites/glutton.png"));
+	GLUTTON_SMURF(5, "Schtroumpf Gourmand", "biblical levels of gluttony", Path.of("src/main/resources/sprites/glutton_smurf.png"));
 
 
 

@@ -13,7 +13,7 @@ public class EventPhase implements GamePhase {
 	public void onEnter(GamePhaseContext ctx) {
 		Logger.LogTrace("started random event phase");
 
-		GameEvent event = RandomEventGenerator.nextEvent();
+		GameEvent event = RandomEventGenerator.nextEvent(ctx.currentRound());
 		
 		// get and apply event effects
 		List<ResourceEffect> effectsToApply = event.trigger(ctx.village());

@@ -6,10 +6,6 @@ import fr.uge.but.schtroumpf.model.*;
 import fr.uge.but.schtroumpf.model.characters.*;
 
 public class GargamelAttack implements GameEvent {
-	
-	
-	
-	
 	@Override public GameEventType getEventType() { return GameEventType.GARGAMEL_ATTACK; }
 
 	@Override
@@ -23,5 +19,17 @@ public class GargamelAttack implements GameEvent {
 		impacts.add(new ResourceEffect(ResourceType.MORAL, -2));
 		
 		return impacts;
+	}
+	
+	public static int getFrequencyModifier(int currentRound) {
+		final int START_ROUND = 5;
+		final int DELTA_PER_ROUND = 10;
+		
+		if (currentRound >= START_ROUND) {
+			int rounds = currentRound - START_ROUND + 1;
+			return rounds * DELTA_PER_ROUND;
+		}
+
+		return 0;
 	}
 }

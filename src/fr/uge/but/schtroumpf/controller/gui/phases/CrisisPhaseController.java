@@ -16,7 +16,7 @@ import fr.uge.but.schtroumpf.model.Game;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.crises.Crisis;
 import fr.uge.but.schtroumpf.view.Logger;
-import fr.uge.but.schtroumpf.view.components.CrisisSummaryRow;
+import fr.uge.but.schtroumpf.view.components.*;
 
 public class CrisisPhaseController implements PhaseSubController {
     private GameController masterController;

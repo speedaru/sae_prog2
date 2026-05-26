@@ -7,10 +7,10 @@ import fr.uge.but.schtroumpf.model.GameRandomness;
 public class RandomEventGenerator {
 	private static final List<GameEventType> availableTypes = List.of(GameEventType.values());
 	
-	public static GameEvent nextEvent() {
+	public static GameEvent nextEvent(int currentRound) {
 		int totalFrequency = 0;
 		for (var type : availableTypes) {
-			totalFrequency += type.getFrequency();
+			totalFrequency += type.calcFrequency(currentRound);
 		}
 		
 		// pick random event
@@ -18,7 +18,7 @@ public class RandomEventGenerator {
 		
 		// pick event from event list that corresponds to rolled frequency
 		for (var type : availableTypes) {
-			roll -= type.getFrequency();
+			roll -= type.calcFrequency(currentRound);
 			if (roll <= 0) {
 				return GameEventType.getEvent(type);
 			}

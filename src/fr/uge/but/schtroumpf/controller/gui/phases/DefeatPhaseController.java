@@ -8,7 +8,7 @@ import fr.uge.but.schtroumpf.controller.PhaseSubController;
 import fr.uge.but.schtroumpf.controller.gui.windows.GameController;
 import fr.uge.but.schtroumpf.model.Game;
 import fr.uge.but.schtroumpf.model.crises.Crisis;
-import fr.uge.but.schtroumpf.view.components.CrisisSummaryRow;
+import fr.uge.but.schtroumpf.view.components.*;
 
 public class DefeatPhaseController implements PhaseSubController {
     private GameController masterController;
