@@ -19,7 +19,7 @@ public class CouncilView implements PhaseView {
 		// create smurf choices
 		int smurfNum = 1;
 		for (SmurfCharacter smurf : availableSmurfs) {
-			menu.addChoice(new MenuChoice(smurfNum++, smurf.getName()));
+			menu.addChoice(new MenuChoice(smurfNum++, smurf.getType().getName()));
 		}
 
 		menu.addChoice(new MenuChoice(0, "Terminer le conseil"));

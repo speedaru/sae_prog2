@@ -53,12 +53,6 @@ public class ConsumptionPhase implements GamePhase {
 	public ConsumptionReport getCurrentReport() { return this.currentReport; }
 	
 	private String determineSeason(int currentRound) {
-		return switch (currentRound / 3) {
-		case 0 -> "Praiontemps";
-		case 1 -> "Ete";
-		case 2 -> "Autaumn";
-		case 3 -> "Hyver";
-		default -> throw new IllegalArgumentException("Unexpected value: " + currentRound % 3);
-		};
+		return Season.getSeason(currentRound).getName();
 	}
 }

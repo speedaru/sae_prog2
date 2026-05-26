@@ -13,10 +13,12 @@ import fr.uge.but.schtroumpf.controller.Navigation.*;
 import fr.uge.but.schtroumpf.controller.AppController;
 import fr.uge.but.schtroumpf.controller.PhaseSubController;
 import fr.uge.but.schtroumpf.model.Game;
+import fr.uge.but.schtroumpf.model.Game.GameState;
 import fr.uge.but.schtroumpf.model.*;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
 import fr.uge.but.schtroumpf.model.characters.ResourceEffect;
 import fr.uge.but.schtroumpf.model.crises.*;
+import fr.uge.but.schtroumpf.model.events.EventHistory;
 import fr.uge.but.schtroumpf.model.phases.*;
 import fr.uge.but.schtroumpf.view.FxmlUtils;
 import fr.uge.but.schtroumpf.view.FxmlUtils.FxWindow;
@@ -105,11 +107,18 @@ public class GameController implements WindowSubController {
     
     /** exposed publicly for phase controllers to call when finished */
     public void advanceTurn() {
+    	if (game.getGameState() != GameState.RUNNING) {
+    		Logger.LogWarn("can't advance turn because game is not running");
+    		return;
+    	}
+    	
     	// tell game to go to next phase
         game.advance();
 
-        // execute and load new phase
-        executeAndLoadCurrentPhase();
+    	if (game.getGameState() == GameState.RUNNING) {
+    		// execute and load new phase
+    		executeAndLoadCurrentPhase();
+    	}
     }
     
     // ------------------------- private helpers
@@ -145,6 +154,19 @@ public class GameController implements WindowSubController {
     	phaseLabel.setText(phase.getType().getDisplayName());
     }
     
+    private void updateHudEventIndicator() {
+    	SmurfVillage village = game.getVillage();
+    	int currentRound = game.getCurrentRound();
+    	
+    	EventHistory event = village.getEventFromRound(currentRound);
+    	String eventStr = "Aucun";
+    	if (event != null) {
+    		eventStr = event.eventType().getTitle();
+    	}
+    	
+    	eventLabel.setText(String.format("Evenement: %s", eventStr));
+    }
+    
     private void executeAndLoadCurrentPhase() {
         // execute automatic logic before loading the UI view
         game.executePhaseLogic();
@@ -170,6 +192,7 @@ public class GameController implements WindowSubController {
         GamePhase currentPhase = game.getCurrentPhase();
         updateHudPhaseIndicator(currentPhase);
         updateHudRoundIndicator(game.getCurrentRound());
+        updateHudEventIndicator();
 
         Path phaseFxmlFile = currentPhase.getType().getFxmlFile();
         Logger.LogDebug("phase fxml: %s", phaseFxmlFile);

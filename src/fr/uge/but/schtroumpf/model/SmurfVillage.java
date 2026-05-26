@@ -127,9 +127,14 @@ public class SmurfVillage {
 		return List.copyOf(eventsHistory);
 	}
 
-	public EventHistory getEventFromRound(int round) {
-		return eventsHistory.stream().filter(e -> e.round() == round).findFirst().orElse(null);
-	}
+    public EventHistory getEventFromRound(int round) {
+    	for (EventHistory eventRecord : eventsHistory) {
+    		if (eventRecord.round() == round) {
+    			return eventRecord;
+    		}
+    	}
+    	return null;
+    }
 
 	public EventHistory getLastEvent() {
 		return eventsHistory.isEmpty() ? null : eventsHistory.getLast();

@@ -1,3 +1,2 @@
-- fenetre des reglages
 - fenetre de encyclopedie
 - reprendre partie + sauvegardes JSON

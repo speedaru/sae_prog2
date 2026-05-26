@@ -21,9 +21,7 @@ public class SettingsController implements WindowSubController {
 		this.router = router;
 	}
 
-    /**
-     * Called automatically by JavaFX after the FXML is loaded.
-     */
+    /** Called automatically by JavaFX after the FXML is loaded */
     @FXML
     public void initialize() {
         populateSettings();
@@ -48,18 +46,7 @@ public class SettingsController implements WindowSubController {
             }
         );
 
-//        // --- WIDGET 2 : Animations ---
-//        SettingToggleWidget animationSetting = new SettingToggleWidget(
-//            "Animations Fluides",
-//            "Active ou désactive les effets de transition et d'animation dans le menu.",
-//            "animation_icon.png", 
-//            true,                 
-//            (isActivated) -> {
-//                System.out.println("Animations are now: " + isActivated);
-//            }
-//        );
-
-        // Inject the widgets into the FXML layout
+        // inject the widgets into the fxml layout
         settingsListContainer.getChildren().addAll(colorblindSetting);
     }
 

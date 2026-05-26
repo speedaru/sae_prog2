@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import fr.uge.but.schtroumpf.model.ResourceType;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
+import fr.uge.but.schtroumpf.model.phases.Season;
 import fr.uge.but.schtroumpf.model.phases.ConsumptionRuleResult;
 import fr.uge.but.schtroumpf.model.characters.ResourceEffect;
 
@@ -12,8 +13,7 @@ public class WinterHeatingRule implements ConsumptionRule {
     @Override
     public ConsumptionRuleResult evaluate(SmurfVillage village, int turnNumber) {
         // Calculate season index (0: Spring, 1: Summer, 2: Autumn, 3: Winter)
-        int seasonIndex = ((turnNumber - 1) / 3) % 4;
-        boolean isWinter = (seasonIndex == 3);
+        boolean isWinter = Season.getSeason(turnNumber) == Season.WINTER;
 
         // This rule remains dormant during Spring, Summer, and Autumn
         if (!isWinter) {
