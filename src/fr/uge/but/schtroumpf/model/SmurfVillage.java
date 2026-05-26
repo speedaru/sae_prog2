@@ -84,8 +84,7 @@ public class SmurfVillage {
 		return result;
 	}
 
-	// ------------------------- round and snapshot tracking
-	// -------------------------
+	// ------------------------- round and snapshot tracking -------------------------
 
 	public void saveRoundResources() {
 		previousRoundResources = resourceManager.getResourcesSnap();
