@@ -33,7 +33,7 @@ public enum ResourceType {
 		for(var type : ResourceType.values()) {
 			if (code == type.code) {
 				return type;
-				}
+			}
 		}
 		throw new IllegalArgumentException("code pas connu");
 	}
