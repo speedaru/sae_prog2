@@ -7,7 +7,9 @@ import fr.uge.but.schtroumpf.model.characters.ResourceEffect;
 
 public interface GameEvent {
 	GameEventType getEventType();
-
+	
 	/** @return a list of effects that should be applied to the village */
 	List<ResourceEffect> trigger(SmurfVillage village);
 }
+
+
