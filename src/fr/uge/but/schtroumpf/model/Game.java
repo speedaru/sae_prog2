@@ -15,6 +15,7 @@ public class Game {
     }
 
     private static final int MAX_ROUNDS = 12;
+	private static final int INITIAL_RESOURCE_VALUES = 3;
 
     private final SmurfVillage village = new SmurfVillage();
     private int currentRound;
@@ -25,8 +26,14 @@ public class Game {
     public void startFirstMonth() {
         this.currentRound = 1;
         this.gameState = GameState.RUNNING;
-        village.saveRoundResources();
         currentPhase = new ProductionPhase();
+        
+        // init village by adding default resources
+        for (ResourceType type : ResourceType.values()) {
+        	village.updateResource(type, INITIAL_RESOURCE_VALUES);
+        }
+        village.saveRoundResources();
+        
         Logger.LogDebug("game model initialized, starting month 1");
     }
 

@@ -115,12 +115,22 @@ public class GameController implements WindowSubController {
     	// tell game to go to next phase
         game.advance();
 
-    	if (game.getGameState() == GameState.RUNNING) {
+        if (game.getGameState() == GameState.VICTORY) {
+        	loadCenterView(GamePhaseType.VICTORY.getFxmlFile());
+        }
+        else if (game.getGameState() == GameState.DEFEAT) {
+        	loadCenterView(GamePhaseType.DEFEAT.getFxmlFile());
+        }
+        else if (game.getGameState() == GameState.RUNNING) {
     		// execute and load new phase
     		executeAndLoadCurrentPhase();
     	}
     }
     
+    public AppController getRouter() {
+    	return router;
+    }
+
     // ------------------------- private helpers
     
     private void initUI() {

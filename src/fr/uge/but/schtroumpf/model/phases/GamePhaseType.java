@@ -7,7 +7,11 @@ public enum GamePhaseType {
 	EVENT_PHASE(2, "Evenement aleatoire", Path.of("phase_views/gui/EventView.fxml")),
 	COUNCIL_PHASE(3, "Conseil", Path.of("phase_views/gui/CouncilView.fxml")),
 	CONSUMPTION_PHASE(4, "Consommation", Path.of("phase_views/gui/ConsumptionView.fxml")),
-	CRISIS_PHASE(5, "Crise", Path.of("phase_views/gui/CrisisView.fxml"));
+	CRISIS_PHASE(5, "Crise", Path.of("phase_views/gui/CrisisView.fxml")),
+
+	// end phases
+	VICTORY(6, "Victoire", Path.of("phase_views/gui/VictoryView.fxml")),
+	DEFEAT(7, "Defaite", Path.of("phase_views/gui/DefeatView.fxml"));
 	
 	private int code;
 	private String displayName;

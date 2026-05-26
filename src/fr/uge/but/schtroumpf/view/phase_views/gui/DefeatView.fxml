@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #1a1c1e; -fx-background-radius: 12; -fx-border-color: #ef4444; -fx-border-width: 2; -fx-border-radius: 12;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.uge.but.schtroumpf.controller.gui.phases.DefeatPhaseController">
+   
+   <top>
+      <VBox alignment="CENTER" spacing="6.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="💀 DÉFAITE" textAlignment="CENTER" textFill="#ef4444">
+               <font>
+                  <Font name="System Bold" size="28.0" />
+               </font>
+            </Label>
+            <Label text="Le village s'est effondré sous le poids des crises simultanées." textFill="#fca5a5">
+               <font>
+                  <Font size="14.0" />
+               </font></Label>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="25.0" />
+         </padding>
+      </VBox>
+   </top>
+
+   <center>
+      <VBox alignment="TOP_CENTER" spacing="15.0" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="10.0" left="40.0" right="40.0" top="10.0" />
+         </padding>
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Label text="CAUSES DE L'EFFONDREMENT :" textFill="#ef4444">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background: transparent; -fx-background-color: transparent;" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
+               <content>
+                  <!-- This container will hold our reusable CrisisSummaryRows -->
+                  <VBox fx:id="fatalCrisesContainer" spacing="10.0" style="-fx-background-color: transparent;" />
+               </content>
+            </ScrollPane>
+         </children>
+      </VBox>
+   </center>
+
+   <bottom>
+      <HBox alignment="CENTER" prefHeight="75.0" spacing="20.0" BorderPane.alignment="CENTER">
+         <children>
+            <!-- Secondary action (Quit App entirely) -->
+            <Button mnemonicParsing="false" onAction="#handleQuitApp" prefHeight="45.0" prefWidth="140.0" style="-fx-background-color: transparent; -fx-text-fill: #94a3b8; -fx-border-color: #4b5563; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-width: 2; -fx-cursor: hand;" text="Quitter le jeu">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+            
+            <!-- Primary action (Back to main menu) -->
+            <Button mnemonicParsing="false" onAction="#handleMainMenu" prefHeight="45.0" prefWidth="250.0" style="-fx-background-color: #ef4444; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand;" text="Retour au Menu Principal">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Button>
+         </children>
+         <padding>
+            <Insets bottom="20.0" />
+         </padding>
+      </HBox>
+   </bottom>
+</BorderPane>

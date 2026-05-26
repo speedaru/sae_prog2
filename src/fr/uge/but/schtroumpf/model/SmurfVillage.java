@@ -20,7 +20,6 @@ public class SmurfVillage {
 	// modifier engine and crisis state
 	private final List<Crisis> activeCrises = new ArrayList<>();
 	private VillageModifierContext modifiers = new VillageModifierContext();
-//    private boolean gameLost = false;
 
 	public SmurfVillage() {
 		councilMembers = createSmurfs();
@@ -214,7 +213,14 @@ public class SmurfVillage {
 
 	/** must be called when crises are up to date, after checkAndUpdateCrises() */
 	public boolean isDefeated() {
-		return activeCrises.size() >= MAX_CRISES;
+		int crisisCount = 0;
+		for (ResourceType type : ResourceType.values()) {
+			if (resourceManager.get(type) <= 0) {
+				crisisCount += 1;
+			}
+		}
+		return crisisCount >= 3;
+//		return activeCrises.size() >= MAX_CRISES;
 	}
 
 	// ------------------------- private helpers -------------------------
