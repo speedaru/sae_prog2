@@ -228,7 +228,8 @@ public class SmurfVillage {
 		return List.of(
 			new GrandSmurf(),
 			new HandySmurf(),
-			new Smurfette()
+			new Smurfette(),
+			new GluttonSmurf()
 		);
 	}
 }
