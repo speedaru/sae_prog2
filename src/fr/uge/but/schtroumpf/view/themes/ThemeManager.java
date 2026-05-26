@@ -7,6 +7,11 @@ import javafx.scene.paint.Color;
 public class ThemeManager {
     private static ResourceTheme currentTheme = ResourceTheme.STANDARD;
 
+    public static void setCurrentTheme(ResourceTheme newTheme) {
+    	currentTheme = newTheme;
+    }
+    
+    
     public static Color getResourceSidebarBarColor(ResourceType type) {
     	return getResourceThemeColor(type);
     }

@@ -2,7 +2,7 @@ package fr.uge.but.schtroumpf;
 
 import module java.base;
 
-import fr.uge.but.schtroumpf.view.AppWindow;
+import fr.uge.but.schtroumpf.view.MainWindow;
 import fr.uge.but.schtroumpf.view.Logger;
 import fr.uge.but.schtroumpf.view.Logger.LoggerFlag;;
 
@@ -20,8 +20,8 @@ public class Main {
 		// test logger
 		Logger.LogDebug("hello");
 		
-		// launch fxml window
-		AppWindow fxmlApp = new AppWindow();
-		fxmlApp.launch();
+		// launch fxml fxWindow
+		MainWindow app = new MainWindow();
+		app.launch();
 	}
 }

@@ -5,7 +5,7 @@ import java.nio.file.Path;
 public enum WindowType {
 	START_WINDOW(1, Path.of("windows/gui/StartWindow.fxml")),
 	GAME_WINDOW(2, Path.of("windows/gui/GameWindow.fxml")),
-	SETTINGS_WINDOW(3, null),
+	SETTINGS_WINDOW(3, Path.of("windows/gui/SettingsWindow.fxml")),
 	EXIT(4, null);
 
 	private final int code;

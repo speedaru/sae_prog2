@@ -34,6 +34,9 @@ public class CrisisPhaseController implements PhaseSubController {
         renderCrises();
     }
 
+	@Override
+	public void updateHudColors() { }
+
     @FXML
     void handleNextMonth(ActionEvent event) {
         // Automatically resets energy and increments the turn counter in your Game loop

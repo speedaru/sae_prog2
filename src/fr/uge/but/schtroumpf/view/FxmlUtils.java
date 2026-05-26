@@ -1,12 +1,13 @@
 package fr.uge.but.schtroumpf.view;
 
 import module java.base;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 
 public class FxmlUtils {
 	public static FXMLLoader loadFxml(Path file) {
-		URL fxml = AppWindow.class.getResource(file.toString());
+		URL fxml = MainWindow.class.getResource(file.toString());
 		if (fxml == null) {
 			Logger.LogError("can't find: " + fxml);
 			return null;
@@ -15,10 +16,10 @@ public class FxmlUtils {
 		return new FXMLLoader(fxml);
 	}
 	
-	public static <C> Parent loadFxmlAndPassController(
+	public static <PC, SC> FxWindow<SC> loadFxmlAndPassController(
 			Path file,
-			C masterController,
-			BiConsumer<FXMLLoader, C> passControllerCallback
+			PC masterController,
+			BiConsumer<FXMLLoader, PC> passControllerCallback
 	) {
 		try {
 			FXMLLoader loader = FxmlUtils.loadFxml(file);
@@ -27,7 +28,8 @@ public class FxmlUtils {
 			}
 
 			Parent root = loader.load();
-
+			SC controller = loader.getController();
+			
 			try {
 				passControllerCallback.accept(loader, masterController);
 			} catch (ClassCastException e) {
@@ -37,12 +39,13 @@ public class FxmlUtils {
 			}
 
 			Logger.LogDebug("loaded %s", file);
-			return root;
-
+			return new FxWindow<SC>(root, controller);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		return null;
 	}
+
+    public record FxWindow<SC>(Parent root, SC controller) {}
 }

@@ -32,6 +32,11 @@ public class EventPhaseController implements PhaseSubController {
 		loadResourceRows();
 	}
 
+	@Override
+	public void updateHudColors() {
+		loadResourceRows();
+	}
+
     @FXML
     void handleNextPhaseButton(ActionEvent event) {
     	masterController.advanceTurn();

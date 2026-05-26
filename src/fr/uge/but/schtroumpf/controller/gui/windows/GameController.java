@@ -3,7 +3,6 @@ package fr.uge.but.schtroumpf.controller.gui.windows;
 import module java.base;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
@@ -20,6 +19,7 @@ import fr.uge.but.schtroumpf.model.characters.ResourceEffect;
 import fr.uge.but.schtroumpf.model.crises.*;
 import fr.uge.but.schtroumpf.model.phases.*;
 import fr.uge.but.schtroumpf.view.FxmlUtils;
+import fr.uge.but.schtroumpf.view.FxmlUtils.FxWindow;
 import fr.uge.but.schtroumpf.view.Logger;
 import fr.uge.but.schtroumpf.view.components.ResourceSidebarWidget;
 
@@ -36,6 +36,8 @@ public class GameController implements WindowSubController {
     
     private final Map<ResourceType, ResourceSidebarWidget> resourceSidebarWidgets = new EnumMap<>(ResourceType.class);
     private int currentCrisisPage = 1;
+    
+    private PhaseSubController currentPhaseSubController = null;
 
     @Override public void setRouter(AppController router) { this.router = router; }
 
@@ -43,9 +45,7 @@ public class GameController implements WindowSubController {
     public void initialize() {
         game.startFirstMonth();
         
-        // init UI
-        initResourceWidgets();
-        updateHudResources();
+        initUI();
 
         // load first phase
         executeAndLoadCurrentPhase();
@@ -74,14 +74,17 @@ public class GameController implements WindowSubController {
     }
 
     @FXML void handleQuitButton1(ActionEvent event) {
-        Logger.LogDebug("Click quit button, going back to start window");
+        Logger.LogDebug("Click quit button, going back to start fxWindow");
         router.navigate(NavigationAction.POP, null);
     }
 
-    // unused handlers
+    // button handlers
     @FXML void handleOpenEncyclopedia(ActionEvent event) { }
     @FXML void handleToggleUI(ActionEvent event) { }
-    @FXML void handleOpenSettings(ActionEvent event) { }
+
+    @FXML void handleOpenSettings(ActionEvent event) {
+    	router.navigate(NavigationAction.PUSH, WindowType.SETTINGS_WINDOW);
+    }
 
     public void updateHudResources() {
         SmurfVillage village = game.getVillage();
@@ -99,6 +102,14 @@ public class GameController implements WindowSubController {
         }
     }
     
+    // refreshes colors (used when changing color blind mode)
+    public void updateHudColors() {
+    	initUI();
+    	if (currentPhaseSubController != null) {
+    		currentPhaseSubController.updateHudColors();
+    	}
+    }
+    
     /** exposed publicly for phase controllers to call when finished */
     public void advanceTurn() {
     	// tell game to go to next phase
@@ -109,6 +120,17 @@ public class GameController implements WindowSubController {
     }
     
     // ------------------------- private helpers
+    
+    private void initUI() {
+    	// clear existing stuff
+    	if (resourceSidebarWidgets.size() > 0) {
+			resourceSidebarWidgets.clear();
+    	}
+		resourcesContainer.getChildren().clear();
+
+        initResourceWidgets();
+        updateHudResources();
+    }
     
     private void initResourceWidgets() {
     	if (resourceSidebarWidgets.size() > 0) {
@@ -164,13 +186,14 @@ public class GameController implements WindowSubController {
     private void loadCenterView(Path fxmlFile) {
     	centerContainer.getChildren().clear();
 
-    	Parent root = FxmlUtils.loadFxmlAndPassController(fxmlFile, this, (loader, masterCtlr) -> {
+    	FxWindow<PhaseSubController> window = FxmlUtils.loadFxmlAndPassController(fxmlFile, this, (loader, masterCtlr) -> {
     		PhaseSubController controller = (PhaseSubController)loader.getController();
 			controller.setMasterController(masterCtlr, this.game);
+			currentPhaseSubController = controller;
     	});
 
-    	if (root != null) {
-			centerContainer.getChildren().add(root);
+    	if (window.root() != null) {
+			centerContainer.getChildren().add(window.root());
     	}
     }
     
@@ -208,6 +231,6 @@ public class GameController implements WindowSubController {
     }
 
     private void handleVictory() {
-		Logger.LogDebug("Victory achieved! Popping back to start window.");
+		Logger.LogDebug("Victory achieved! Popping back to start fxWindow.");
     }
 }

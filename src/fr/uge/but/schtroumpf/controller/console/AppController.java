@@ -35,7 +35,7 @@ public class AppController {
 		return switch (windowType) {
 		case START_WINDOW -> new StartController();
 		case GAME_WINDOW -> new GameController();
-		default -> throw new IllegalArgumentException("unknown window type : " + windowType);
+		default -> throw new IllegalArgumentException("unknown fxWindow type : " + windowType);
 		};
 	}
 }

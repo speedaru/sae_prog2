@@ -22,7 +22,7 @@ import fr.uge.but.schtroumpf.model.characters.ResourceEffect;
 
 /**
  * Interactive accordion widget representing a council member's active ability.
- * Optimized with dynamic text boundary wrappers to prevent window expansion.
+ * Optimized with dynamic text boundary wrappers to prevent fxWindow expansion.
  */
 public class AbilityAccordionWidget extends VBox {
 

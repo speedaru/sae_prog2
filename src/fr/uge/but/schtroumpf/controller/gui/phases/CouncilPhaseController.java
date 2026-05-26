@@ -54,6 +54,11 @@ public class CouncilPhaseController implements PhaseSubController {
 		loadCouncilMembers();
 	}
 
+	@Override
+	public void updateHudColors() {
+		loadCouncilMembers();
+	}
+
     @FXML
     void handleFinish(ActionEvent event) {
     	masterController.advanceTurn();

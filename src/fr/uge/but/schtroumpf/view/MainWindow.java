@@ -6,7 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-public class AppWindow extends Application {
+public class MainWindow extends Application {
 	static final int WINDOW_WIDTH = 1280;
 	static final int WINDOW_HEIGHT = 720;
 	static final String WINDOW_TITLE = "Village des Schtroumpfs";
@@ -34,6 +34,6 @@ public class AppWindow extends Application {
 	}
 	
 	public void launch() {
-        Application.launch(AppWindow.class);
+        Application.launch(MainWindow.class);
 	}
 }
