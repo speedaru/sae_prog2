@@ -24,6 +24,8 @@ public class ResourceSummaryRow extends HBox {
     private final ImageView resourceIconImage;
     private final Label deltaLabel;
     private final Label nameLabel;
+    
+    private final Runnable themeUpdater = this::applyCurrentThemeColors;
 
     public ResourceSummaryRow(ResourceType type) {
         this.type = type;
@@ -58,6 +60,8 @@ public class ResourceSummaryRow extends HBox {
 
         // 5. Build layout children node hierarchy
         this.getChildren().addAll(resourceIconImage, deltaLabel, nameLabel);
+        
+        ThemeManager.addThemeChangeListener(themeUpdater);
     }
 
     /**
@@ -77,6 +81,10 @@ public class ResourceSummaryRow extends HBox {
         }
     }
 
+    private void applyCurrentThemeColors() {
+    	this.nameLabel.setTextFill(ThemeManager.getResourceColor(type));
+    }
+    
     /**
      * Tries to locate graphic image indicators inside your build paths.
      */

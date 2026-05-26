@@ -25,11 +25,6 @@ public class ProductionPhaseController implements PhaseSubController {
 		loadResourceRows();
 	}
 	
-	@Override
-    public void updateHudColors() {
-		loadResourceRows();
-	}
-
     @FXML private VBox resourcesContainer;
     @FXML private Button nextPhaseButton;
 

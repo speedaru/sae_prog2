@@ -17,14 +17,16 @@ import fr.uge.but.schtroumpf.view.themes.ThemeManager;
  * Displays the crisis name, the missing resource cause, and the systemic penalty.
  */
 public class CrisisSummaryRow extends VBox {
-    
     private final CrisisType crisisType;
+
+    private final Runnable themeUpdater = this::applyCurrentThemeColors;
 
     public CrisisSummaryRow(CrisisType crisisType) {
         this.crisisType = crisisType;
 
         Color resourceColor = ThemeManager.getResourceColor(crisisType.getCause());
         String hexColor = colorToHex(resourceColor);
+        
         
         // 1. Configure parent container constraints (Alert Card Style)
         this.setSpacing(6.0);
@@ -60,6 +62,8 @@ public class CrisisSummaryRow extends VBox {
 
         // 4. Assemble the final node hierarchy
         this.getChildren().addAll(headerRow, descriptionLabel);
+        
+        ThemeManager.addThemeChangeListener(themeUpdater);
     }
     
     public CrisisType getCrisisType() {
@@ -69,8 +73,17 @@ public class CrisisSummaryRow extends VBox {
     private String colorToHex(Color color) {
     	return String.format("#%02X%02X%02X",
     			(int)(color.getRed() * 255),
-    			(int)(color.getBlue() * 255),
-    			(int)(color.getGreen() * 255)
+    			(int)(color.getGreen() * 255),
+    			(int)(color.getBlue() * 255)
     	);
+    }
+
+    private void applyCurrentThemeColors() {
+        Color resourceColor = ThemeManager.getResourceColor(crisisType.getCause());
+        String hexColor = colorToHex(resourceColor);
+
+    	String style = this.getStyle();
+    	style += "-fx-border-color: " + hexColor + "; ";
+    	this.setStyle(style);
     }
 }

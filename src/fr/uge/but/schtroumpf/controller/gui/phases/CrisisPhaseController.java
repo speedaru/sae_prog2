@@ -15,6 +15,7 @@ import fr.uge.but.schtroumpf.controller.gui.windows.GameController;
 import fr.uge.but.schtroumpf.model.Game;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.crises.Crisis;
+import fr.uge.but.schtroumpf.view.Logger;
 import fr.uge.but.schtroumpf.view.components.CrisisSummaryRow;
 
 public class CrisisPhaseController implements PhaseSubController {
@@ -33,9 +34,6 @@ public class CrisisPhaseController implements PhaseSubController {
 
         renderCrises();
     }
-
-	@Override
-	public void updateHudColors() { }
 
     @FXML
     void handleNextMonth(ActionEvent event) {
@@ -64,6 +62,7 @@ public class CrisisPhaseController implements PhaseSubController {
         // create crisis widgets
         for (Crisis crisis : activeCrises) {
             CrisisSummaryRow crisisRow = new CrisisSummaryRow(crisis.getType());
+            Logger.LogDebug("added crisis, cause: %s", crisis.getType().getCause());
             crisisCardsContainer.getChildren().add(crisisRow);
         }
     }

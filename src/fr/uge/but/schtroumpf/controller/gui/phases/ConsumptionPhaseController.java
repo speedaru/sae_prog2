@@ -39,11 +39,6 @@ public class ConsumptionPhaseController implements PhaseSubController {
 		renderConsumptionReport();
 	}
 
-	@Override
-	public void updateHudColors() {
-		renderConsumptionReport();
-	}
-
     @FXML
     void handleNextPhaseButton(ActionEvent event) {
     	masterController.advanceTurn();

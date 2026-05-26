@@ -1,14 +1,34 @@
 package fr.uge.but.schtroumpf.view.themes;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+
 import fr.uge.but.schtroumpf.model.ResourceType;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResultType;
 import javafx.scene.paint.Color;
 
 public class ThemeManager {
+	// Stores weak references so we don't accidentally keep dead UI widgets alive in RAM
+    private static final List<WeakReference<Runnable>> listeners = new ArrayList<>();
     private static ResourceTheme currentTheme = ResourceTheme.STANDARD;
 
+    public static void addThemeChangeListener(Runnable listener) {
+        listeners.add(new WeakReference<>(listener));
+    }
+    
     public static void setCurrentTheme(ResourceTheme newTheme) {
     	currentTheme = newTheme;
+    	
+    	// Iterate backward to safely remove dead references while firing active ones
+        for (int i = listeners.size() - 1; i >= 0; i--) {
+            Runnable listener = listeners.get(i).get();
+            if (listener != null) {
+                listener.run(); // Widget is alive, update its colors!
+            } else {
+                listeners.remove(i); // Widget was garbage collected, prune the dead link
+            }
+        }
     }
     
     

@@ -22,7 +22,7 @@ public class ProductionPhase implements GamePhase {
 		// generate resources
 		var resourceGenerationEffects = new ArrayList<ResourceEffect>();
 		for (ResourceType resourceType : ResourceType.values()) {
-			int delta = GameRandomness.randomChoice(1, 3);
+			int delta = GameRandomness.randomChoice(1, 2);
 			resourceGenerationEffects.add(new ResourceEffect(resourceType, delta));
 		}
 		

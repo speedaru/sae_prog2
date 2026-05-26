@@ -37,7 +37,8 @@ public class GameController implements WindowSubController {
     private final Map<ResourceType, ResourceSidebarWidget> resourceSidebarWidgets = new EnumMap<>(ResourceType.class);
     private int currentCrisisPage = 1;
     
-    private PhaseSubController currentPhaseSubController = null;
+    @SuppressWarnings("unused")
+	private PhaseSubController currentPhaseSubController = null;
 
     @Override public void setRouter(AppController router) { this.router = router; }
 
@@ -102,14 +103,6 @@ public class GameController implements WindowSubController {
         }
     }
     
-    // refreshes colors (used when changing color blind mode)
-    public void updateHudColors() {
-    	initUI();
-    	if (currentPhaseSubController != null) {
-    		currentPhaseSubController.updateHudColors();
-    	}
-    }
-    
     /** exposed publicly for phase controllers to call when finished */
     public void advanceTurn() {
     	// tell game to go to next phase
@@ -144,12 +137,12 @@ public class GameController implements WindowSubController {
         }
     }
 
-    private void updateHudPhaseIndicator(GamePhase phase) {
-    	phaseLabel.setText(phase.getType().getDisplayName());
+    private void updateHudRoundIndicator(int round) {
+    	monthLabel.setText(String.format("%d (%s)", round, getMonthFromNumber(round)));
     }
 
-    private void updateHudRoundIndicator(int round) {
-    	phaseLabel.setText(String.format("%d (%s)", round, getMonthFromNumber(round)));
+    private void updateHudPhaseIndicator(GamePhase phase) {
+    	phaseLabel.setText(phase.getType().getDisplayName());
     }
     
     private void executeAndLoadCurrentPhase() {
@@ -158,7 +151,6 @@ public class GameController implements WindowSubController {
 
         // 4. Update the center viewport layout panel to the next phase sequence
         syncPhaseView();
-        updateHudRoundIndicator(game.getCurrentRound());
 
         // 3. Re-render resources to immediately reflect deltas on the spot
         updateHudResources();
@@ -177,6 +169,7 @@ public class GameController implements WindowSubController {
         
         GamePhase currentPhase = game.getCurrentPhase();
         updateHudPhaseIndicator(currentPhase);
+        updateHudRoundIndicator(game.getCurrentRound());
 
         Path phaseFxmlFile = currentPhase.getType().getFxmlFile();
         Logger.LogDebug("phase fxml: %s", phaseFxmlFile);

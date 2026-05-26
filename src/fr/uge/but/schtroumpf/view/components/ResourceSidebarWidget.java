@@ -18,6 +18,8 @@ public class ResourceSidebarWidget extends VBox {
     private final Label quantityLabel;
     private final Label deltaLabel;
 
+    private final Runnable themeUpdater = this::applyCurrentThemeColors;
+
     public ResourceSidebarWidget(ResourceType type) {
         this.type = type;
         
@@ -60,6 +62,8 @@ public class ResourceSidebarWidget extends VBox {
         
         // 5. Pack children structural graphs
         this.getChildren().addAll(nameLabel, interactionRow);
+
+        ThemeManager.addThemeChangeListener(themeUpdater);
     }
 
     /**
@@ -86,5 +90,9 @@ public class ResourceSidebarWidget extends VBox {
     /** Called when the user flips the color-blind setting */
     public void refreshColors() {
         progressFill.setFill(ThemeManager.getResourceSidebarBarColor(type));
+    }
+    
+    private void applyCurrentThemeColors() {
+    	this.progressFill.setFill(ThemeManager.getResourceSidebarBarColor(type));
     }
 }

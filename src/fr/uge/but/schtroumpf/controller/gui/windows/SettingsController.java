@@ -6,9 +6,7 @@ import javafx.scene.layout.VBox;
 
 import fr.uge.but.schtroumpf.controller.AppController;
 import fr.uge.but.schtroumpf.controller.Navigation.NavigationAction;
-import fr.uge.but.schtroumpf.model.WindowType;
 import fr.uge.but.schtroumpf.controller.WindowSubController;
-import fr.uge.but.schtroumpf.view.Logger;
 import fr.uge.but.schtroumpf.view.components.SettingToggleWidget;
 import fr.uge.but.schtroumpf.view.themes.ThemeManager;
 import fr.uge.but.schtroumpf.view.themes.ThemeManager.ResourceTheme;
@@ -46,14 +44,6 @@ public class SettingsController implements WindowSubController {
             	}
             	else {
 					ThemeManager.setCurrentTheme(ResourceTheme.STANDARD);
-            	}
-            	
-            	WindowSubController controller = router.getWindowController(WindowType.GAME_WINDOW);
-            	try {
-            		GameController gameController = (GameController)controller;
-            		gameController.updateHudColors();
-            	} catch (ClassCastException e) {
-            		Logger.LogError("got game window controller but cant cast it to GameController");
             	}
             }
         );
