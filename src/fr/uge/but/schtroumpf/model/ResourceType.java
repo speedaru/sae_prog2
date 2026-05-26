@@ -29,4 +29,12 @@ public enum ResourceType {
 	public String toString() {
 		return displayName;
 	}
+	public static ResourceType getResourceFromCode(int code) {
+		for(var type : ResourceType.values()) {
+			if (code == type.code) {
+				return type;
+			}
+		}
+		throw new IllegalArgumentException("code pas connu");
+	}
 }

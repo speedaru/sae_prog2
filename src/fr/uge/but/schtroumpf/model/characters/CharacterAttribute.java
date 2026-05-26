@@ -3,7 +3,8 @@ package fr.uge.but.schtroumpf.model.characters;
 import java.util.Objects;
 
 public enum CharacterAttribute {
-	WISDOM(1, "Sagesse");
+	WISDOM(1, "Sagesse"),
+	KINDNESS(2, "Gentillesse");
 	
 	private final int code;
     private final String name;
