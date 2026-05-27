@@ -46,7 +46,7 @@ public class ResourceSummaryRow extends HBox {
         // 1. Configure parent row container constraints matching your FXML properties
         this.setAlignment(Pos.CENTER_LEFT);
         this.setPrefHeight(30.0);
-        this.setSpacing(8.0);
+        this.setSpacing(2);
         this.setPadding(new Insets(0, 15.0, 0, 15.0));
 
         // 2. Instantiate and configure the Resource Icon Graphic
@@ -62,7 +62,7 @@ public class ResourceSummaryRow extends HBox {
         // 3. Delta value text tracker (styled big and bold)
         this.deltaLabel = new Label();
         this.deltaLabel.setAlignment(Pos.CENTER);
-        this.deltaLabel.setPrefWidth(35.0); // Slightly wider to safely hold double-digit numbers like "-10"
+        this.deltaLabel.setPrefWidth(30.0); // Slightly wider to safely hold double-digit numbers like "-10"
         this.deltaLabel.setFont(Font.font("System", FontWeight.BOLD, 14.0));
 
         // 4. Structural Resource Identity Label

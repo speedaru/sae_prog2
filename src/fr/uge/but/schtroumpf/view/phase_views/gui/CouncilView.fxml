@@ -6,27 +6,48 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <!-- ADDED: -fx-border-color: #3f444c; -fx-border-width: 2; to match Production/Event -->
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #1a1c1e; -fx-background-radius: 12; -fx-border-color: #3f444c; -fx-border-width: 2; -fx-border-radius: 12;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.uge.but.schtroumpf.controller.gui.phases.CouncilPhaseController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #1a1c1e; -fx-background-radius: 12; -fx-border-color: #3f444c; -fx-border-width: 2; -fx-border-radius: 12;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.uge.but.schtroumpf.controller.gui.phases.CouncilPhaseController">
    
    <top>
-      <VBox alignment="CENTER" spacing="6.0" BorderPane.alignment="CENTER">
+<HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="700.0" BorderPane.alignment="BOTTOM_RIGHT">
          <children>
-            <Label text="CONSEIL DES SCHTROUMPFS" textAlignment="CENTER" textFill="#f8fafc">
+            
+            <Label text="CONSEIL DES SCHTROUMPFS" textFill="#f8fafc">
                <font>
                   <Font name="System Bold" size="20.0" />
                </font>
             </Label>
+            
+            <javafx.scene.layout.Region HBox.hgrow="ALWAYS" />
+            <Label text="Actions disponibles :" textFill="#94a3b8">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label fx:id="actionsCounterLabel" text="3 / 3" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="11.0" />
+               </font>
+               <padding>
+                  <Insets bottom="2.0" left="8.0" right="8.0" top="2.0" />
+               </padding>
+            </Label>
+            
          </children>
+         <BorderPane.margin>
+            <Insets bottom="4.0" />
+         </BorderPane.margin>
          <padding>
-            <Insets bottom="5.0" left="20.0" right="20.0" top="15.0" />
+            <Insets left="24.0" right="24.0" top="8.0" />
          </padding>
-      </VBox>
+      </HBox>
    </top>
 
    <center>

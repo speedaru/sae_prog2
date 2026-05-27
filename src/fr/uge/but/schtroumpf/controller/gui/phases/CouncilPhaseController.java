@@ -29,7 +29,7 @@ public class CouncilPhaseController implements PhaseSubController {
     @FXML private VBox detailAbilitiesContainer, detailPanelContent, emptyPlaceholderCard, smurfsListContainer;
     @FXML private HBox detailCardContainer;
     @FXML private Button finishButton;
-    @FXML private Label statusFeedbackLabel;
+    @FXML private Label statusFeedbackLabel, actionsCounterLabel;;
     
 	 // View State Layers
     private final SmurfDetailCard detailHeaderCard = new SmurfDetailCard();
@@ -125,23 +125,18 @@ public class CouncilPhaseController implements PhaseSubController {
         detailAbilitiesContainer.getChildren().clear();
         abilityRows.clear();
 
+        // create ability widgets
         for (CharacterAbility ability : characterAbilities) {
             AbilityAccordionWidget abilityWidget = new AbilityAccordionWidget(ability);
 
             abilityWidget.populateEffectsDisplay(ability);
-
-            if (!smurf.hasEnoughEnergy(ability)) {
-                abilityWidget.setActivationAllowed(false, "Énergie Insuffisante");
-            } else if (!smurf.hasRequiredResources(village, ability)) {
-                abilityWidget.setActivationAllowed(false, "Ressources Manquantes");
-            } else {
-                abilityWidget.setActivationAllowed(true, "Activer");
-            }
+            setAbilityButtonConstraints(smurf, ability, abilityWidget);
 
             // Bind the click action confirmation callback hook
             abilityWidget.setOnAbilityActivated(_ -> {
             	executeAbility(smurf, ability);
             	updateAbilityRows(smurf); // disable some rows if not enough energy now
+            	updateRemainingAbilitiesCounter();
             });
 
             detailAbilitiesContainer.getChildren().add(abilityWidget);
@@ -160,16 +155,33 @@ public class CouncilPhaseController implements PhaseSubController {
             if (abilityWidget == null) continue;
             
             // only update button state
-            if (!smurf.hasEnoughEnergy(ability)) {
-                abilityWidget.setActivationAllowed(false, "Énergie Insuffisante");
-            } else if (!smurf.hasRequiredResources(village, ability)) {
-                abilityWidget.setActivationAllowed(false, "Ressources Manquantes");
-            } else {
-                abilityWidget.setActivationAllowed(true, "Activer");
-            }
+            setAbilityButtonConstraints(smurf, ability, abilityWidget);
         }
     }
+    
+    private void updateRemainingAbilitiesCounter() {
+    	SmurfVillage village = game.getVillage();
+    	int max = village.getMaxAbilitiesPerTurn();
+    	int used = village.getAbilitiesUsedThisTurn();
+    	int remaining = max - used;
+    	
+    	actionsCounterLabel.setText(String.format("%d/%d", remaining, max));
+    }
 
+    private void setAbilityButtonConstraints(SmurfCharacter smurf, CharacterAbility ability, AbilityAccordionWidget widget) {
+    	SmurfVillage village = game.getVillage();
+    	
+    	if (village.isActionLimitReached()) {
+    		widget.setActivationAllowed(false, String.format("Limite de %d actions", village.getMaxAbilitiesPerTurn()));
+    	} else if (!smurf.hasEnoughEnergy(ability)) {
+    		widget.setActivationAllowed(false, "Énergie Insuffisante");
+    	} else if (!smurf.hasRequiredResources(village, ability)) {
+    		widget.setActivationAllowed(false, "Ressources Manquantes");
+    	} else {
+    		widget.setActivationAllowed(true, "Activer");
+    	}
+    }
+    
     /**
      * Triggers model state changes and re-synchronizes all view counters instantly.
      */

@@ -11,12 +11,14 @@ import fr.uge.but.schtroumpf.model.crises.*;
 
 public class SmurfVillage {
 	public final static int MAX_CRISES = 3; // 3+ crises = lose
+	private final static int MAX_ABILITIES_PER_TURN = 3;
 
 	private final ResourceManager resourceManager = new ResourceManager();
 	private List<ResourceSnapshot> previousRoundResources;
 	private List<SmurfCharacter> councilMembers;
 	private ArrayList<EventHistory> eventsHistory = new ArrayList<EventHistory>();
-
+	private int abilitiesUsedThisTurn = 0;
+	
 	// modifier engine and crisis state
 	private final List<Crisis> activeCrises = new ArrayList<>();
 	private VillageModifierContext modifiers = new VillageModifierContext();
@@ -74,15 +76,46 @@ public class SmurfVillage {
 	}
 
 	public AbilityResult executeCouncilMemberAbility(SmurfCharacter smurf, CharacterAbility ability) {
+		if (isActionLimitReached()) {
+            throw new IllegalStateException("Limite d'actions atteinte pour ce tour.");
+        }
 		if (!smurf.canExecute(this, ability)) {
 			throw new IllegalStateException("Action processing denied: Preconditions unmet.");
 		}
+		
+		// use smurf energy
 		smurf.updateEnergy(this, -ability.energyCost());
 
+		// apply effects
 		AbilityResult result = ability.actionLogic().apply(this);
 		this.applyEffects(result.effectsToApply());
+		
+		// increase used abilities counter
+		this.abilitiesUsedThisTurn++;
 		return result;
 	}
+	
+	// ------------------------- smurf abilities -------------------------
+
+    /**
+     * Resets the turn's action counter. 
+     * Call this at the start of a new turn (e.g., when saving round resources or replenishing energy).
+     */
+    public void resetTurnAbilitiesCounter() {
+        this.abilitiesUsedThisTurn = 0;
+    }
+
+    public int getAbilitiesUsedThisTurn() {
+        return this.abilitiesUsedThisTurn;
+    }
+
+    public int getMaxAbilitiesPerTurn() {
+        return MAX_ABILITIES_PER_TURN;
+    }
+
+    public boolean isActionLimitReached() {
+        return this.abilitiesUsedThisTurn >= MAX_ABILITIES_PER_TURN;
+    }
 
 	// ------------------------- round and snapshot tracking -------------------------
 
