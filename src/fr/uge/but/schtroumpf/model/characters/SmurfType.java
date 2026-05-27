@@ -8,9 +8,9 @@ public enum SmurfType {
 	OLD_SMURF(2, "Vieux Schtroumpf", "vieux con", null),
 	SMURFETTE(3, "Schtroumpfette", "Support emotionnel du village", Path.of("src/main/resources/sprites/smurfette.png")),
 	HANDY_SMURF(4, "Brico Schtroumpf", "artisan du village", Path.of("src/main/resources/sprites/handy_smurf.png")), 
-	GLUTTON_SMURF(5, "Schtroumpf Gourmand", "biblical levels of gluttony", Path.of("src/main/resources/sprites/glutton_smurf.png"));
-
-
+	GLUTTON_SMURF(5, "Schtroumpf Gourmand", "biblical levels of gluttony", Path.of("src/main/resources/sprites/glutton_smurf.png")),
+	GROUCHY_SMURF(6, "Schtroumpf Grognon", "Maintient la discipline et anticipe les menaces", null),
+	BRAINY_SMURF(7, "Schtroumpf Lunettes", "Intellectuel du village", null);
 
 	private final int code;
     private final String name;
