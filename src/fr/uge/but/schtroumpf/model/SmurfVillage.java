@@ -262,7 +262,9 @@ public class SmurfVillage {
 			new GrandSmurf(),
 			new HandySmurf(),
 			new Smurfette(),
-			new GluttonSmurf()
+			new GluttonSmurf(),
+			new GrouchySmurf(),
+			new BrainySmurf()
 		);
 	}
 }
