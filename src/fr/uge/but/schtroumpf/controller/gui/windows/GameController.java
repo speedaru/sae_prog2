@@ -5,8 +5,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 
 import fr.uge.but.schtroumpf.controller.WindowSubController;
 import fr.uge.but.schtroumpf.controller.Navigation.*;
@@ -31,7 +31,7 @@ public class GameController implements WindowSubController {
 
     @FXML private Label monthLabel, phaseLabel, eventLabel;
     @FXML private Button mysteriousButton, encyclopediaButton, uiToggleButton, settingsButton, quitButton1;
-    @FXML private FlowPane resourcesContainer;
+    @FXML private VBox resourcesContainer;
     @FXML private StackPane centerContainer;
     @FXML private Label crisisTitleLabel, crisisCauseLabel, crisisEffectsLabel, crisisPageLabel;
     @FXML private Button prevCrisisBtn, nextCrisisBtn;

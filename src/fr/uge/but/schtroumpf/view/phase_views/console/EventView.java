@@ -7,7 +7,6 @@ import fr.uge.but.schtroumpf.model.phases.GamePhaseContext;
 import fr.uge.but.schtroumpf.view.windows.console.GameWindow;
 
 public class EventView implements PhaseView {
-	@Override
 	public void display(GamePhaseContext ctx) {
 //		ctx.window().displayCurrentEvent(ctx.currentRound(), ctx.village());
 	}

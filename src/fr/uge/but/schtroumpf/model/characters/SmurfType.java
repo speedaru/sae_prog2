@@ -6,8 +6,7 @@ import java.util.Objects;
 public enum SmurfType {
 	GRAND_SMURF(1, "Grand Schtroumpf", "gardien du village", Path.of("src/main/resources/sprites/grand_smurf.png")),
 	OLD_SMURF(2, "Vieux Schtroumpf", "vieux con", null),
-
-	SMURFETTE(3, "Schtroumpfette", "Support emotionnel du village", null),
+	SMURFETTE(3, "Schtroumpfette", "Support emotionnel du village", Path.of("src/main/resources/sprites/smurfette.png")),
 	HANDY_SMURF(4, "Brico Schtroumpf", "artisan du village", Path.of("src/main/resources/sprites/handy_smurf.png")), 
 	GLUTTON_SMURF(5, "Schtroumpf Gourmand", "biblical levels of gluttony", Path.of("src/main/resources/sprites/glutton_smurf.png"));
 
