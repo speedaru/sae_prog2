@@ -17,12 +17,13 @@ import javafx.scene.text.FontWeight;
 import java.util.List;
 import java.util.Objects;
 
+import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility;
 import fr.uge.but.schtroumpf.model.characters.ResourceEffect;
 
 /**
  * Interactive accordion widget representing a council member's active ability.
- * Optimized with dynamic text boundary wrappers to prevent fxWindow expansion.
+ * Upgraded with multi-line wrap text formatting for missing resources and explicit cost vs output details.
  */
 public class AbilityAccordionWidget extends VBox {
 
@@ -34,7 +35,11 @@ public class AbilityAccordionWidget extends VBox {
     private final CharacterAbility ability;
     private final Button activateButton;
     private final Label chevronLabel;
+    
     private final VBox detailsContainer;
+    private final VBox requirementsSection;
+    private final VBox requirementsContainer;
+    private final VBox effectsSection;
     private final VBox effectsListContainer;
     private final Label descriptionLabel;
 
@@ -86,10 +91,11 @@ public class AbilityAccordionWidget extends VBox {
             "-fx-background-radius: 4;"
         );
 
+        // MODIFIED: Increased width/height to properly contain wrapped text like "Ressources manquantes"
         this.activateButton = new Button("Activer");
-        this.activateButton.setMinSize(75, 26);
-        this.activateButton.setPrefSize(75, 26);
-        this.activateButton.setMaxSize(75, 26);
+        this.activateButton.setMinSize(90, 36);
+        this.activateButton.setPrefSize(90, 36);
+        this.activateButton.setMaxSize(90, 36);
         setActivationAllowed(true, "Activer");
 
         this.activateButton.setOnAction(_ -> {
@@ -105,8 +111,8 @@ public class AbilityAccordionWidget extends VBox {
         // 2. Collapsible Details Dropdown Panel
         // ==========================================
         this.detailsContainer = new VBox();
-        this.detailsContainer.setSpacing(4);
-        this.detailsContainer.setPadding(new Insets(5, 6, 5, 12)); 
+        this.detailsContainer.setSpacing(12); // Slightly increased spacing between text blocks
+        this.detailsContainer.setPadding(new Insets(10, 12, 10, 12)); 
         this.detailsContainer.setStyle(
             "-fx-background-color: #1a1c1e; " +
             "-fx-background-radius: 0 0 6 6;"
@@ -120,14 +126,25 @@ public class AbilityAccordionWidget extends VBox {
         this.descriptionLabel.setTextFill(Color.web("#cbd5e1"));
         this.descriptionLabel.setFont(Font.font("System", 11));
         this.descriptionLabel.setWrapText(true);
-        
-        // CRITICAL FIX: Forces text wrapping vertically based on parent width bounds
         this.descriptionLabel.maxWidthProperty().bind(this.widthProperty().subtract(40));
 
-        this.effectsListContainer = new VBox();
-        this.effectsListContainer.setSpacing(0);
+        // Paragraph 1: Resources Required (Costs)
+        this.requirementsSection = new VBox(6);
+        Label reqHeader = new Label("Ressources requises :");
+        reqHeader.setTextFill(Color.web("#fca5a5")); // Soft alert red for cost requirements
+        reqHeader.setFont(Font.font("System", FontWeight.BOLD, 12));
+        this.requirementsContainer = new VBox(2);
+        this.requirementsSection.getChildren().addAll(reqHeader, this.requirementsContainer);
 
-        this.detailsContainer.getChildren().addAll(this.descriptionLabel, this.effectsListContainer);
+        // Paragraph 2: Potential Effects Produced (Yields)
+        this.effectsSection = new VBox(6);
+        Label effHeader = new Label("Effets potentiels produits :");
+        effHeader.setTextFill(Color.web("#34d399")); // Emerald green for produced yields
+        effHeader.setFont(Font.font("System", FontWeight.BOLD, 12));
+        this.effectsListContainer = new VBox(2);
+        this.effectsSection.getChildren().addAll(effHeader, this.effectsListContainer);
+
+        this.detailsContainer.getChildren().addAll(this.descriptionLabel, this.requirementsSection, this.effectsSection);
         this.getChildren().addAll(outerRow, this.detailsContainer);
 
         // ==========================================
@@ -141,22 +158,50 @@ public class AbilityAccordionWidget extends VBox {
             event.consume();
         });
 
-        // Auto-populate the resource summary changes lists right on instantiation
+        // Auto-populate all sub-row displays inside the panels
         populateEffectsDisplay(ability);
     }
 
     /**
-     * Rebuilds the internal resource modification list view.
+     * Rebuilds the dynamic costs and produced outputs lists.
      */
     public void populateEffectsDisplay(CharacterAbility ability) {
         Objects.requireNonNull(ability, "L'abilité ne peut pas être nulle.");
-        this.effectsListContainer.getChildren().clear();
+        
+        // 1. Populate Required Resources (Flat quantities)
+        this.requirementsContainer.getChildren().clear();
+        List<ResourceSnapshot> requiredResources = ability.requiredResources();
+        
+        if (requiredResources == null || requiredResources.isEmpty()) {
+            this.requirementsSection.setVisible(false);
+            this.requirementsSection.setManaged(false);
+        } else {
+            this.requirementsSection.setVisible(true);
+            this.requirementsSection.setManaged(true);
+            for (ResourceSnapshot req : requiredResources) {
+                // Instantiated with false flag to display flat uncolored quantities
+                ResourceSummaryRow row = new ResourceSummaryRow(req.type(), false);
+                row.updateDelta(req.quantity());
+                this.requirementsContainer.getChildren().add(row);
+            }
+        }
 
+        // 2. Populate Potential Yields (Delta-colored tracking changes)
+        this.effectsListContainer.getChildren().clear();
         List<ResourceEffect> primaryEffects = ability.primaryEffects();
-        for (ResourceEffect effect : primaryEffects) {
-            ResourceSummaryRow row = new ResourceSummaryRow(effect.resourceType());
-            row.updateDelta(effect.delta());
-            this.effectsListContainer.getChildren().add(row);
+        
+        if (primaryEffects == null || primaryEffects.isEmpty()) {
+            this.effectsSection.setVisible(false);
+            this.effectsSection.setManaged(false);
+        } else {
+            this.effectsSection.setVisible(true);
+            this.effectsSection.setManaged(true);
+            for (ResourceEffect effect : primaryEffects) {
+                // Instantiated with default true flag to display red/green delta values
+                ResourceSummaryRow row = new ResourceSummaryRow(effect.resourceType(), true);
+                row.updateDelta(effect.delta());
+                this.effectsListContainer.getChildren().add(row);
+            }
         }
     }
 
@@ -170,14 +215,24 @@ public class AbilityAccordionWidget extends VBox {
             this.activateButton.setText("Activer");
             this.activateButton.setStyle(
                 "-fx-background-color: #10b981; -fx-text-fill: white; -fx-background-radius: 4; " +
-                "-fx-font-weight: bold; -fx-font-size: 10px; -fx-cursor: hand;"
+                "-fx-font-weight: bold; -fx-font-size: 11px; -fx-cursor: hand;"
             );
         } else {
             this.activateButton.setDisable(true);
-            this.activateButton.setText(lockReason != null ? lockReason : "Verrouillé");
+            
+            // Intercept standard missing indicators and apply elegant wrapping layouts
+            String buttonText = lockReason;
+            if (lockReason != null && (lockReason.equalsIgnoreCase("resources ...") || lockReason.toLowerCase().contains("resource"))) {
+                buttonText = "Ressources\nmanquantes";
+            } else if (buttonText == null) {
+                buttonText = "Verrouillé";
+            }
+
+            this.activateButton.setText(buttonText);
             this.activateButton.setStyle(
                 "-fx-background-color: #4b5563; -fx-text-fill: #94a3b8; -fx-background-radius: 4; " +
-                "-fx-font-weight: bold; -fx-font-size: 9px; -fx-cursor: not-allowed;"
+                "-fx-font-weight: bold; -fx-font-size: 10px; -fx-cursor: not-allowed; " +
+                "-fx-text-alignment: center; -fx-wrap-text: true;" // Force text centering and multi-line wrapping
             );
         }
     }
