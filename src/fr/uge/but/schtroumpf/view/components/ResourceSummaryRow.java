@@ -12,7 +12,7 @@ import javafx.scene.text.FontWeight;
 
 import java.nio.file.Path;
 
-import fr.uge.but.schtroumpf.model.ResourceType;
+import fr.uge.but.schtroumpf.model.types.ResourceType;
 import fr.uge.but.schtroumpf.view.themes.ThemeManager;
 
 /**

@@ -5,9 +5,13 @@ import module java.base;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
 import fr.uge.but.schtroumpf.model.characters.*;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
-import fr.uge.but.schtroumpf.model.events.*;
-import fr.uge.but.schtroumpf.view.Logger;
 import fr.uge.but.schtroumpf.model.crises.*;
+import fr.uge.but.schtroumpf.model.save.GameSave;
+import fr.uge.but.schtroumpf.model.types.EventHistory;
+import fr.uge.but.schtroumpf.model.types.ResourceMap;
+import fr.uge.but.schtroumpf.model.types.ResourceType;
+import fr.uge.but.schtroumpf.model.types.VillageModifierContext;
+import fr.uge.but.schtroumpf.model.utils.Logger;
 
 public class SmurfVillage {
 	public final static int MAX_CRISES = 3; // 3+ crises = lose
@@ -16,17 +20,54 @@ public class SmurfVillage {
 	private final ResourceManager resourceManager = new ResourceManager();
 	private List<ResourceSnapshot> previousRoundResources;
 	private List<SmurfCharacter> councilMembers;
-	private ArrayList<EventHistory> eventsHistory = new ArrayList<EventHistory>();
+	private ArrayList<EventHistory> eventsHistory = new ArrayList<>();
 	private int abilitiesUsedThisTurn = 0;
 	
 	// modifier engine and crisis state
-	private final List<Crisis> activeCrises = new ArrayList<>();
+	private final ArrayList<Crisis> activeCrises = new ArrayList<>();
 	private VillageModifierContext modifiers = new VillageModifierContext();
 
 	public SmurfVillage() {
 		councilMembers = createSmurfs();
 	}
 
+	// ------------------------- game saving and loading -------------------------
+	
+	public void loadSave(GameSave.VillageState state) {
+		abilitiesUsedThisTurn = state.abilitiesUsedThisTurn();
+		
+		// current resources
+		for (var entry : state.currentResources().entrySet()) {
+			resourceManager.set(entry.getKey(), entry.getValue());
+		}
+		Logger.LogDebug("loaded current resoruces:\n%s", resourceManager);
+
+		// previous resources
+		ResourceManager previousRoundResourceManager = new ResourceManager(state.previousRoundResources());
+		previousRoundResources = previousRoundResourceManager.getResourcesSnap();
+		Logger.LogDebug("loaded previous round resources:\n%s", resourceManager);
+		
+		// council members
+		councilMembers = new ArrayList<>();
+		for (var savedMember : state.councilMembers()) {
+			SmurfCharacter newMember = SmurfCharacter.fromType(savedMember.type());
+			councilMembers.add(newMember);
+			newMember.setEnergy(savedMember.currentEnergy());
+		}
+		
+		// event history
+		loadEventsHistory(state.eventsHistory());
+		
+		// load crises
+		activeCrises.clear();
+		for (GameSave.CrisisState savedCrisis : state.activeCrises()) {
+			activeCrises.add(Crisis.fromType(savedCrisis.type()));
+		}
+		
+		// load modifiers
+		modifiers = new VillageModifierContext(state.modifiers());
+	}
+	
 	// ------------------------- resource management -------------------------
 
 	public List<ResourceSnapshot> getResources() {
@@ -122,6 +163,10 @@ public class SmurfVillage {
 	public void saveRoundResources() {
 		previousRoundResources = resourceManager.getResourcesSnap();
 	}
+	
+	public List<ResourceSnapshot> getPreviousRoundResources() {
+		return previousRoundResources;
+	}
 
 	public List<ResourceSnapshot> getResourcesDiff() {
 		if (previousRoundResources == null)
@@ -154,7 +199,7 @@ public class SmurfVillage {
 		eventsHistory.add(recordedEvent);
 	}
 
-	public List<EventHistory> getHistory() {
+	public List<EventHistory> getEventsHistory() {
 		return List.copyOf(eventsHistory);
 	}
 
@@ -171,8 +216,18 @@ public class SmurfVillage {
 		return eventsHistory.isEmpty() ? null : eventsHistory.getLast();
 	}
 
+	private void loadEventsHistory(List<EventHistory> history) {
+		eventsHistory = new ArrayList<>(history);
+		Logger.LogDebug("loaded event history (%d events), last event: %s",
+				eventsHistory.size(), eventsHistory.getLast().eventType().name());
+	}
+
 	// ------------------------- hooks for modifier engine -------------------------
 
+	public VillageModifierContext getModifiers() {
+		return modifiers;
+	}
+	
 	/**
 	 * replaces standard GameRandomness.rollChance applies active crisis penalties
 	 * to random roll
@@ -256,7 +311,19 @@ public class SmurfVillage {
 	}
 
 	// ------------------------- private helpers -------------------------
+	
+	private List<Crisis> calcCrisesFromResources(ResourceMap resources) {
+		ArrayList<Crisis> crises = new ArrayList<>();
 
+		for (CrisisType type : CrisisType.values()) {
+			if (type.shouldTrigger(resources)) {
+				crises.add(Crisis.fromType(type));
+			}
+		}
+		
+		return List.copyOf(crises);
+	}
+	
 	private static List<SmurfCharacter> createSmurfs() {
 		return List.of(
 			new GrandSmurf(),

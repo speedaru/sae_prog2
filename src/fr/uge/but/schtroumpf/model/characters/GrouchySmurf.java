@@ -7,6 +7,7 @@ import java.util.Map;
 import fr.uge.but.schtroumpf.model.*;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResultType;
+import fr.uge.but.schtroumpf.model.types.ResourceType;
 
 public class GrouchySmurf implements SmurfCharacter {
     private int energy = 10;
@@ -18,6 +19,7 @@ public class GrouchySmurf implements SmurfCharacter {
 
     @Override public SmurfType getType() { return SmurfType.GROUCHY_SMURF; }
     @Override public int getEnergy() { return energy; }
+	@Override public void setEnergy(int value) { energy = value; }
 
     @Override
     public void updateEnergy(SmurfVillage village, int delta) {

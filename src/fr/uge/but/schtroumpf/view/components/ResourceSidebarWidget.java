@@ -10,9 +10,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import fr.uge.but.schtroumpf.model.ResourceType;
 import fr.uge.but.schtroumpf.view.themes.ThemeManager;
 import fr.uge.but.schtroumpf.model.ResourceManager;
+import fr.uge.but.schtroumpf.model.types.ResourceType;
 
 public class ResourceSidebarWidget extends VBox {
     // 1. Restore the dynamic ratio tracker!

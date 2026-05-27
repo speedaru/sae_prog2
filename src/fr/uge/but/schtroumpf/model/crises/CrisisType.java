@@ -2,9 +2,10 @@ package fr.uge.but.schtroumpf.model.crises;
 
 import module java.base;
 
-import fr.uge.but.schtroumpf.model.ResourceType;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.crises.Crises.*;
+import fr.uge.but.schtroumpf.model.types.ResourceMap;
+import fr.uge.but.schtroumpf.model.types.ResourceType;
 
 public enum CrisisType {
 	FAMINE(1, ResourceType.BERRIES, "Famine", "moins d’actions aux prochains tours, ou moins de ressources aux prochains tours"),
@@ -47,15 +48,9 @@ public enum CrisisType {
 	public boolean shouldTrigger(SmurfVillage village) {
 		return village.getResourceQuantity(this.cause) == 0;
 	}
-	
-	/** factory */
-	public static Crisis getCrisis(CrisisType type) {
-		return switch (type) {
-			case FAMINE -> new FamineCrisis();
-			case EPIDEMIC -> new EpidemicCrisis();
-			case REVOLT -> new RevoltCrisis();
-			case MASSIVE_ATTACK -> new MassiveAttackCrisis();
-			case DARK_AGES -> new DarkAgesCrisis();
-		};
+
+	/** returns true if crisis cause resource is at 0 */
+	public boolean shouldTrigger(ResourceMap resources) {
+		return resources.get(this.cause) == 0;
 	}
 }

@@ -4,7 +4,7 @@ import module java.base;
 
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.crises.*;
-import fr.uge.but.schtroumpf.view.Logger;
+import fr.uge.but.schtroumpf.model.utils.Logger;
 
 public class CrisisPhase implements GamePhase {
 	@Override public GamePhaseType getType() { return GamePhaseType.CRISIS_PHASE; }
@@ -18,7 +18,7 @@ public class CrisisPhase implements GamePhase {
 		List<Crisis> activeCrises = new ArrayList<Crisis>();
 		for (CrisisType crisisType : CrisisType.values()) {
 			if (crisisType.shouldTrigger(village)) {
-				activeCrises.add(CrisisType.getCrisis(crisisType));
+				activeCrises.add(Crisis.fromType(crisisType));
 				Logger.LogDebug("triggered %s crisis", crisisType.name());
 			}
 		}

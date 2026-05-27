@@ -1,4 +1,6 @@
-package fr.uge.but.schtroumpf.model;
+package fr.uge.but.schtroumpf.model.types;
+
+import fr.uge.but.schtroumpf.model.save.GameSave;
 
 public class VillageModifierContext {
 	private double successChanceBonus = 0.0;
@@ -6,6 +8,17 @@ public class VillageModifierContext {
     private int maxEnergyDelta = 0;
     private double efficiencyMultiplier = 1.0;
     private boolean passiveFoodProductionBlocked = false;
+    
+    public VillageModifierContext() {
+    }
+    
+    public VillageModifierContext(GameSave.VillageModifierCtxState state) {
+    	this.successChanceBonus = state.successChanceBonus();
+    	this.energyRechargeRateDelta = state.energyRechargeRateDelta();
+    	this.maxEnergyDelta = state.maxEnergyDelta();
+    	this.efficiencyMultiplier = state.efficiencyMultiplier();
+    	this.passiveFoodProductionBlocked = state.passiveFoodProductionBlocked();
+    }
     
     // ------------------------- adders / setters
     

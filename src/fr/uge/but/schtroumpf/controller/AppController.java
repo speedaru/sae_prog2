@@ -7,9 +7,10 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import fr.uge.but.schtroumpf.controller.Navigation.*;
-import fr.uge.but.schtroumpf.model.WindowType;
-import fr.uge.but.schtroumpf.view.FxmlUtils;
-import fr.uge.but.schtroumpf.view.FxmlUtils.FxWindow;
+import fr.uge.but.schtroumpf.model.types.WindowType;
+import fr.uge.but.schtroumpf.model.utils.FxmlUtils;
+import fr.uge.but.schtroumpf.model.utils.Logger;
+import fr.uge.but.schtroumpf.model.utils.FxmlUtils.FxWindow;
 
 public class AppController {
     private final Deque<AppWindow> windowStack = new ArrayDeque<>();
@@ -55,10 +56,16 @@ public class AppController {
         }
     }
     
-    public WindowSubController getWindowController(WindowType type) {
+    @SuppressWarnings("unchecked")
+	public <C extends WindowSubController> C getWindowController(WindowType type) {
     	for (AppWindow window : windowStack) {
     		if (window.type() == type) {
-    			return window.fxWindow().controller();
+    			try {
+    				WindowSubController controller = window.fxWindow().controller();
+    				return (C)controller;
+    			} catch (ClassCastException e) {
+    				Logger.LogError("failed to cast window controller");
+    			}
     		}
     	}
     	return null;

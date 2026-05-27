@@ -4,7 +4,7 @@ import module java.base;
 
 import fr.uge.but.schtroumpf.controller.SubController;
 import fr.uge.but.schtroumpf.controller.Navigation.NavigationResult;
-import fr.uge.but.schtroumpf.model.WindowType;
+import fr.uge.but.schtroumpf.model.types.WindowType;
 
 public class AppController {
 	private final Deque<SubController> stack = new ArrayDeque<SubController>();

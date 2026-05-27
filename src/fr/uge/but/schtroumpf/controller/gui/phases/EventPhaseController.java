@@ -12,7 +12,7 @@ import fr.uge.but.schtroumpf.controller.PhaseSubController;
 import fr.uge.but.schtroumpf.controller.gui.windows.GameController;
 import fr.uge.but.schtroumpf.model.Game;
 import fr.uge.but.schtroumpf.model.characters.ResourceEffect;
-import fr.uge.but.schtroumpf.model.events.EventHistory;
+import fr.uge.but.schtroumpf.model.types.EventHistory;
 import fr.uge.but.schtroumpf.view.components.ResourceSummaryRow;
 
 public class EventPhaseController implements PhaseSubController {

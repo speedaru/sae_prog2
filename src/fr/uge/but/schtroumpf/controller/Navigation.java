@@ -1,6 +1,6 @@
 package fr.uge.but.schtroumpf.controller;
 
-import fr.uge.but.schtroumpf.model.WindowType;
+import fr.uge.but.schtroumpf.model.types.WindowType;
 
 public class Navigation {
 	public enum NavigationAction {

@@ -11,4 +11,15 @@ public interface GamePhase {
     
     /** factory method that returns the next phase */
     GamePhase getNextPhase();
+    
+	public static GamePhase fromType(GamePhaseType type) {
+		return switch (type) {
+			case PRODUCTION_PHASE -> new ProductionPhase();
+			case CONSUMPTION_PHASE -> new ConsumptionPhase();
+			case COUNCIL_PHASE -> new CouncilPhase();
+			case CRISIS_PHASE -> new CrisisPhase();
+			case EVENT_PHASE -> new EventPhase();
+			default -> throw new IllegalArgumentException("unsported type");
+		};
+	}
 }

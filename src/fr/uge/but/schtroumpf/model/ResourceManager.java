@@ -2,14 +2,44 @@ package fr.uge.but.schtroumpf.model;
 
 import module java.base;
 
+import fr.uge.but.schtroumpf.model.types.ResourceMap;
+import fr.uge.but.schtroumpf.model.types.ResourceType;
+
 public class ResourceManager {
 	public record ResourceSnapshot(ResourceType type, int quantity) { }
 
 	// hash map of resource type and quantity
-	private final ResourceMap resources = new ResourceMap();
+	private ResourceMap resources = new ResourceMap();
 
 	// constants
 	public static final int MAX_QUANTITY = 10;
+	
+	public ResourceManager() { }
+	
+	// create using snapshot list
+	public ResourceManager(List<ResourceSnapshot> snapshot) {
+		for (ResourceSnapshot snap : snapshot) {
+			resources.put(snap.type(), snap.quantity);
+		}
+	}
+
+	// create using resource map
+	public ResourceManager(ResourceMap resources) {
+		// create copy of map
+		this.resources = new ResourceMap(resources);
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Resource Manager:\n");
+		
+		for (var entry : resources.entrySet()) {
+			sb.append(String.format("%s: %d\n", entry.getKey(), entry.getValue()));
+		}
+		
+		return sb.toString().stripTrailing();
+	}
 
 	public void set(ResourceType type, int quantity) { 
 		// if resource doesn't exist create it with a quantity of 0

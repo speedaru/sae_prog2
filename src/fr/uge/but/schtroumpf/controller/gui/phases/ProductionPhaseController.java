@@ -5,7 +5,7 @@ import java.util.Objects;
 import fr.uge.but.schtroumpf.controller.PhaseSubController;
 import fr.uge.but.schtroumpf.controller.gui.windows.GameController;
 import fr.uge.but.schtroumpf.model.Game;
-import fr.uge.but.schtroumpf.model.ResourceType;
+import fr.uge.but.schtroumpf.model.types.ResourceType;
 import fr.uge.but.schtroumpf.view.components.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

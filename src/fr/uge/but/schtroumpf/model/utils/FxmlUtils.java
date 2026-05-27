@@ -1,7 +1,8 @@
-package fr.uge.but.schtroumpf.view;
+package fr.uge.but.schtroumpf.model.utils;
 
 import module java.base;
 
+import fr.uge.but.schtroumpf.view.MainWindow;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 

@@ -38,17 +38,5 @@ public enum GameEventType {
 		return frequency + getFreqModifier.apply(currentRound);
 	}
 	
-	public static GameEvent getEvent(GameEventType type) {
-		return switch(type) {
-			case SARSAPARILLA_STORM -> new SarsaparillaStorm();
-			case GARGAMEL_ATTACK -> new GargamelAttack();
-			case MAGIC_BERRIES -> new MagicBerries();
-			case FRIENDLY_VILLAGE -> new FriendlyVillage();
-			case SMURF_PARTY -> new SmurfParty();
-			case FOREST_CURSE -> new ForestCurse();
-			default -> throw new IllegalArgumentException("invalid type"); 
-		};
-	}
-	
 	private static int noFreqModifier(int currentRound) { return 0; }
 }

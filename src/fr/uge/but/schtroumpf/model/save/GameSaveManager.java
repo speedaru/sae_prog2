@@ -1,163 +1,147 @@
 package fr.uge.but.schtroumpf.model.save;
 
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.databind.DatabindException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import fr.uge.but.schtroumpf.model.Game;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
-import fr.uge.but.schtroumpf.model.ResourceType;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
 import fr.uge.but.schtroumpf.model.characters.SmurfCharacter;
-import fr.uge.but.schtroumpf.model.characters.SmurfType;
-import fr.uge.but.schtroumpf.model.events.EventHistory;
-import fr.uge.but.schtroumpf.model.events.GameEventType;
-import fr.uge.but.schtroumpf.model.phases.GamePhase;
+import fr.uge.but.schtroumpf.model.crises.Crisis;
+import fr.uge.but.schtroumpf.model.types.EventHistory;
+import fr.uge.but.schtroumpf.model.types.ResourceMap;
+import fr.uge.but.schtroumpf.model.types.VillageModifierContext;
+import fr.uge.but.schtroumpf.model.utils.Logger;
 
 public class GameSaveManager {
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
-    private final ObjectMapper objectMapper;
-
-    public GameSaveManager() {
-        this.objectMapper = new ObjectMapper();
-        // Enables pretty printing so players can easily read or manually inspect their JSON files if desired
-        this.objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+    public static void init() {
+        // enable tab indenting in json dump
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
     }
 
-    /**
-     * Serializes an active game session to a specific file destination path.
-     */
-    public void serializeGame(Game game, Path targetPath) throws IOException {
+    /** serialize Game and outputs json file in a specified file path */
+    public static void serializeGame(Game game, Path targetPath) throws IOException {
         SmurfVillage village = game.getVillage();
 
-        // 1. Map Engine State
-        String phaseClassName = game.getCurrentPhase() != null ? game.getCurrentPhase().getClass().getName() : null;
-        GameSaveDTO.EngineStateDTO engineState = new GameSaveDTO.EngineStateDTO(
-            game.getCurrentRound(),
-            game.getGameState(),
-            phaseClassName
-        );
-
-        // 2. Map Resource Quantities
-        Map<ResourceType, Integer> currentResources = village.getResources().stream()
-            .collect(Collectors.toMap(ResourceSnapshot::type, ResourceSnapshot::quantity, (v1, v2) -> v1, () -> new EnumMap<>(ResourceType.class)));
-
-        // Safely extract snapshot modifications variations diff arrays
-        Map<ResourceType, Integer> previousResources = new EnumMap<>(ResourceType.class);
-        try {
-            var diffs = village.getResourcesDiff(); 
-            for (ResourceType type : ResourceType.values()) {
-                previousResources.put(type, village.getResourceQuantity(type) - village.getResourceDelta(type));
-            }
-        } catch (Exception e) {
-            // Fallback default mapping layers if historical rounds are uninitialized
-            for (ResourceType type : ResourceType.values()) { previousResources.put(type, 3); }
-        }
-
-        GameSaveDTO.VillageStateDTO villageState = new GameSaveDTO.VillageStateDTO(
-            village.getAbilitiesUsedThisTurn(),
-            currentResources,
-            previousResources
-        );
-
-        // 3. Map Council Characters Status Energy metrics
-        List<GameSaveDTO.CouncilMemberStateDTO> councilState = village.getCouncilMembers().stream()
-            .map(smurf -> new GameSaveDTO.CouncilMemberStateDTO(smurf.getType(), smurf.getEnergy()))
-            .toList();
-
-        // 4. Map History Log Indexes
-        List<GameSaveDTO.EventHistoryDTO> historyState = village.getHistory().stream()
-            .map(hist -> new GameSaveDTO.EventHistoryDTO(hist.round(), hist.type().name()))
-            .toList();
+        GameSave.EngineState engineState = serialEngine(game);
+        GameSave.VillageState villageState = serializeVillage(village);
 
         // Assemble unified contract and save to disk
-        GameSaveDTO saveFileContent = new GameSaveDTO(engineState, villageState, councilState, historyState);
+        GameSave saveFileContent = new GameSave(engineState, villageState);
         objectMapper.writeValue(targetPath.toFile(), saveFileContent);
     }
 
     /**
      * Deserializes a file from a path back into an initialized operational Game loop model.
      */
-    public Game deserializeGame(Path sourcePath) throws IOException {
-        // Read file contents matching our JSON contract schema definitions
-        GameSaveDTO data = objectMapper.readValue(sourcePath.toFile(), GameSaveDTO.class);
+    public static Game deserializeGame(Path sourcePath) {
+        // read json file into game save struct
+        GameSave save;
+		try {
+			save = objectMapper.readValue(sourcePath.toFile(), GameSave.class);
 
-        Game game = new Game();
-        SmurfVillage village = game.getVillage();
+			Game game = new Game();
+			SmurfVillage village = game.getVillage();
 
-        // 1. Rehydrate basic Engine configurations
-        try {
-            var roundField = Game.class.getDeclaredField("currentRound");
-            roundField.setAccessible(true);
-            roundField.set(game, data.engineState().currentRound());
+			game.loadSave(save);
+			village.loadSave(save.villageState());
 
-            var stateField = Game.class.getDeclaredField("gameState");
-            stateField.setAccessible(true);
-            stateField.set(game, data.engineState().gameState());
-
-            if (data.engineState().currentPhaseClassName() != null) {
-                GamePhase phaseInstance = (GamePhase) Class.forName(data.engineState().currentPhaseClassName())
-                    .getDeclaredConstructor().newInstance();
-                var phaseField = Game.class.getDeclaredField("currentPhase");
-                phaseField.setAccessible(true);
-                phaseField.set(game, phaseInstance);
-            }
-        } catch (Exception e) {
-            throw new IOException("Failed to rehydrate Game core lifecycle context maps.", e);
-        }
-
-        // 2. Rehydrate Resource Banks Quantities
-        data.villageState().currentResources().forEach(village::setResourceQuantity);
-
-        // Reconstruct historical records arrays snapshots safely
-        List<ResourceSnapshot> historicalSnap = new ArrayList<>();
-        data.villageState().previousRoundResources().forEach((type, qty) -> {
-            historicalSnap.add(new ResourceSnapshot(type, qty));
-        });
-        try {
-            var prevRoundField = SmurfVillage.class.getDeclaredField("previousRoundResources");
-            prevRoundField.setAccessible(true);
-            prevRoundField.set(village, historicalSnap);
-        } catch (Exception e) {
-            throw new IOException("Failed to link past historical resource arrays snapshots.", e);
-        }
-
-        // 3. Rehydrate Turn Counter
-        try {
-            var turnCounterField = SmurfVillage.class.getDeclaredField("abilitiesUsedThisTurn");
-            turnCounterField.setAccessible(true);
-            turnCounterField.set(village, data.villageState().abilitiesUsedThisTurn());
-        } catch (Exception e) {
-            throw new IOException("Failed to restore action constraint counter structures.", e);
-        }
-
-        // 4. Rehydrate Council Character energy parameters
-        for (GameSaveDTO.CouncilMemberStateDTO smurfData : data.councilState()) {
-            SmurfCharacter character = village.getCouncilMember(smurfData.type());
-            // Use standard direct application method updating parameters inside the domain boundaries
-            character.updateEnergy(village, smurfData.currentEnergy() - character.getEnergy());
-        }
-
-        // 5. Rehydrate History metrics pipelines
-        for (GameSaveDTO.EventHistoryDTO histData : data.history()) {
-            GameEventType type = GameEventType.valueOf(histData.eventTypeName());
-            village.recordEvent(new EventHistory(histData.round(), type));
-        }
-
-        // 🚨 CRITICAL SANITY REFRESH: Force the engine to look at the newly injected resources 
-        // to immediately recalculate active crises and context blackboards completely fresh from scratch!
-        // This guarantees that modifier values (+/- energy rates, etc.) are valid immediately after load.
-        // Assuming your standard game initialization method loop runs a validation pipeline, e.g.:
-        // game.recalculateActiveVillageCrisesContexts();
-
-        return game;
+			return game;
+		} catch (StreamReadException e) {
+			e.printStackTrace();
+		} catch (DatabindException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        
+		Logger.LogError("failed to load save");
+		return null;
     }
-}ackage fr.uge.but.schtroumpf.model;
+    
+    private static GameSave.EngineState serialEngine(Game game) {
+        return new GameSave.EngineState(
+			game.getCurrentRound(),
+			game.getGameState(),
+			game.getCurrentPhase().getType()
+        );
+    }
+    
+    private static GameSave.VillageState serializeVillage(SmurfVillage village) {
+    	// resources
+    	ResourceMap currentResources = resourcesSnapToMap(village.getResources());
+    	ResourceMap previousResources = resourcesSnapToMap(village.getPreviousRoundResources());
 
-public class GameSaveManager {
+        // council members
+        List<GameSave.CouncilMemberState> councilState = serializeCouncilMembers(village.getCouncilMembers());;
+        
+        // events history
+        List<EventHistory> historyState = village.getEventsHistory();
 
+        // active crises
+        List<GameSave.CrisisState> crises = new ArrayList<>();
+        for (Crisis crisis : village.getActiveCrises()) {
+        	GameSave.CrisisState save = new GameSave.CrisisState(
+				crisis.getType()
+			);
+        	crises.add(save);
+        }
+
+        // game modifiers
+        GameSave.VillageModifierCtxState modifiersState = serializeModifiers(village.getModifiers());
+        
+        return new GameSave.VillageState(
+        	village.getAbilitiesUsedThisTurn(),
+        	currentResources,
+        	previousResources,
+        	councilState,
+        	historyState,
+        	crises,
+        	modifiersState
+        );
+    }
+    
+    private static List<GameSave.CouncilMemberState> serializeCouncilMembers(List<SmurfCharacter> councilMembers) {
+        ArrayList<GameSave.CouncilMemberState> councilState = new ArrayList<>();
+        
+        for (SmurfCharacter smurf : councilMembers) {
+        	councilState.add(new GameSave.CouncilMemberState(smurf.getType(), smurf.getEnergy()));
+        }
+        
+        return List.copyOf(councilState);
+    }
+    
+    private static GameSave.VillageModifierCtxState serializeModifiers(VillageModifierContext modifiers) {
+    	return new GameSave.VillageModifierCtxState(
+    		modifiers.getSuccessChanceBonus(),
+    		modifiers.getEnergyRechargeRateDelta(),
+    		modifiers.getMaxEnergyDelta(),
+    		modifiers.getEfficiencyMultiplier(),
+    		modifiers.isPassiveFoodProductionBlocked()
+    	);
+    }
+    
+    // ------------------------- helpers
+    
+    private static ResourceMap resourcesSnapToMap(List<ResourceSnapshot> snapshots) {
+        ResourceMap map = new ResourceMap();
+        
+        for (ResourceSnapshot snap : snapshots) {
+        	if (map.containsKey(snap.type())) {
+        		throw new IllegalStateException(String.format("resource %s already exists in map", snap.type()));
+        	}
+        	map.put(snap.type(), snap.quantity());
+        }
+        
+        return map;
+    }
 }

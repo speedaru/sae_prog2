@@ -1,9 +1,11 @@
 package fr.uge.but.schtroumpf.controller.gui.windows;
 
+import java.nio.file.Path;
+
 import fr.uge.but.schtroumpf.controller.AppController;
 import fr.uge.but.schtroumpf.controller.WindowSubController;
 import fr.uge.but.schtroumpf.controller.Navigation.NavigationAction;
-import fr.uge.but.schtroumpf.model.WindowType;
+import fr.uge.but.schtroumpf.model.types.WindowType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -28,7 +30,11 @@ public class StartMenuController implements WindowSubController {
 
     @FXML
     void handleLoadGame(ActionEvent event) {
-        System.out.println("Loading previous save state...");
-        // Add your save parsing initialization here
+    	router.navigate(NavigationAction.PUSH, WindowType.GAME_WINDOW);
+
+    	GameController gameController = router.getWindowController(WindowType.GAME_WINDOW);
+    	if (gameController != null) {
+    		gameController.loadGame(Path.of("save1.json"));
+    	}
     }
 }

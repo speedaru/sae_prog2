@@ -5,7 +5,9 @@ import java.util.function.BiConsumer;
 import fr.uge.but.schtroumpf.model.phases.GamePhase;
 import fr.uge.but.schtroumpf.model.phases.GamePhaseContext;
 import fr.uge.but.schtroumpf.model.phases.ProductionPhase;
-import fr.uge.but.schtroumpf.view.Logger;
+import fr.uge.but.schtroumpf.model.save.GameSave;
+import fr.uge.but.schtroumpf.model.types.ResourceType;
+import fr.uge.but.schtroumpf.model.utils.Logger;
 
 public class Game {
     public enum GameState {
@@ -61,6 +63,15 @@ public class Game {
         if (currentPhase == null) {
             handleMonthEnd();
         }
+    }
+    
+    public void loadSave(GameSave save) {
+    	GameSave.EngineState engine = save.engineState();
+
+    	// load game engine state
+    	currentRound = engine.currentRound();
+    	gameState = engine.gameState();
+    	currentPhase = GamePhase.fromType(engine.currentPhase());
     }
 
     // public getters for controller

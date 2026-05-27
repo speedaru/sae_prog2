@@ -4,8 +4,8 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.uge.but.schtroumpf.model.ResourceType;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResultType;
+import fr.uge.but.schtroumpf.model.types.ResourceType;
 import javafx.scene.paint.Color;
 
 public class ThemeManager {

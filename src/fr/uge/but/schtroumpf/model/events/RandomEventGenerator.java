@@ -20,7 +20,7 @@ public class RandomEventGenerator {
 		for (var type : availableTypes) {
 			roll -= type.calcFrequency(currentRound);
 			if (roll <= 0) {
-				return GameEventType.getEvent(type);
+				return GameEvent.fromType(type);
 			}
 		}
 		

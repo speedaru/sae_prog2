@@ -6,7 +6,7 @@ import java.util.List;
 import fr.uge.but.schtroumpf.model.Game;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.phases.rules.*;
-import fr.uge.but.schtroumpf.view.Logger;
+import fr.uge.but.schtroumpf.model.utils.Logger;
 
 public class ConsumptionPhase implements GamePhase {
 	private final List<ConsumptionRule> rules = new ArrayList<>();

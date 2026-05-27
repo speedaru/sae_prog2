@@ -3,8 +3,9 @@ package fr.uge.but.schtroumpf.model.phases;
 import module java.base;
 
 import fr.uge.but.schtroumpf.model.events.*;
+import fr.uge.but.schtroumpf.model.types.EventHistory;
+import fr.uge.but.schtroumpf.model.utils.Logger;
 import fr.uge.but.schtroumpf.model.characters.*;
-import fr.uge.but.schtroumpf.view.Logger;
 
 public class EventPhase implements GamePhase {
 	@Override public GamePhaseType getType() { return GamePhaseType.EVENT_PHASE; }

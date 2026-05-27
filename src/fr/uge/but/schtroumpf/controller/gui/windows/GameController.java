@@ -12,22 +12,24 @@ import fr.uge.but.schtroumpf.controller.WindowSubController;
 import fr.uge.but.schtroumpf.controller.Navigation.*;
 import fr.uge.but.schtroumpf.controller.AppController;
 import fr.uge.but.schtroumpf.controller.PhaseSubController;
-import fr.uge.but.schtroumpf.model.Game;
 import fr.uge.but.schtroumpf.model.Game.GameState;
 import fr.uge.but.schtroumpf.model.*;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
 import fr.uge.but.schtroumpf.model.characters.ResourceEffect;
 import fr.uge.but.schtroumpf.model.crises.*;
-import fr.uge.but.schtroumpf.model.events.EventHistory;
 import fr.uge.but.schtroumpf.model.phases.*;
-import fr.uge.but.schtroumpf.view.FxmlUtils;
-import fr.uge.but.schtroumpf.view.FxmlUtils.FxWindow;
-import fr.uge.but.schtroumpf.view.Logger;
+import fr.uge.but.schtroumpf.model.save.GameSaveManager;
+import fr.uge.but.schtroumpf.model.types.EventHistory;
+import fr.uge.but.schtroumpf.model.types.ResourceType;
+import fr.uge.but.schtroumpf.model.types.WindowType;
+import fr.uge.but.schtroumpf.model.utils.FxmlUtils;
+import fr.uge.but.schtroumpf.model.utils.Logger;
+import fr.uge.but.schtroumpf.model.utils.FxmlUtils.FxWindow;
 import fr.uge.but.schtroumpf.view.components.ResourceSidebarWidget;
 
 public class GameController implements WindowSubController {
     private AppController router;
-    private final Game game = new Game();
+    private Game game = new Game();
 
     @FXML private Label monthLabel, phaseLabel, eventLabel;
     @FXML private Button mysteriousButton, encyclopediaButton, uiToggleButton, settingsButton, quitButton1;
@@ -46,12 +48,13 @@ public class GameController implements WindowSubController {
 
     @FXML
     public void initialize() {
-        game.startFirstMonth();
-        
         initUI();
 
-        // load first phase
-        executeAndLoadCurrentPhase();
+		game.startFirstMonth();
+		
+		// load first phase
+		executeCurrentPhase();
+    	loadCurrentPhase();
         
         Logger.LogDebug("GameController gui initialized");
     }
@@ -123,12 +126,29 @@ public class GameController implements WindowSubController {
         }
         else if (game.getGameState() == GameState.RUNNING) {
     		// execute and load new phase
-    		executeAndLoadCurrentPhase();
+        	executeCurrentPhase();
+        	loadCurrentPhase();
     	}
     }
     
     public AppController getRouter() {
     	return router;
+    }
+    
+    public void saveGame(Path path) {
+		try {
+			GameSaveManager.serializeGame(game, path);
+			Logger.LogDebug("saved game to %s", path.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    public void loadGame(Path path) {
+    	game = GameSaveManager.deserializeGame(path);
+    	Logger.LogDebug("loaded saved game from %s", path.toString());
+    	
+    	loadCurrentPhase();
     }
 
     // ------------------------- private helpers
@@ -177,10 +197,17 @@ public class GameController implements WindowSubController {
     	eventLabel.setText(String.format("Evenement: %s", eventStr));
     }
     
-    private void executeAndLoadCurrentPhase() {
-        // execute automatic logic before loading the UI view
-        game.executePhaseLogic();
-
+//    private void executeAndLoadCurrentPhase() {
+//        // execute automatic logic before loading the UI view
+//        game.executePhaseLogic();
+//        loadCurrentPhase();
+//    }
+    
+    private void executeCurrentPhase() {
+    	game.executePhaseLogic();
+    }
+    
+    private void loadCurrentPhase() {
         // 4. Update the center viewport layout panel to the next phase sequence
         syncPhaseView();
 
@@ -205,7 +232,6 @@ public class GameController implements WindowSubController {
         updateHudEventIndicator();
 
         Path phaseFxmlFile = currentPhase.getType().getFxmlFile();
-        Logger.LogDebug("phase fxml: %s", phaseFxmlFile);
         loadCenterView(phaseFxmlFile);
     }
     

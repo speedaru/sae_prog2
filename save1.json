@@ -1,0 +1,92 @@
+{
+  "engineState" : {
+    "currentRound" : 4,
+    "gameState" : "RUNNING",
+    "currentPhase" : "CONSUMPTION_PHASE"
+  },
+  "villageState" : {
+    "abilitiesUsedThisTurn" : 0,
+    "currentResources" : {
+      "BERRIES" : 0,
+      "SARSAPARILLA" : 5,
+      "GOLD" : 7,
+      "TOOLS" : 3,
+      "MORAL" : 2,
+      "DEFENSE" : 1,
+      "KNOWLEDGE" : 0
+    },
+    "previousRoundResources" : {
+      "BERRIES" : 0,
+      "SARSAPARILLA" : 3,
+      "GOLD" : 6,
+      "TOOLS" : 4,
+      "MORAL" : 4,
+      "DEFENSE" : 1,
+      "KNOWLEDGE" : 3
+    },
+    "councilMembers" : [ {
+      "type" : "GRAND_SMURF",
+      "currentEnergy" : 8
+    }, {
+      "type" : "HANDY_SMURF",
+      "currentEnergy" : 8
+    }, {
+      "type" : "SMURFETTE",
+      "currentEnergy" : 8
+    }, {
+      "type" : "GLUTTON_SMURF",
+      "currentEnergy" : 8
+    }, {
+      "type" : "GROUCHY_SMURF",
+      "currentEnergy" : 8
+    }, {
+      "type" : "BRAINY_SMURF",
+      "currentEnergy" : 8
+    } ],
+    "eventsHistory" : [ {
+      "eventType" : "FOREST_CURSE",
+      "effectsApplied" : [ {
+        "resourceType" : "KNOWLEDGE",
+        "delta" : -3
+      } ],
+      "round" : 1
+    }, {
+      "eventType" : "FRIENDLY_VILLAGE",
+      "effectsApplied" : [ {
+        "resourceType" : "GOLD",
+        "delta" : 2
+      }, {
+        "resourceType" : "MORAL",
+        "delta" : 2
+      } ],
+      "round" : 2
+    }, {
+      "eventType" : "SMURF_PARTY",
+      "effectsApplied" : [ {
+        "resourceType" : "BERRIES",
+        "delta" : -2
+      }, {
+        "resourceType" : "MORAL",
+        "delta" : 3
+      } ],
+      "round" : 3
+    }, {
+      "eventType" : "FOREST_CURSE",
+      "effectsApplied" : [ {
+        "resourceType" : "KNOWLEDGE",
+        "delta" : -3
+      } ],
+      "round" : 4
+    } ],
+    "activeCrises" : [ {
+      "type" : "FAMINE"
+    } ],
+    "modifiers" : {
+      "successChanceBonus" : 0.0,
+      "energyRechargeRateDelta" : 0,
+      "maxEnergyDelta" : -2,
+      "efficiencyMultiplier" : 1.0,
+      "passiveFoodProductionBlocked" : false
+    }
+  }
+}

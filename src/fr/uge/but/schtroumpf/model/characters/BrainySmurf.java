@@ -8,7 +8,7 @@ import fr.uge.but.schtroumpf.model.*;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResultType;
-import fr.uge.but.schtroumpf.view.Logger;
+import fr.uge.but.schtroumpf.model.types.ResourceType;
 
 public class BrainySmurf implements SmurfCharacter {
     private int energy = 10;
@@ -20,6 +20,7 @@ public class BrainySmurf implements SmurfCharacter {
 
     @Override public SmurfType getType() { return SmurfType.BRAINY_SMURF; }
     @Override public int getEnergy() { return energy; }
+	@Override public void setEnergy(int value) { energy = value; }
 
     @Override
     public void updateEnergy(SmurfVillage village, int delta) {

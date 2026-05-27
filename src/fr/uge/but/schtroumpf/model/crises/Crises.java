@@ -1,8 +1,8 @@
 package fr.uge.but.schtroumpf.model.crises;
 
-import fr.uge.but.schtroumpf.model.ResourceType;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
-import fr.uge.but.schtroumpf.model.VillageModifierContext;
+import fr.uge.but.schtroumpf.model.types.ResourceType;
+import fr.uge.but.schtroumpf.model.types.VillageModifierContext;
 
 public final class Crises {
 	private Crises() {}

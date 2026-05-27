@@ -2,6 +2,8 @@ package fr.uge.but.schtroumpf.view;
 
 import module java.base;
 
+import fr.uge.but.schtroumpf.model.utils.Logger;
+
 public class ConsoleMenu {
 	private final ArrayList<MenuChoice> choices = new ArrayList<MenuChoice>();
 	

@@ -1,4 +1,4 @@
-package fr.uge.but.schtroumpf.model;
+package fr.uge.but.schtroumpf.model.types;
 
 import java.nio.file.Path;
 

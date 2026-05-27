@@ -4,6 +4,7 @@ import module java.base;
 
 import fr.uge.but.schtroumpf.model.*;
 import fr.uge.but.schtroumpf.model.characters.*;
+import fr.uge.but.schtroumpf.model.types.ResourceType;
 
 public class FriendlyVillage implements GameEvent {
 	

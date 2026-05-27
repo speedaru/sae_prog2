@@ -20,6 +20,7 @@ import fr.uge.but.schtroumpf.model.characters.ResourceEffect;
 import fr.uge.but.schtroumpf.model.phases.ConsumptionPhase;
 import fr.uge.but.schtroumpf.model.phases.ConsumptionReport;
 import fr.uge.but.schtroumpf.model.phases.ConsumptionRuleResult;
+import fr.uge.but.schtroumpf.model.utils.Logger;
 import fr.uge.but.schtroumpf.view.components.ResourceSummaryRow;
 
 public class ConsumptionPhaseController implements PhaseSubController {
@@ -37,6 +38,7 @@ public class ConsumptionPhaseController implements PhaseSubController {
 		this.game = game;
 
 		renderConsumptionReport();
+		Logger.LogDebug("passed master controller to consuption phae");
 	}
 
     @FXML
@@ -53,10 +55,15 @@ public class ConsumptionPhaseController implements PhaseSubController {
         penaltyEffectsContainer.getChildren().clear();
 
         // 2. Safely extract the active model phase reference context
-        if (!(game.getCurrentPhase() instanceof ConsumptionPhase consumptionPhase)) {
-            throw new IllegalStateException("Controller loaded outside of an active ConsumptionPhase context.");
+        if (game.getCurrentPhase() == null) {
+        	return;
         }
+
+        ConsumptionPhase consumptionPhase = (ConsumptionPhase)game.getCurrentPhase();
         ConsumptionReport report = consumptionPhase.getCurrentReport();
+        if (report == null) {
+        	return;
+        }
 
         // Update the baseline demographic metrics counter
         int populationCount = game.getVillage().getAvailableSmurfs().size();

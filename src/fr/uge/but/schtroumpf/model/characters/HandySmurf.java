@@ -6,24 +6,16 @@ import fr.uge.but.schtroumpf.model.*;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResultType;
-import fr.uge.but.schtroumpf.view.Logger;
+import fr.uge.but.schtroumpf.model.types.ResourceType;
+import fr.uge.but.schtroumpf.model.utils.Logger;
 
 public class HandySmurf implements SmurfCharacter {
 	private int energy = 10;
 	private final Map<CharacterAttribute, Integer> attributes = new HashMap<>();
 
-	public HandySmurf() {
-	}
-
-	@Override
-	public SmurfType getType() {
-		return SmurfType.HANDY_SMURF;
-	}
-
-	@Override
-	public int getEnergy() {
-		return energy;
-	}
+	@Override public SmurfType getType() { return SmurfType.HANDY_SMURF; }
+	@Override public int getEnergy() { return energy; }
+	@Override public void setEnergy(int value) { energy = value; }
 
 	@Override
 	public void updateEnergy(SmurfVillage village, int delta) {

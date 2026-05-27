@@ -1,8 +1,8 @@
-package fr.uge.but.schtroumpf.model;
+package fr.uge.but.schtroumpf.model.types;
 
 import module java.base;
 
-public enum ResourceType {
+public enum ResourceType implements CodeEnum {
 	BERRIES(1, "Baies", "Nourriture des Schtroumpfs"),
 	SARSAPARILLA(2, "Salsepareille", "Plante magique (soins, potions)"),
 	GOLD(3, "Or", "Richesse du village"),
@@ -21,20 +21,12 @@ public enum ResourceType {
 		this.description = Objects.requireNonNull(description);
 	}
 	
-	public int getCode() { return code; }
+	@Override public int getCode() { return code; }
 	public String getDisplayName() { return displayName; }
 	public String getDescription() { return description; }
 	
 	@Override
 	public String toString() {
 		return displayName;
-	}
-	public static ResourceType getResourceFromCode(int code) {
-		for(var type : ResourceType.values()) {
-			if (code == type.code) {
-				return type;
-			}
-		}
-		throw new IllegalArgumentException("code pas connu");
 	}
 }
