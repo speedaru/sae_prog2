@@ -52,6 +52,7 @@ public class CouncilPhaseController implements PhaseSubController {
 		
 		 // 2. Initialize and load council members list layout
 		loadCouncilMembers();
+		updateRemainingAbilitiesCounter();
 	}
 
     @FXML

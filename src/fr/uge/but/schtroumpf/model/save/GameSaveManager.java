@@ -17,7 +17,6 @@ import fr.uge.but.schtroumpf.model.characters.SmurfCharacter;
 import fr.uge.but.schtroumpf.model.crises.Crisis;
 import fr.uge.but.schtroumpf.model.types.EventHistory;
 import fr.uge.but.schtroumpf.model.types.ResourceMap;
-import fr.uge.but.schtroumpf.model.types.VillageModifierContext;
 import fr.uge.but.schtroumpf.model.utils.Logger;
 
 public class GameSaveManager {
@@ -97,7 +96,9 @@ public class GameSaveManager {
         }
 
         // game modifiers
-        GameSave.VillageModifierCtxState modifiersState = serializeModifiers(village.getModifiers());
+        GameSave.VillageModifierCtxState modifiersState = new GameSave.VillageModifierCtxState(
+			village.getModifiers().getModifiers()
+		);
         
         return new GameSave.VillageState(
         	village.getAbilitiesUsedThisTurn(),
@@ -118,16 +119,6 @@ public class GameSaveManager {
         }
         
         return List.copyOf(councilState);
-    }
-    
-    private static GameSave.VillageModifierCtxState serializeModifiers(VillageModifierContext modifiers) {
-    	return new GameSave.VillageModifierCtxState(
-    		modifiers.getSuccessChanceBonus(),
-    		modifiers.getEnergyRechargeRateDelta(),
-    		modifiers.getMaxEnergyDelta(),
-    		modifiers.getEfficiencyMultiplier(),
-    		modifiers.isPassiveFoodProductionBlocked()
-    	);
     }
     
     // ------------------------- helpers

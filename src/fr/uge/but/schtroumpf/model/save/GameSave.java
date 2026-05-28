@@ -1,11 +1,14 @@
 package fr.uge.but.schtroumpf.model.save;
 
 import java.util.List;
+import java.util.Map;
+
 import fr.uge.but.schtroumpf.model.Game.GameState;
 import fr.uge.but.schtroumpf.model.characters.SmurfType;
 import fr.uge.but.schtroumpf.model.crises.CrisisType;
 import fr.uge.but.schtroumpf.model.phases.GamePhaseType;
 import fr.uge.but.schtroumpf.model.types.EventHistory;
+import fr.uge.but.schtroumpf.model.types.GameModifierType;
 import fr.uge.but.schtroumpf.model.types.ResourceMap;
 
 /** data object representing state of a save file */
@@ -39,10 +42,6 @@ public record GameSave(
     ) {}
     
     public record VillageModifierCtxState(
-		 double successChanceBonus,
-		 int energyRechargeRateDelta,
-		 int maxEnergyDelta,
-		 double efficiencyMultiplier,
-		 boolean passiveFoodProductionBlocked
+		Map<GameModifierType, Object> modifiers
 	) {}
 }

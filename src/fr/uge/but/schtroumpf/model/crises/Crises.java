@@ -1,6 +1,7 @@
 package fr.uge.but.schtroumpf.model.crises;
 
 import fr.uge.but.schtroumpf.model.SmurfVillage;
+import fr.uge.but.schtroumpf.model.types.GameModifierType;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 import fr.uge.but.schtroumpf.model.types.VillageModifierContext;
 
@@ -13,7 +14,7 @@ public final class Crises {
 		@Override
 		public void applyModifiers(VillageModifierContext ctx) {
 			// starving smurfs have less stamina
-			ctx.addMaxEnergyDelta(-2);
+			ctx.addInt(GameModifierType.MAX_ENERGY_DELTA, -2);
 		}
 	}
 	
@@ -23,7 +24,7 @@ public final class Crises {
 	    @Override
 	    public void applyModifiers(VillageModifierContext ctx) {
 	        // sick smurfs only produce 50% of standard ability yields
-	        ctx.multiplyEfficiency(0.5);
+			ctx.addDouble(GameModifierType.EFFICIENCY_MULTIPLIER, 0.5);
 	    }
 	}
 	
@@ -33,7 +34,7 @@ public final class Crises {
 	    @Override
 	    public void applyModifiers(VillageModifierContext ctx) {
 	        // uncooperative Smurfs -25% flat chance to all dice rolls
-	        ctx.addSuccessChanceBonus(-0.25);
+			ctx.addDouble(GameModifierType.SUCCESS_CHANCE_BONUS, -0.25);
 	    }
 	}
 	
@@ -43,7 +44,7 @@ public final class Crises {
 	    @Override
 	    public void applyModifiers(VillageModifierContext ctx) {
 	        // attackers cause panic, tiring out the defenders
-	        ctx.addMaxEnergyDelta(-1);
+			ctx.addInt(GameModifierType.MAX_ENERGY_DELTA, -1);
 	    }
 
 	    @Override
@@ -60,7 +61,7 @@ public final class Crises {
 	    @Override
 	    public void applyModifiers(VillageModifierContext ctx) {
 	        // disables passive generation of berries during production phase
-	        ctx.setPassiveFoodProductionBlocked(true);
+			ctx.setBool(GameModifierType.PASSIVE_FOOD_PRODUCTION_BLOCKED, true);
 	    }
 	}
 }

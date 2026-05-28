@@ -8,6 +8,7 @@ import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
 import fr.uge.but.schtroumpf.model.crises.*;
 import fr.uge.but.schtroumpf.model.save.GameSave;
 import fr.uge.but.schtroumpf.model.types.EventHistory;
+import fr.uge.but.schtroumpf.model.types.GameModifierType;
 import fr.uge.but.schtroumpf.model.types.ResourceMap;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 import fr.uge.but.schtroumpf.model.types.VillageModifierContext;
@@ -233,24 +234,27 @@ public class SmurfVillage {
 	 * to random roll
 	 */
 	public boolean rollChance(double baseChance) {
-		double finalChance = baseChance + modifiers.getSuccessChanceBonus();
+		double sucessChanceModifier = modifiers.getDouble(GameModifierType.SUCCESS_CHANCE_BONUS);
+		double finalChance = baseChance + sucessChanceModifier;
 		finalChance = Math.clamp(finalChance, 0, 1);
 		return GameRandomness.rollChance(finalChance);
 	}
 
 	/** intercepts effect applications to apply efficiency multipliers */
 	public void applyEffects(List<ResourceEffect> resourceEffects) {
+		double efficienyMultiplier = modifiers.getDouble(GameModifierType.EFFICIENCY_MULTIPLIER);
+		boolean foodProductionBlocked = modifiers.getBoolean(GameModifierType.PASSIVE_FOOD_PRODUCTION_BLOCKED);
+		
 		for (ResourceEffect effect : resourceEffects) {
 			int delta = effect.delta();
 
 			// apply active modifier for positive effects
 			if (delta > 0) {
-				delta = (int) Math.floor(delta * modifiers.getEfficiencyMultiplier());
+				delta = (int) Math.floor(delta * efficienyMultiplier);
 			}
 
 			// block berries production during DarkAgesCrisis
-			if (effect.resourceType() == ResourceType.BERRIES && delta > 0
-					&& modifiers.isPassiveFoodProductionBlocked()) {
+			if (effect.resourceType() == ResourceType.BERRIES && delta > 0 && foodProductionBlocked) {
 				continue;
 			}
 
@@ -259,17 +263,18 @@ public class SmurfVillage {
 	}
 
 	public void rechargeSmurfEnergy(SmurfCharacter smurf, int baseRate) {
-		int finalRate = baseRate + modifiers.getEnergyRechargeRateDelta();
+		int energyRechargeRateDelta = modifiers.getInt(GameModifierType.ENERGY_RECHARGE_RATE_DELTA);
+		int finalRate = baseRate + energyRechargeRateDelta;
 		finalRate = Math.max(1, finalRate); // always at least 1
 
 		smurf.updateEnergy(this, finalRate);
-		Logger.LogDebug("recharged %s energy by %d (+%d modifier)", smurf, finalRate,
-				modifiers.getEnergyRechargeRateDelta());
+		Logger.LogDebug("recharged %s energy by %d (+%d modifier)", smurf, finalRate, energyRechargeRateDelta);
 	}
 
 	/** determines dynamic max energy of a smurf based on active debuffs */
 	public int getDynamicMaxEnergy(SmurfCharacter smurf) {
-		int finalMax = smurf.getBaseMaxEnergy() + modifiers.getMaxEnergyDelta();
+		int maxEnergyDelta = modifiers.getInt(GameModifierType.MAX_ENERGY_DELTA);
+		int finalMax = smurf.getBaseMaxEnergy() + maxEnergyDelta;
 		return Math.max(1, finalMax); // always at least 1 max energy
 	}
 
@@ -312,17 +317,17 @@ public class SmurfVillage {
 
 	// ------------------------- private helpers -------------------------
 	
-	private List<Crisis> calcCrisesFromResources(ResourceMap resources) {
-		ArrayList<Crisis> crises = new ArrayList<>();
-
-		for (CrisisType type : CrisisType.values()) {
-			if (type.shouldTrigger(resources)) {
-				crises.add(Crisis.fromType(type));
-			}
-		}
-		
-		return List.copyOf(crises);
-	}
+//	private List<Crisis> calcCrisesFromResources(ResourceMap resources) {
+//		ArrayList<Crisis> crises = new ArrayList<>();
+//
+//		for (CrisisType type : CrisisType.values()) {
+//			if (type.shouldTrigger(resources)) {
+//				crises.add(Crisis.fromType(type));
+//			}
+//		}
+//		
+//		return List.copyOf(crises);
+//	}
 	
 	private static List<SmurfCharacter> createSmurfs() {
 		return List.of(

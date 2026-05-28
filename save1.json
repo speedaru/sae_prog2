@@ -1,28 +1,28 @@
 {
   "engineState" : {
-    "currentRound" : 4,
+    "currentRound" : 3,
     "gameState" : "RUNNING",
-    "currentPhase" : "CONSUMPTION_PHASE"
+    "currentPhase" : "COUNCIL_PHASE"
   },
   "villageState" : {
-    "abilitiesUsedThisTurn" : 0,
+    "abilitiesUsedThisTurn" : 2,
     "currentResources" : {
       "BERRIES" : 0,
-      "SARSAPARILLA" : 5,
-      "GOLD" : 7,
+      "SARSAPARILLA" : 3,
+      "GOLD" : 5,
       "TOOLS" : 3,
-      "MORAL" : 2,
-      "DEFENSE" : 1,
+      "MORAL" : 8,
+      "DEFENSE" : 3,
       "KNOWLEDGE" : 0
     },
     "previousRoundResources" : {
       "BERRIES" : 0,
       "SARSAPARILLA" : 3,
-      "GOLD" : 6,
-      "TOOLS" : 4,
-      "MORAL" : 4,
-      "DEFENSE" : 1,
-      "KNOWLEDGE" : 3
+      "GOLD" : 5,
+      "TOOLS" : 1,
+      "MORAL" : 3,
+      "DEFENSE" : 2,
+      "KNOWLEDGE" : 0
     },
     "councilMembers" : [ {
       "type" : "GRAND_SMURF",
@@ -35,10 +35,10 @@
       "currentEnergy" : 8
     }, {
       "type" : "GLUTTON_SMURF",
-      "currentEnergy" : 8
+      "currentEnergy" : 5
     }, {
       "type" : "GROUCHY_SMURF",
-      "currentEnergy" : 8
+      "currentEnergy" : 7
     }, {
       "type" : "BRAINY_SMURF",
       "currentEnergy" : 8
@@ -51,42 +51,33 @@
       } ],
       "round" : 1
     }, {
-      "eventType" : "FRIENDLY_VILLAGE",
+      "eventType" : "FOREST_CURSE",
       "effectsApplied" : [ {
-        "resourceType" : "GOLD",
-        "delta" : 2
-      }, {
-        "resourceType" : "MORAL",
-        "delta" : 2
+        "resourceType" : "KNOWLEDGE",
+        "delta" : -3
       } ],
       "round" : 2
-    }, {
-      "eventType" : "SMURF_PARTY",
-      "effectsApplied" : [ {
-        "resourceType" : "BERRIES",
-        "delta" : -2
-      }, {
-        "resourceType" : "MORAL",
-        "delta" : 3
-      } ],
-      "round" : 3
     }, {
       "eventType" : "FOREST_CURSE",
       "effectsApplied" : [ {
         "resourceType" : "KNOWLEDGE",
         "delta" : -3
       } ],
-      "round" : 4
+      "round" : 3
     } ],
     "activeCrises" : [ {
       "type" : "FAMINE"
+    }, {
+      "type" : "DARK_AGES"
     } ],
     "modifiers" : {
-      "successChanceBonus" : 0.0,
-      "energyRechargeRateDelta" : 0,
-      "maxEnergyDelta" : -2,
-      "efficiencyMultiplier" : 1.0,
-      "passiveFoodProductionBlocked" : false
+      "modifiers" : {
+        "PASSIVE_FOOD_PRODUCTION_BLOCKED" : true,
+        "MAX_ENERGY_DELTA" : -2,
+        "SUCCESS_CHANCE_BONUS" : 0.0,
+        "ENERGY_RECHARGE_RATE_DELTA" : 0,
+        "EFFICIENCY_MULTIPLIER" : 1.0
+      }
     }
   }
 }
