@@ -16,7 +16,8 @@ import fr.uge.but.schtroumpf.model.utils.Logger;
 
 public class SmurfVillage {
 	public final static int MAX_CRISES = 3; // 3+ crises = lose
-	private final static int MAX_ABILITIES_PER_TURN = 3;
+	public final static int BASE_ABILITIES_PER_TURN = 3;
+	public final static int BASE_PRODUCTION_RATE = 4;
 
 	private final ResourceManager resourceManager = new ResourceManager();
 	private List<ResourceSnapshot> previousRoundResources;
@@ -148,13 +149,9 @@ public class SmurfVillage {
     public int getAbilitiesUsedThisTurn() {
         return this.abilitiesUsedThisTurn;
     }
-
-    public int getMaxAbilitiesPerTurn() {
-        return MAX_ABILITIES_PER_TURN;
-    }
-
+    
     public boolean isActionLimitReached() {
-        return this.abilitiesUsedThisTurn >= MAX_ABILITIES_PER_TURN;
+        return this.abilitiesUsedThisTurn >= getDynamicMaxAbilitiesPerTurn();
     }
 
 	// ------------------------- round and snapshot tracking -------------------------
@@ -274,6 +271,19 @@ public class SmurfVillage {
 		int maxEnergyDelta = modifiers.getInt(GameModifierType.MAX_ENERGY_DELTA);
 		int finalMax = smurf.getBaseMaxEnergy() + maxEnergyDelta;
 		return Math.max(1, finalMax); // always at least 1 max energy
+	}
+	
+	public int getDynamicMaxAbilitiesPerTurn() {
+		int abilitiesDelta = modifiers.getInt(GameModifierType.ABILITIES_PER_TURN_DELTA);
+		int finalAbilities = abilitiesDelta + BASE_ABILITIES_PER_TURN;
+		return Math.max(1, finalAbilities);
+	}
+	
+	/** @return number of resources to gain in the production phase */
+	public int getProductionRate() {
+		int productionDelta = modifiers.getInt(GameModifierType.PRODUCTION_DELTA);
+		int finalProductionRate = productionDelta + BASE_PRODUCTION_RATE;
+		return Math.max(1, finalProductionRate);
 	}
 
 	// ------------------------- crisis and end conditions -------------------------

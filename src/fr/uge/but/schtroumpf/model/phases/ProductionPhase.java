@@ -12,8 +12,9 @@ import fr.uge.but.schtroumpf.model.types.ResourceType;
 import fr.uge.but.schtroumpf.model.utils.Logger;
 
 public class ProductionPhase implements GamePhase {
-	final int BASE_ENERGY_RECHARGE_RATE = 1;
-	final int MAX_RESOURCE_GAIN = 4;
+	private static final int BASE_ENERGY_RECHARGE_RATE = 1;
+	private static final int MAX_GAIN_PER_RESOURCE = 2;
+	
 	@Override public GamePhaseType getType() { return GamePhaseType.PRODUCTION_PHASE; }
 	
 	@Override
@@ -23,14 +24,15 @@ public class ProductionPhase implements GamePhase {
 		
 		// generate resources
 		var resourceGenerationEffects = new ArrayList<ResourceEffect>();
-		int resource_to_gain= MAX_RESOURCE_GAIN;
+		int productionRate = ctx.village().getProductionRate();
 		List<ResourceType> types = new ArrayList<>(Arrays.asList(ResourceType.values()));
-		while(resource_to_gain>0) {
+		
+		while(productionRate > 0) {
 			ResourceType type= types.get(GameRandomness.randomChoice(0,types.size()));
 			types.remove(type);
-			int delta = GameRandomness.randomChoice(1, Math.min(2, resource_to_gain)+1);
+			int delta = GameRandomness.randomChoice(1, Math.min(MAX_GAIN_PER_RESOURCE, productionRate) + 1);
 			resourceGenerationEffects.add(new ResourceEffect(type,delta));
-			resource_to_gain -= delta;
+			productionRate -= delta;
 		}
 		
 		// apply generation effects

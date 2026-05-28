@@ -174,7 +174,7 @@ public class CouncilPhaseController implements PhaseSubController {
     
     private void updateRemainingAbilitiesCounter() {
     	SmurfVillage village = game.getVillage();
-    	int max = village.getMaxAbilitiesPerTurn();
+    	int max = village.getDynamicMaxAbilitiesPerTurn();
     	int used = village.getAbilitiesUsedThisTurn();
     	int remaining = max - used;
     	
@@ -191,7 +191,7 @@ public class CouncilPhaseController implements PhaseSubController {
     	SmurfVillage village = game.getVillage();
     	
     	if (village.isActionLimitReached()) {
-    		widget.setActivationAllowed(false, String.format("Limite de %d actions", village.getMaxAbilitiesPerTurn()));
+    		widget.setActivationAllowed(false, String.format("Limite de %d actions", village.getDynamicMaxAbilitiesPerTurn()));
     	} else if (!smurf.hasEnoughEnergy(ability)) {
     		widget.setActivationAllowed(false, "Énergie Insuffisante");
     	} else if (!smurf.hasRequiredResources(village, ability)) {
