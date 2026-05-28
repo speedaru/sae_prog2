@@ -50,7 +50,37 @@ public class Smurfette implements SmurfCharacter {
 				),
 			this::executeNegociate
 		);
-		return List.of(negociate);
+		
+		
+		CharacterAbility appease = new CharacterAbility(
+				"Apaiser un conflit interne",
+				"Schtroumpfette calme deux Schtroupfs en embrouille",
+				1,
+				List.of(
+						new ResourceSnapshot(ResourceType.KNOWLEDGE, 6)
+					),
+				List.of(
+						new ResourceEffect(ResourceType.MORAL, 2)
+					),
+				this::executeAppease
+			);
+			
+			
+			CharacterAbility feast = new CharacterAbility(
+					"Organise une grande fête pour le village",
+					"Schtroumpfette Prépare et invite les Schtroumpfs à un festin!",
+					4, 
+					List.of(
+							new ResourceSnapshot(ResourceType.BERRIES, 7)
+						),
+					List.of(
+							new ResourceEffect(ResourceType.MORAL, 5),
+							new ResourceEffect(ResourceType.BERRIES,-6)
+						),
+					this::executeFeast
+				);
+				return List.of(negociate, appease, feast);
+				
 	}
 	private AbilityResult executeNegociate(SmurfVillage village) {
 		final double successChance = 0.5;
@@ -75,6 +105,38 @@ public class Smurfette implements SmurfCharacter {
 				List.of(plusSarsaparilla)
 			);
 		}
+	}
+	private AbilityResult executeAppease(SmurfVillage village) {
+		final double successChance = 0.80;
+		ResourceEffect plusMoral = new ResourceEffect(ResourceType.MORAL, 2);
+		
+		
+	
+		if (village.rollChance(successChance)) {
+			Logger.LogDebug("Les schtroumpfs ne sont plus en conflit");
+			return new AbilityResult(
+				AbilityResultType.SUCCESS,
+				"Succès ! La Schtroumpfette a réconcilié les Schtroumpfs"+plusMoral,
+				List.of(plusMoral)
+			);
+		}
+		else {
+			return new AbilityResult(
+				AbilityResultType.FAILURE,
+				"Échec ! Les Schtroumpfs ne veulent rien entendre..",
+				List.of()
+			);
+		}
+	}
+	private AbilityResult executeFeast(SmurfVillage village) {
+		ResourceEffect plusMoral = new ResourceEffect(ResourceType.MORAL, 5);
+		ResourceEffect minusBerries = new ResourceEffect(ResourceType.BERRIES,6);
+		
+		Logger.LogDebug("Les schtroumpfs font la fête, +5 moral -6 baies");
+		return new AbilityResult(AbilityResultType.SUCCESS,
+				"Les schtroumpfs ont fait la fête : " + plusMoral + ", " + minusBerries,
+				List.of(plusMoral, minusBerries));
+		
 	}
 
 }
