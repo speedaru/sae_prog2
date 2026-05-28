@@ -57,9 +57,10 @@ public class GrandSmurf implements SmurfCharacter {
 			"Organiser une réunion",
 			"Le Grand Schtroumpf rassemble le village pour motiver les Schtroumpfs et renforcer leur moral.",
 			3,
-			List.of(),
+			List.of(new ResourceSnapshot(ResourceType.GOLD,3)),
 			List.of(
-				new ResourceEffect(ResourceType.MORAL, 2)
+				new ResourceEffect(ResourceType.MORAL, 2),
+				new ResourceEffect(ResourceType.GOLD, -3)
 			),
 			this::executePlanMeeting
 		);
@@ -113,10 +114,11 @@ public class GrandSmurf implements SmurfCharacter {
 	private AbilityResult executePlanMeeting(SmurfVillage village) {
 		Logger.LogDebug("Grand Smurf organized a meeting");
 		ResourceEffect plusMoral = new ResourceEffect(ResourceType.MORAL, 2);
+		ResourceEffect minusGold = new ResourceEffect(ResourceType.GOLD, -3);
 		return new AbilityResult(
 			AbilityResultType.NEUTRAL,
-			"Le Grand Schtroumpf a reuni le village " + plusMoral,
-			List.of(plusMoral)
+			"Le Grand Schtroumpf a reuni le village " + plusMoral + minusGold,
+			List.of(plusMoral,minusGold)
 		);
 	}
 

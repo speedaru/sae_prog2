@@ -69,8 +69,17 @@ public final class Crises {
 
 	    @Override
 	    public void applyModifiers(VillageModifierContext ctx) {
-	        // disables passive generation of berries during production phase
-			
+	        // retire une action pour le conseil
+			ctx.addInt(GameModifierType.ABILITIES_PER_TURN_DELTA, -1);
+	    }
+	}
+	public static class StoneAgeCrisis implements Crisis {
+	    @Override public CrisisType getType() { return CrisisType.STONE_AGE; }
+
+	    @Override
+	    public void applyModifiers(VillageModifierContext ctx) {
+	        // retire un de chaque production
+			ctx.addInt(GameModifierType.PRODUCTION_DELTA, -1);
 	    }
 	}
 }

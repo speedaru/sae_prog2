@@ -21,6 +21,7 @@ public interface Crisis {
 			case MASSIVE_ATTACK -> new MassiveAttackCrisis();
 			case DARK_AGES -> new DarkAgesCrisis();
 			case BANKRUPTCY -> new BankruptcyCrisis();
+			case STONE_AGE -> new StoneAgeCrisis();
 		};
 	}
 }
