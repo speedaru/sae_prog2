@@ -39,7 +39,7 @@ public class Smurfette implements SmurfCharacter {
 	@Override
 	public List<CharacterAbility> getAbilities() {
 		CharacterAbility negociate = new CharacterAbility(
-			"Négocier avec les villages voisins",
+			"Négocier avec villages voisins",
 			"Rencontre avec des villages voisins pour tenter d'obtenir de l'or ou de la Salsepareille",
 			3,
 			List.of(

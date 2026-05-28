@@ -13,7 +13,7 @@
 
 <!-- ADDED: -fx-border-color: #3f444c; -fx-border-width: 2; to match Production/Event -->
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #1a1c1e; -fx-background-radius: 12; -fx-border-color: #3f444c; -fx-border-width: 2; -fx-border-radius: 12;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.uge.but.schtroumpf.controller.gui.phases.CouncilPhaseController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #1a1c1e; -fx-background-radius: 12; -fx-border-color: #3f444c; -fx-border-width: 2; -fx-border-radius: 12;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.uge.but.schtroumpf.controller.gui.phases.CouncilPhaseController">
    
    <top>
 <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="700.0" BorderPane.alignment="BOTTOM_RIGHT">
@@ -80,7 +80,7 @@
                         <Font name="System Bold" size="13.0" />
                      </font>
                   </Label>
-                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="220.0" style="-fx-background: #202225; -fx-background-color: transparent; -fx-border-color: transparent;" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
+                  <ScrollPane fx:id="councilScrollPane" fitToWidth="true" hbarPolicy="NEVER" prefHeight="220.0" style="-fx-background: #202225; -fx-background-color: transparent; -fx-border-color: transparent;" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
                      <content>
                         <VBox fx:id="smurfsListContainer" spacing="6.0" style="-fx-background-color: #202225;" />
                      </content>
@@ -94,9 +94,12 @@
                   <VBox fx:id="detailPanelContent" spacing="10.0" VBox.vgrow="ALWAYS">
                      <children>
                         <HBox fx:id="detailCardContainer" prefHeight="90.0" />
-                        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background: transparent; -fx-background-color: transparent;" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
+                        <ScrollPane fx:id="abilityScrollPane" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background: transparent; -fx-background-color: transparent;" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
                            <content>
-                              <VBox fx:id="detailAbilitiesContainer" spacing="6.0" style="-fx-background-color: transparent;" />
+                              <VBox fx:id="detailAbilitiesContainer" style="-fx-background-color: transparent;">
+                                 <padding>
+                                    <Insets left="4.0" right="4.0" />
+                                 </padding></VBox>
                            </content>
                         </ScrollPane>
                      </children>

@@ -1,12 +1,14 @@
 package fr.uge.but.schtroumpf.controller.gui.phases;
 
 import module java.base;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 
 import fr.uge.but.schtroumpf.controller.PhaseSubController;
 import fr.uge.but.schtroumpf.controller.gui.windows.GameController;
@@ -19,6 +21,7 @@ import fr.uge.but.schtroumpf.model.utils.Logger;
 import fr.uge.but.schtroumpf.model.characters.SmurfCharacter;
 import fr.uge.but.schtroumpf.model.characters.SmurfType;
 import fr.uge.but.schtroumpf.view.components.AbilityAccordionWidget;
+import fr.uge.but.schtroumpf.view.components.CoolScrollPane;
 import fr.uge.but.schtroumpf.view.components.SmurfDetailCard;
 import fr.uge.but.schtroumpf.view.components.SmurfListRow;
 import fr.uge.but.schtroumpf.view.themes.ThemeManager;
@@ -31,6 +34,7 @@ public class CouncilPhaseController implements PhaseSubController {
     @FXML private HBox detailCardContainer;
     @FXML private Button finishButton;
     @FXML private Label statusFeedbackLabel, actionsCounterLabel, efficiencyBonusLabel;
+    @FXML private ScrollPane councilScrollPane, abilityScrollPane;
     
 	 // View State Layers
     private final SmurfDetailCard detailHeaderCard = new SmurfDetailCard();
@@ -52,7 +56,7 @@ public class CouncilPhaseController implements PhaseSubController {
         detailCardContainer.getChildren().add(detailHeaderCard);
 		
 		 // 2. Initialize and load council members list layout
-		loadCouncilMembers();
+        initUI();
 		updateRemainingAbilitiesCounter();
 		updateEfficiencyBonusLabel();
 	}
@@ -60,6 +64,12 @@ public class CouncilPhaseController implements PhaseSubController {
     @FXML
     void handleFinish(ActionEvent event) {
     	masterController.advanceTurn();
+    }
+    
+    private void initUI() {
+		loadCouncilMembers();
+		CoolScrollPane.setScrollBarStyle(councilScrollPane);
+		CoolScrollPane.setScrollBarStyle(abilityScrollPane);
     }
 
 	/**

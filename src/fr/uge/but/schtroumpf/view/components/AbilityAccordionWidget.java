@@ -6,9 +6,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -65,16 +65,16 @@ public class AbilityAccordionWidget extends VBox {
         // ==========================================
         // 1. Always Visible Header Row
         // ==========================================
-        BorderPane outerRow = new BorderPane();
-        outerRow.setPadding(new Insets(10, 12, 10, 12));
+        HBox outerRow = new HBox();
+        outerRow.setPadding(new Insets(6, 12, 6, 12));
         outerRow.setStyle(
             "-fx-background-color: #2d3139; " +
             "-fx-background-radius: 6 6 0 0; " +
             "-fx-cursor: hand;"
         );
-
-        HBox outerRowLeft = createOuterRow();
-        HBox outerRowRight = createOuterRow();
+        
+        outerRow.setAlignment(Pos.CENTER_LEFT);
+        outerRow.setSpacing(6);
 
         this.chevronLabel = new Label("▼");
         this.chevronLabel.setTextFill(Color.web("#94a3b8"));
@@ -85,9 +85,6 @@ public class AbilityAccordionWidget extends VBox {
         nameLabel.setFont(Font.font("System", FontWeight.BOLD, 12));
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
 
-        outerRowLeft.getChildren().addAll(this.chevronLabel, nameLabel);
-        outerRow.setLeft(outerRowLeft);
-
         Label costBadge = new Label(ability.energyCost() + " ⚡");
         costBadge.setTextFill(Color.web("#3b82f6"));
         costBadge.setFont(Font.font("System", FontWeight.BOLD, 11));
@@ -96,12 +93,19 @@ public class AbilityAccordionWidget extends VBox {
             "-fx-padding: 3 6 3 6; " +
             "-fx-background-radius: 4;"
         );
+        
+        Region regionSeparator = new Region();
+        HBox.setHgrow(regionSeparator, Priority.ALWAYS);
 
         // MODIFIED: Increased width/height to properly contain wrapped text like "Ressources manquantes"
         this.activateButton = new Button("Activer");
-        this.activateButton.setMinSize(90, 36);
-        this.activateButton.setPrefSize(90, 36);
-        this.activateButton.setMaxSize(90, 36);
+        {
+        	double width = 90;
+        	double height = 32;
+        	this.activateButton.setMinSize(width, height);
+        	this.activateButton.setPrefSize(width, height);
+        	this.activateButton.setMaxSize(width, height);
+        }
         setActivationAllowed(true, "Activer");
 
         this.activateButton.setOnAction(_ -> {
@@ -110,8 +114,7 @@ public class AbilityAccordionWidget extends VBox {
             }
         });
 
-        outerRowRight.getChildren().addAll(costBadge, this.activateButton);
-        outerRow.setRight(outerRowRight);
+        outerRow.getChildren().addAll(this.chevronLabel, nameLabel, regionSeparator, costBadge, this.activateButton);
 
         // ==========================================
         // 2. Collapsible Details Dropdown Panel
@@ -216,42 +219,41 @@ public class AbilityAccordionWidget extends VBox {
     }
 
     public void setActivationAllowed(boolean allowed, String lockReason) {
-        if (allowed) {
+    	String ENABLE_FMT = "-fx-background-color: #10b981; -fx-text-fill: white; -fx-background-radius: 4; "
+    			+ "-fx-font-weight: bold; -fx-font-size: %dpx; -fx-cursor: hand;";
+    	
+    	String DISABLE_FMT = "-fx-background-color: #4b5563; -fx-text-fill: #b8c2d1; -fx-background-radius: 4; "
+    			+ "-fx-font-weight: bold; -fx-font-size: %dpx; -fx-cursor: not-allowed; "
+    	        + "-fx-text-alignment: center; -fx-wrap-text: true;";
+
+    	int NORMAL_FONT_SIZE = 12;
+    	int SMALL_FONT_SIZE = 9;
+
+        if (allowed) {       
             this.activateButton.setDisable(false);
             this.activateButton.setText("Activer");
-            this.activateButton.setStyle(
-                "-fx-background-color: #10b981; -fx-text-fill: white; -fx-background-radius: 4; " +
-                "-fx-font-weight: bold; -fx-font-size: 11px; -fx-cursor: hand;"
-            );
+            this.activateButton.setStyle(String.format(ENABLE_FMT, NORMAL_FONT_SIZE));
         } else {
             this.activateButton.setDisable(true);
-            
-            // Intercept standard missing indicators and apply elegant wrapping layouts
-            String buttonText = lockReason;
-            if (lockReason != null && (lockReason.equalsIgnoreCase("resources ...") || lockReason.toLowerCase().contains("resource"))) {
-                buttonText = "Ressources\nmanquantes";
-            } else if (buttonText == null) {
-                buttonText = "Verrouillé";
-            }
 
-            this.activateButton.setText(buttonText);
-            this.activateButton.setStyle(
-                "-fx-background-color: #4b5563; -fx-text-fill: #94a3b8; -fx-background-radius: 4; " +
-                "-fx-font-weight: bold; -fx-font-size: 10px; -fx-cursor: not-allowed; " +
-                "-fx-text-alignment: center; -fx-wrap-text: true;" // Force text centering and multi-line wrapping
-            );
+            // diminuer taille si message long
+            if (lockReason.length() >= 15) {
+            	int lastSpace = lockReason.lastIndexOf(' ');
+            	if (lastSpace != -1) {
+            		lockReason = String.format("%s\n%s", lockReason.substring(0, lastSpace), lockReason.substring(lastSpace + 1));
+            	}
+            	this.activateButton.setStyle(String.format(DISABLE_FMT, SMALL_FONT_SIZE));
+            }
+            else {
+            	this.activateButton.setStyle(String.format(DISABLE_FMT, NORMAL_FONT_SIZE));
+            }
+            
+            this.activateButton.setText(lockReason);
         }
     }
 
     public CharacterAbility getAbility() {
         return this.ability;
-    }
-
-    private HBox createOuterRow() {
-        HBox hbox = new HBox();
-        hbox.setSpacing(10);
-        hbox.setAlignment(Pos.CENTER_LEFT);
-        return hbox;
     }
 
     private void toggleAccordionState() {

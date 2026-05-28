@@ -5,9 +5,9 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -25,7 +25,7 @@ import fr.uge.but.schtroumpf.model.characters.SmurfType;
  * * Conçu spécifiquement pour être hautement lisible, notamment pour Thierry (accessibilité daltonisme)
  * en évitant toute dépendance exclusive à des indicateurs de couleur abstraits.
  */
-public class SmurfListRow extends BorderPane {
+public class SmurfListRow extends HBox {
     private final SmurfCharacter smurf;
     private final ImageView avatarView;
     private final Label nameLabel;
@@ -52,9 +52,10 @@ public class SmurfListRow extends BorderPane {
             "-fx-border-radius: 6; " +
             "-fx-cursor: hand;"
         );
-        
-        HBox left = createHBox();
-        HBox right = createHBox();
+
+        this.setAlignment(Pos.CENTER_LEFT);
+        this.setPadding(new Insets(8, 8, 8, 8));
+        this.setSpacing(6);
 
         // Avatar de prévisualisation (24x24)
         this.avatarView = new ImageView();
@@ -68,11 +69,11 @@ public class SmurfListRow extends BorderPane {
         // Nom du personnage (Prend tout l'espace restant pour l'alignement)
         this.nameLabel = new Label(smurf.getType().getName());
         this.nameLabel.setTextFill(labelColor);
-        this.nameLabel.setFont(Font.font("System", FontWeight.BOLD, 12));
+        this.nameLabel.setFont(Font.font("System", FontWeight.BOLD, 11));
         HBox.setHgrow(this.nameLabel, Priority.ALWAYS);
-
-        left.getChildren().addAll(this.avatarView, this.nameLabel);
-        this.setLeft(left);
+        
+        Region regionSeparator = new Region();
+        HBox.setHgrow(regionSeparator, Priority.ALWAYS);
 
         // Indicateur d'énergie explicite en texte brut (Thierry-friendly)
         this.energyLabel = new Label();
@@ -80,8 +81,7 @@ public class SmurfListRow extends BorderPane {
         this.energyLabel.setTextFill(labelColor);
         updateEnergyDisplay(smurf.getEnergy(), village.getDynamicMaxEnergy(smurf));
 
-        right.getChildren().add(this.energyLabel);
-        this.setRight(right);
+        this.getChildren().addAll(this.avatarView, this.nameLabel, regionSeparator, this.energyLabel);
 
         // Vérification automatique de l'état d'épuisement initial
 		setExhaustedState(smurf.getEnergy());
@@ -144,16 +144,8 @@ public class SmurfListRow extends BorderPane {
         return this.smurf;
     }
     
-    private HBox createHBox() {
-        HBox hbox = new HBox();
-        hbox.setAlignment(Pos.CENTER_LEFT);
-        hbox.setPadding(new Insets(8, 8, 8, 8));
-        hbox.setSpacing(6);
-        return hbox;
-    }
-
     private void updateEnergyDisplay(int current, int max) {
-        this.energyLabel.setText(current + " / " + max + " ⚡");
+        this.energyLabel.setText(String.format("%d/%d ⚡", current, max));
     }
 
     private void loadAvatar(Path spritePath) {

@@ -31,7 +31,6 @@ public class ThemeManager {
         }
     }
     
-    
     public static Color getResourceSidebarBarColor(ResourceType type) {
     	return getResourceThemeColor(type);
     }
