@@ -1,6 +1,4 @@
-package fr.uge.but.schtroumpf.model.characters;
-
-import fr.uge.but.schtroumpf.model.types.ResourceType;
+package fr.uge.but.schtroumpf.model.types;
 
 /**
  * represents a change to the village resource

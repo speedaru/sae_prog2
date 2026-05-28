@@ -20,8 +20,8 @@ import java.util.Objects;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility;
-import fr.uge.but.schtroumpf.model.characters.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.GameModifierType;
+import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 
 /**
  * Interactive accordion widget representing a council member's active ability.
@@ -101,7 +101,7 @@ public class AbilityAccordionWidget extends VBox {
         this.activateButton = new Button("Activer");
         {
         	double width = 90;
-        	double height = 32;
+        	double height = 34;
         	this.activateButton.setMinSize(width, height);
         	this.activateButton.setPrefSize(width, height);
         	this.activateButton.setMaxSize(width, height);

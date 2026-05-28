@@ -3,7 +3,7 @@ package fr.uge.but.schtroumpf.model.events;
 import module java.base;
 
 import fr.uge.but.schtroumpf.model.SmurfVillage;
-import fr.uge.but.schtroumpf.model.characters.ResourceEffect;
+import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 
 public interface GameEvent {
 	GameEventType getEventType();

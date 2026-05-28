@@ -7,6 +7,7 @@ import java.util.Map;
 import fr.uge.but.schtroumpf.model.*;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResultType;
+import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 
 public class GrouchySmurf implements SmurfCharacter {

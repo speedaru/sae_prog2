@@ -101,6 +101,7 @@ public class Game {
 
         Logger.LogDebug("preparing for month %d", currentRound);
         village.saveRoundResources();
+        village.resetTurnAbilitiesCounter();
         currentPhase = new ProductionPhase();
     }
     

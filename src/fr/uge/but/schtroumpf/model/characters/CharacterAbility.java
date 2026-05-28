@@ -3,6 +3,7 @@ package fr.uge.but.schtroumpf.model.characters;
 import module java.base;
 
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
+import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 
 /**

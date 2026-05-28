@@ -5,9 +5,9 @@ import java.util.List;
 
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.phases.Season;
+import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 import fr.uge.but.schtroumpf.model.phases.ConsumptionRuleResult;
-import fr.uge.but.schtroumpf.model.characters.ResourceEffect;
 
 public class WinterHeatingRule implements ConsumptionRule {
 

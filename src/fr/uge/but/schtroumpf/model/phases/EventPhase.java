@@ -4,6 +4,7 @@ import module java.base;
 
 import fr.uge.but.schtroumpf.model.events.*;
 import fr.uge.but.schtroumpf.model.types.EventHistory;
+import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.utils.Logger;
 import fr.uge.but.schtroumpf.model.characters.*;
 

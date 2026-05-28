@@ -9,6 +9,7 @@ import fr.uge.but.schtroumpf.model.crises.*;
 import fr.uge.but.schtroumpf.model.save.GameSave;
 import fr.uge.but.schtroumpf.model.types.EventHistory;
 import fr.uge.but.schtroumpf.model.types.GameModifierType;
+import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 import fr.uge.but.schtroumpf.model.types.VillageModifierContext;
 import fr.uge.but.schtroumpf.model.utils.Logger;

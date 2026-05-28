@@ -4,6 +4,7 @@ import module java.base;
 
 import fr.uge.but.schtroumpf.model.characters.*;
 import fr.uge.but.schtroumpf.model.phases.GamePhaseContext;
+import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.view.ConsoleMenu;
 import fr.uge.but.schtroumpf.view.ConsoleMenu.*;
 
