@@ -15,7 +15,7 @@ public class GargamelAttack implements GameEvent {
 		List<ResourceEffect> impacts = new ArrayList<ResourceEffect>();
 		
 		// always lose defense
-		impacts.add(new ResourceEffect(ResourceType.DEFENSE, -1));
+		impacts.add(new ResourceEffect(ResourceType.DEFENSE, -4));
 		
 		// always lose moral
 		impacts.add(new ResourceEffect(ResourceType.MORAL, -2));

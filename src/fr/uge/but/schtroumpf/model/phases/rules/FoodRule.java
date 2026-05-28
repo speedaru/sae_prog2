@@ -34,16 +34,18 @@ public class FoodRule implements ConsumptionRule {
             // Famine strike path: drain whatever partial berries are remaining to 0
             village.setResourceQuantity(ResourceType.BERRIES, 0);
             appliedEffects.add(new ResourceEffect(ResourceType.BERRIES, -currentBerries));
-
-            // Instantly penalize village state parameters due to starvation
+            
+            // Instantly penalize village state parameters due to starvation 
             village.updateResource(ResourceType.MORAL, -2);
             appliedEffects.add(new ResourceEffect(ResourceType.MORAL, -2));
+            village.updateResource(ResourceType.GOLD, -3);
+            appliedEffects.add(new ResourceEffect(ResourceType.GOLD, -3));
 
             return new ConsumptionRuleResult(
                 "Rationnement Alimentaire",
                 appliedEffects,
                 true,
-                "⚠️ FAMINE : Le village a manqué de Baies pour nourrir la population ! (-2 Moral)"
+                "⚠️ FAMINE : Le village a manqué de Baies pour nourrir la population et les prix augmentent ! (-3 Or, -2 Moral)"
             );
         }
     }

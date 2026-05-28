@@ -51,16 +51,16 @@ public class GluttonSmurf implements SmurfCharacter {
 		);
 
 		// Organiser une réunion
-		CharacterAbility planFeast = new CharacterAbility(
-			"Organiser un festin",
-			"Le Schtroumpf Gourmand organise un festin, augmentant fortement le moral du village.",
+		CharacterAbility stealBerries = new CharacterAbility(
+			"Voler des baies",
+			"Le Schtroumpf Gourmand vole des baies à un village voisin",
 			3,
-			List.of(),
+			List.of(new ResourceSnapshot(ResourceType.DEFENSE,3)),
 			List.of(
-				new ResourceEffect(ResourceType.MORAL, 3),
-				new ResourceEffect(ResourceType.BERRIES, -2)
+				new ResourceEffect(ResourceType.DEFENSE, -2),
+				new ResourceEffect(ResourceType.BERRIES, 2)
 			),
-			this::executePlanFeast
+			this::executeStealBerries
 		);
 
 		// Négocier avec les animaux
@@ -83,7 +83,7 @@ public class GluttonSmurf implements SmurfCharacter {
 
 		return List.of(
 			gatherBerries,
-			planFeast,
+			stealBerries,
 			findRareMushroom
 		);
 	}
@@ -98,14 +98,14 @@ public class GluttonSmurf implements SmurfCharacter {
 			);
 		}
 
-	private AbilityResult executePlanFeast(SmurfVillage village) {
-		Logger.LogDebug("Glutton organized a feast");
-		ResourceEffect plusMoral = new ResourceEffect(ResourceType.MORAL, 3);
-		ResourceEffect minusBerries = new ResourceEffect(ResourceType.BERRIES, -2);
+	private AbilityResult executeStealBerries(SmurfVillage village) {
+		Logger.LogDebug("Steals Berries from another village");
+		ResourceEffect minusDefense = new ResourceEffect(ResourceType.DEFENSE, -2);
+		ResourceEffect plusBerries = new ResourceEffect(ResourceType.BERRIES, 2);
 		return new AbilityResult(
 			AbilityResultType.NEUTRAL,
-			"Le Schtroumpf Gourmand a organiser un festin " + plusMoral + minusBerries,
-			List.of(plusMoral, minusBerries)
+			"Le Schtroumpf Gourmand a volé des baies chez le village voisin " + plusBerries + minusDefense,
+			List.of(plusBerries, minusDefense)
 		);
 	}
 
