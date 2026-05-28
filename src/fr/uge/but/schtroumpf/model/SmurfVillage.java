@@ -9,7 +9,6 @@ import fr.uge.but.schtroumpf.model.crises.*;
 import fr.uge.but.schtroumpf.model.save.GameSave;
 import fr.uge.but.schtroumpf.model.types.EventHistory;
 import fr.uge.but.schtroumpf.model.types.GameModifierType;
-import fr.uge.but.schtroumpf.model.types.ResourceMap;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 import fr.uge.but.schtroumpf.model.types.VillageModifierContext;
 import fr.uge.but.schtroumpf.model.utils.Logger;
@@ -41,12 +40,10 @@ public class SmurfVillage {
 		for (var entry : state.currentResources().entrySet()) {
 			resourceManager.set(entry.getKey(), entry.getValue());
 		}
-		Logger.LogDebug("loaded current resoruces:\n%s", resourceManager);
 
 		// previous resources
 		ResourceManager previousRoundResourceManager = new ResourceManager(state.previousRoundResources());
 		previousRoundResources = previousRoundResourceManager.getResourcesSnap();
-		Logger.LogDebug("loaded previous round resources:\n%s", resourceManager);
 		
 		// council members
 		councilMembers = new ArrayList<>();
@@ -316,18 +313,6 @@ public class SmurfVillage {
 	}
 
 	// ------------------------- private helpers -------------------------
-	
-//	private List<Crisis> calcCrisesFromResources(ResourceMap resources) {
-//		ArrayList<Crisis> crises = new ArrayList<>();
-//
-//		for (CrisisType type : CrisisType.values()) {
-//			if (type.shouldTrigger(resources)) {
-//				crises.add(Crisis.fromType(type));
-//			}
-//		}
-//		
-//		return List.copyOf(crises);
-//	}
 	
 	private static List<SmurfCharacter> createSmurfs() {
 		return List.of(

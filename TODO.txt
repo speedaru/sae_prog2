@@ -1,2 +1,3 @@
+- fix ability feedback label wront effect values bcs doesnt take into accoutn modfiiers
 - fenetre de encyclopedie
 - reprendre partie + sauvegardes JSON

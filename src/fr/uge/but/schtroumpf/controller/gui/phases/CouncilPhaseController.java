@@ -14,6 +14,7 @@ import fr.uge.but.schtroumpf.model.Game;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
+import fr.uge.but.schtroumpf.model.types.GameModifierType;
 import fr.uge.but.schtroumpf.model.utils.Logger;
 import fr.uge.but.schtroumpf.model.characters.SmurfCharacter;
 import fr.uge.but.schtroumpf.model.characters.SmurfType;
@@ -29,7 +30,7 @@ public class CouncilPhaseController implements PhaseSubController {
     @FXML private VBox detailAbilitiesContainer, detailPanelContent, emptyPlaceholderCard, smurfsListContainer;
     @FXML private HBox detailCardContainer;
     @FXML private Button finishButton;
-    @FXML private Label statusFeedbackLabel, actionsCounterLabel;;
+    @FXML private Label statusFeedbackLabel, actionsCounterLabel, efficiencyBonusLabel;
     
 	 // View State Layers
     private final SmurfDetailCard detailHeaderCard = new SmurfDetailCard();
@@ -53,6 +54,7 @@ public class CouncilPhaseController implements PhaseSubController {
 		 // 2. Initialize and load council members list layout
 		loadCouncilMembers();
 		updateRemainingAbilitiesCounter();
+		updateEfficiencyBonusLabel();
 	}
 
     @FXML
@@ -128,7 +130,7 @@ public class CouncilPhaseController implements PhaseSubController {
 
         // create ability widgets
         for (CharacterAbility ability : characterAbilities) {
-            AbilityAccordionWidget abilityWidget = new AbilityAccordionWidget(ability);
+            AbilityAccordionWidget abilityWidget = new AbilityAccordionWidget(ability, village);
 
             abilityWidget.populateEffectsDisplay(ability);
             setAbilityButtonConstraints(smurf, ability, abilityWidget);
@@ -168,6 +170,12 @@ public class CouncilPhaseController implements PhaseSubController {
     	
     	actionsCounterLabel.setText(String.format("%d/%d", remaining, max));
     }
+    
+    private void updateEfficiencyBonusLabel() {
+    	double efficiencyMultiplier = game.getVillage().getModifiers().getDouble(GameModifierType.EFFICIENCY_MULTIPLIER);
+    	double bonusPct = (efficiencyMultiplier - 1.0) * 100.0; // bonus starts at 0 not 1
+    	efficiencyBonusLabel.setText(String.format("%.0f%%", bonusPct));
+    }
 
     private void setAbilityButtonConstraints(SmurfCharacter smurf, CharacterAbility ability, AbilityAccordionWidget widget) {
     	SmurfVillage village = game.getVillage();
@@ -183,35 +191,31 @@ public class CouncilPhaseController implements PhaseSubController {
     	}
     }
     
-    /**
-     * Triggers model state changes and re-synchronizes all view counters instantly.
-     */
+    /** executes ability logic via village and updates UI stuff */
     private void executeAbility(SmurfCharacter smurf, CharacterAbility ability) {
     	SmurfVillage village = game.getVillage();
-
     	if (!smurf.canExecute(village, ability)) {
     		return;
     	}
     	
+    	// actual logic
     	AbilityResult result = village.executeCouncilMemberAbility(smurf, ability);
+    	
+    	// update UI
     	
 		// update ability status indicator
 		if (result.message().equals(abilityResultLastMsg)) {
-			// Safe, clean numeric multiplier stacking
 			abilityResultSameMsgCounter++;
 			statusFeedbackLabel.setText(String.format("%s (x%d)", result.message(), abilityResultSameMsgCounter + 1));
 		} else {
-			// Fresh text message context tracking reset
 			statusFeedbackLabel.setText(result.message());
 			abilityResultLastMsg = result.message();
 			abilityResultSameMsgCounter = 0;
 		}
 		statusFeedbackLabel.setTextFill(ThemeManager.getAbilityResultTypeColor(result.type()));
 
-        // 2. RE-SYNC GLOBAL SIDEBAR HUD INDICATORS ON THE SPOT (Bars and deltas re-render)
         masterController.updateHudResources();
 
-        // 3. Read back fresh updated variables directly out of memory
         int newEnergyAmount = village.getCouncilMember(smurf.getType()).getEnergy();
 
         // update energy indicators

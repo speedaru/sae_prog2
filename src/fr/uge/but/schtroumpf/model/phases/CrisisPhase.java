@@ -4,6 +4,7 @@ import module java.base;
 
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.crises.*;
+import fr.uge.but.schtroumpf.model.types.GameModifierType;
 import fr.uge.but.schtroumpf.model.utils.Logger;
 
 public class CrisisPhase implements GamePhase {
@@ -24,6 +25,11 @@ public class CrisisPhase implements GamePhase {
 		}
 		
 		village.setActiveCrises(activeCrises);
+		
+		if (ctx.currentRound() >= 2) {
+			village.getModifiers().addDouble(GameModifierType.EFFICIENCY_MULTIPLIER, 1);
+			Logger.LogDebug("efficiency multiplier: %f", village.getModifiers().getDouble(GameModifierType.EFFICIENCY_MULTIPLIER));
+		}
 	}
 
 	@Override

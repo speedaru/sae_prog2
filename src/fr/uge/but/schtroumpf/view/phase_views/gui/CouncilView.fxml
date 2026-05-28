@@ -26,6 +26,19 @@
             </Label>
             
             <javafx.scene.layout.Region HBox.hgrow="ALWAYS" />
+            <Label text="Bonus d'efficacite :" textFill="#94a3b8">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label fx:id="efficiencyBonusLabel" text="0%" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="11.0" />
+               </font>
+               <padding>
+                  <Insets bottom="2.0" left="8.0" right="8.0" top="2.0" />
+               </padding>
+            </Label>
             <Label text="Actions disponibles :" textFill="#94a3b8">
                <font>
                   <Font name="System Bold" size="12.0" />

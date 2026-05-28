@@ -3,7 +3,6 @@ package fr.uge.but.schtroumpf.model.crises;
 import module java.base;
 
 import fr.uge.but.schtroumpf.model.SmurfVillage;
-import fr.uge.but.schtroumpf.model.crises.Crises.*;
 import fr.uge.but.schtroumpf.model.types.ResourceMap;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 

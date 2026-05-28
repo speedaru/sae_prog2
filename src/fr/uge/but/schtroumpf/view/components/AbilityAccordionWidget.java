@@ -18,8 +18,10 @@ import java.util.List;
 import java.util.Objects;
 
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
+import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility;
 import fr.uge.but.schtroumpf.model.characters.ResourceEffect;
+import fr.uge.but.schtroumpf.model.types.GameModifierType;
 
 /**
  * Interactive accordion widget representing a council member's active ability.
@@ -33,6 +35,8 @@ public class AbilityAccordionWidget extends VBox {
     }
 
     private final CharacterAbility ability;
+    private final SmurfVillage village;
+    
     private final Button activateButton;
     private final Label chevronLabel;
     
@@ -45,9 +49,11 @@ public class AbilityAccordionWidget extends VBox {
 
     private AbilityActivationListener activationListener;
 
-    public AbilityAccordionWidget(CharacterAbility ability) {
+    public AbilityAccordionWidget(CharacterAbility ability, SmurfVillage village) {
         super();
-        this.ability = Objects.requireNonNull(ability, "La compétence ne peut pas être nulle.");
+        this.ability = Objects.requireNonNull(ability);
+        this.village = Objects.requireNonNull(village);
+        
 
         this.setSpacing(0);
         this.setStyle(
@@ -199,7 +205,7 @@ public class AbilityAccordionWidget extends VBox {
             for (ResourceEffect effect : primaryEffects) {
                 // Instantiated with default true flag to display red/green delta values
                 ResourceSummaryRow row = new ResourceSummaryRow(effect.resourceType(), true);
-                row.updateDelta(effect.delta());
+                row.updateDelta(applyEfficiencyMultiplier(effect.delta()));
                 this.effectsListContainer.getChildren().add(row);
             }
         }
@@ -263,5 +269,10 @@ public class AbilityAccordionWidget extends VBox {
             target = target.getParent();
         }
         return false;
+    }
+    
+    private int applyEfficiencyMultiplier(int baseQuantity) {
+    	double efficiencyMultiplier = village.getModifiers().getDouble(GameModifierType.EFFICIENCY_MULTIPLIER);
+    	return (int)Math.floor(baseQuantity* efficiencyMultiplier);
     }
 }
