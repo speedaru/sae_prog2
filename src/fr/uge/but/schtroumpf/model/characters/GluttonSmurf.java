@@ -41,9 +41,7 @@ public class GluttonSmurf implements SmurfCharacter {
 			"Cueillir des baies",
 			"Le Schtroumpf Gourmand va cueillir des baies.",
 			1,
-			List.of(
-				new ResourceSnapshot(ResourceType.BERRIES, 1)
-			),
+			List.of(),
 			List.of(
 				new ResourceEffect(ResourceType.BERRIES, 1)
 			),

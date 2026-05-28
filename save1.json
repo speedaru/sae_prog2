@@ -1,49 +1,66 @@
 {
   "engineState" : {
-    "currentRound" : 1,
+    "currentRound" : 4,
     "gameState" : "RUNNING",
-    "currentPhase" : "COUNCIL_PHASE"
+    "currentPhase" : "CRISIS_PHASE"
   },
   "villageState" : {
     "abilitiesUsedThisTurn" : 0,
     "currentResources" : {
-      "BERRIES" : 3,
-      "SARSAPARILLA" : 3,
-      "GOLD" : 4,
-      "TOOLS" : 2,
+      "BERRIES" : 0,
+      "SARSAPARILLA" : 6,
+      "GOLD" : 0,
+      "TOOLS" : 0,
       "MORAL" : 3,
-      "DEFENSE" : 3,
-      "KNOWLEDGE" : 5
+      "DEFENSE" : 0,
+      "KNOWLEDGE" : 6
     },
     "previousRoundResources" : {
-      "BERRIES" : 3,
-      "SARSAPARILLA" : 3,
-      "GOLD" : 3,
-      "TOOLS" : 3,
-      "MORAL" : 3,
-      "DEFENSE" : 3,
-      "KNOWLEDGE" : 3
+      "BERRIES" : 0,
+      "SARSAPARILLA" : 6,
+      "GOLD" : 2,
+      "TOOLS" : 0,
+      "MORAL" : 1,
+      "DEFENSE" : 2,
+      "KNOWLEDGE" : 6
     },
     "councilMembers" : [ {
       "type" : "GRAND_SMURF",
-      "currentEnergy" : 10
+      "currentEnergy" : 8
     }, {
       "type" : "HANDY_SMURF",
-      "currentEnergy" : 10
+      "currentEnergy" : 8
     }, {
       "type" : "SMURFETTE",
-      "currentEnergy" : 10
+      "currentEnergy" : 8
     }, {
       "type" : "GLUTTON_SMURF",
-      "currentEnergy" : 10
+      "currentEnergy" : 8
     }, {
       "type" : "GROUCHY_SMURF",
-      "currentEnergy" : 10
+      "currentEnergy" : 8
     }, {
       "type" : "BRAINY_SMURF",
-      "currentEnergy" : 10
+      "currentEnergy" : 8
     } ],
     "eventsHistory" : [ {
+      "eventType" : "MAGIC_BERRIES",
+      "effectsApplied" : [ {
+        "resourceType" : "BERRIES",
+        "delta" : 2
+      }, {
+        "resourceType" : "SARSAPARILLA",
+        "delta" : 2
+      } ],
+      "round" : 1
+    }, {
+      "eventType" : "FOREST_CURSE",
+      "effectsApplied" : [ {
+        "resourceType" : "KNOWLEDGE",
+        "delta" : -3
+      } ],
+      "round" : 2
+    }, {
       "eventType" : "SARSAPARILLA_STORM",
       "effectsApplied" : [ {
         "resourceType" : "TOOLS",
@@ -52,16 +69,34 @@
         "resourceType" : "KNOWLEDGE",
         "delta" : 1
       } ],
-      "round" : 1
+      "round" : 3
+    }, {
+      "eventType" : "SMURF_PARTY",
+      "effectsApplied" : [ {
+        "resourceType" : "BERRIES",
+        "delta" : -2
+      }, {
+        "resourceType" : "MORAL",
+        "delta" : 3
+      } ],
+      "round" : 4
     } ],
-    "activeCrises" : [ ],
+    "activeCrises" : [ {
+      "type" : "FAMINE"
+    }, {
+      "type" : "MASSIVE_ATTACK"
+    }, {
+      "type" : "BANKRUPTCY"
+    } ],
     "modifiers" : {
       "modifiers" : {
-        "SUCCESS_CHANCE_BONUS" : 0.0,
-        "EFFICIENCY_MULTIPLIER" : 1.0,
+        "MAX_ENERGY_DELTA" : -5,
         "PASSIVE_FOOD_PRODUCTION_BLOCKED" : false,
-        "ENERGY_RECHARGE_RATE_DELTA" : 0,
-        "MAX_ENERGY_DELTA" : 0
+        "EFFICIENCY_MULTIPLIER" : 1.0,
+        "PRODUCTION_DELTA" : 0,
+        "ABILITIES_PER_TURN_DELTA" : 0,
+        "SUCCESS_CHANCE_BONUS" : 0.0,
+        "ENERGY_RECHARGE_RATE_DELTA" : 0
       }
     }
   }

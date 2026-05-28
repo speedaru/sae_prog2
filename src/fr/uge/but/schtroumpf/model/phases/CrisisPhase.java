@@ -4,7 +4,6 @@ import module java.base;
 
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.crises.*;
-import fr.uge.but.schtroumpf.model.types.GameModifierType;
 import fr.uge.but.schtroumpf.model.utils.Logger;
 
 public class CrisisPhase implements GamePhase {

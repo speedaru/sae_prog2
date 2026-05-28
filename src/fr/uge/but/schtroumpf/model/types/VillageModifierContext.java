@@ -50,6 +50,27 @@ public class VillageModifierContext {
         return (T)modifier.getType().cast(value);
     }
 
+    /** apply a modifier effect */
+	public void accumulateEffect(GameModifierEffect<?> effect) {
+		GameModifierType modifierType = effect.type();
+		Object effectVal = effect.value();
+
+		if (modifierType.getType() == Integer.class) {
+			int current = this.getInt(modifierType);
+			int delta = (Integer) effectVal;
+			this.set(modifierType, current + delta);
+		} else if (modifierType.getType() == Double.class) {
+			double current = this.getDouble(modifierType);
+			double delta = (Double) effectVal;
+			this.set(modifierType, current + delta);
+		} else if (modifierType.getType() == Boolean.class) {
+			boolean current = this.getBool(modifierType);
+			boolean newVal = (Boolean)effectVal;
+			// accumulate effects so if at least 1 effect sets to true it should remain true
+			this.set(modifierType, current || newVal);
+		}
+	}
+
     // ------------------------- types getters
     
     public double getDouble(GameModifierType modifier) {
@@ -60,20 +81,18 @@ public class VillageModifierContext {
         return get(modifier);
     }
 
-    public boolean getBoolean(GameModifierType modifier) {
+    public boolean getBool(GameModifierType modifier) {
         return get(modifier);
     }
 
-    /** updates modifier value */
+    // ------------------------- types setters
+
+    /** updates modifier value and check type */
     public void set(GameModifierType modifier, Object value) {
-//        if (!modifier.getType().isInstance(value)) {
-//            throw new IllegalArgumentException(String.format("cant set modifier %s to type %s. expected type: %s",
-//                modifier.name(),
-//                value.getClass().getSimpleName(),
-//                modifier.getType().getSimpleName()
-//            ));
-//        }
-        modifiers.put(modifier, value);
+        if (!modifier.getType().isInstance(value)) {
+			throw new IllegalArgumentException(String.format("cant set modifier %s to type %s. expected type: %s",
+					modifier.name(), value.getClass().getSimpleName(), modifier.getType().getSimpleName()));
+        }
     }
 
     public void setBool(GameModifierType modifier, boolean value) {

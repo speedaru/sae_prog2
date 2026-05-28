@@ -50,8 +50,8 @@ public enum GameModifierType {
     // ------------------------- private formaters
 
     private static String formatPct(Object obj) {
-    	int pct = (int)(((double)obj - 1.0) * 100);
-    	return formatIntDelta(pct + "%");
+    	int pct = (int) Math.round((((double) obj) - 1.0) * 100);
+    	return String.format(pct > 0 ? "+%d%%" : "%d%%", pct);
 	}
 
     private static String formatIntDelta(Object obj) {

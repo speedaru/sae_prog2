@@ -39,6 +39,10 @@ public class ThemeManager {
     	return getResourceThemeColor(type);
     }
     
+    public static Color getCrisisColor(ResourceType type) {
+    	return getResourceThemeColor(type);
+    }
+    
     public static Color getAbilityResultTypeColor(AbilityResultType resType) {
     	if (currentTheme == ResourceTheme.COLOR_BLIND) {
     		return switch (resType) {

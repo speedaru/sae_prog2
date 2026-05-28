@@ -1,8 +1,6 @@
 package fr.uge.but.schtroumpf.model.phases;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import fr.uge.but.schtroumpf.model.GameRandomness;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
@@ -23,15 +21,19 @@ public class ProductionPhase implements GamePhase {
 		SmurfVillage village = ctx.village();
 		
 		// generate resources
-		var resourceGenerationEffects = new ArrayList<ResourceEffect>();
-		int productionRate = ctx.village().getProductionRate();
-		List<ResourceType> types = new ArrayList<>(Arrays.asList(ResourceType.values()));
+		int productionRate = village.getProductionRate();
+		ArrayList<ResourceType> types = village.getProductionAllowedResourceTypes();
+		Logger.LogTrace("production rate: %d", productionRate);
 		
+		ArrayList<ResourceEffect> resourceGenerationEffects = new ArrayList<>();
 		while(productionRate > 0) {
-			ResourceType type= types.get(GameRandomness.randomChoice(0,types.size()));
+			// select random type
+			ResourceType type = types.get(GameRandomness.randomChoice(0,types.size()));
 			types.remove(type);
+			
+			// random delta and cap at MAX_GAIN_PER_RESOURCE
 			int delta = GameRandomness.randomChoice(1, Math.min(MAX_GAIN_PER_RESOURCE, productionRate) + 1);
-			resourceGenerationEffects.add(new ResourceEffect(type,delta));
+			resourceGenerationEffects.add(new ResourceEffect(type, delta));
 			productionRate -= delta;
 		}
 		

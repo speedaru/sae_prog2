@@ -10,6 +10,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import fr.uge.but.schtroumpf.model.crises.CrisisType;
+import fr.uge.but.schtroumpf.model.utils.ColorUtils;
 import fr.uge.but.schtroumpf.view.themes.ThemeManager;
 
 /**
@@ -25,8 +26,7 @@ public class CrisisSummaryRow extends VBox {
         this.crisisType = crisisType;
 
         Color resourceColor = ThemeManager.getResourceColor(crisisType.getCause());
-        String hexColor = colorToHex(resourceColor);
-        
+        String hexColor = ColorUtils.colorToHex(resourceColor);
         
         // 1. Configure parent container constraints (Alert Card Style)
         this.setSpacing(6.0);
@@ -70,17 +70,9 @@ public class CrisisSummaryRow extends VBox {
         return this.crisisType;
     }
     
-    private String colorToHex(Color color) {
-    	return String.format("#%02X%02X%02X",
-    			(int)(color.getRed() * 255),
-    			(int)(color.getGreen() * 255),
-    			(int)(color.getBlue() * 255)
-    	);
-    }
-
     private void applyCurrentThemeColors() {
         Color resourceColor = ThemeManager.getResourceColor(crisisType.getCause());
-        String hexColor = colorToHex(resourceColor);
+        String hexColor = ColorUtils.colorToHex(resourceColor);
 
     	String style = this.getStyle();
     	style += "-fx-border-color: " + hexColor + "; ";

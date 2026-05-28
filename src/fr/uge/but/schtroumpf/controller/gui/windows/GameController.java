@@ -25,6 +25,7 @@ import fr.uge.but.schtroumpf.model.types.WindowType;
 import fr.uge.but.schtroumpf.model.utils.FxmlUtils;
 import fr.uge.but.schtroumpf.model.utils.Logger;
 import fr.uge.but.schtroumpf.model.utils.FxmlUtils.FxWindow;
+import fr.uge.but.schtroumpf.view.components.CrisisWidget;
 import fr.uge.but.schtroumpf.view.components.ResourceSidebarWidget;
 
 public class GameController implements WindowSubController {
@@ -33,7 +34,7 @@ public class GameController implements WindowSubController {
 
     @FXML private Label monthLabel, phaseLabel, eventLabel;
     @FXML private Button mysteriousButton, encyclopediaButton, uiToggleButton, settingsButton, quitButton1;
-    @FXML private VBox resourcesContainer;
+    @FXML private VBox resourcesContainer, crisisContainer;
     @FXML private StackPane centerContainer;
     @FXML private Label crisisTitleLabel, crisisCauseLabel, crisisEffectsLabel, crisisPageLabel;
     @FXML private Button prevCrisisBtn, nextCrisisBtn;
@@ -55,6 +56,7 @@ public class GameController implements WindowSubController {
 		// load first phase
 		executeCurrentPhase();
     	loadCurrentPhase();
+    	updateHudCrisis();
         
         Logger.LogDebug("GameController gui initialized");
     }
@@ -62,14 +64,15 @@ public class GameController implements WindowSubController {
     @FXML void handlePrevCrisis(ActionEvent event) {
         if (currentCrisisPage > 1) {
             currentCrisisPage--;
+            updateHudCrisis();
         }
     }
 
     @FXML void handleNextCrisis(ActionEvent event) {
-        // re-calculate total pages on each click to be safe
-        long totalPages = Stream.of(CrisisType.values()).filter(t -> t.shouldTrigger(game.getVillage())).count();
+    	int totalPages = game.getVillage().getActiveCrises().size();
         if (currentCrisisPage < totalPages) {
             currentCrisisPage++;
+            updateHudCrisis();
         }
     }
 
@@ -106,6 +109,28 @@ public class GameController implements WindowSubController {
                 widget.updateState(snap.quantity(), delta);
             }
         }
+    }
+
+    public void updateHudCrisis() {
+        crisisContainer.getChildren().clear();
+
+        SmurfVillage village = game.getVillage();
+        List<Crisis> activeCrises = village.getActiveCrises();
+
+        // zero crises
+        if (activeCrises.isEmpty()) {
+        	loadCrisisEmptyView();
+            return;
+        }
+
+        int totalPages = activeCrises.size();
+        updateHudCrisisNavBar(totalPages);
+        
+        Crisis currentCrisis = activeCrises.get(currentCrisisPage - 1);
+
+        // load crisis widget
+        CrisisWidget crisisWidget = new CrisisWidget(currentCrisis);
+        crisisContainer.getChildren().add(crisisWidget);
     }
     
     /** exposed publicly for phase controllers to call when finished */
@@ -153,6 +178,8 @@ public class GameController implements WindowSubController {
 
     // ------------------------- private helpers
     
+    // ------------------------- UI helpers
+    
     private void initUI() {
     	// clear existing stuff
     	if (resourceSidebarWidgets.size() > 0) {
@@ -197,22 +224,46 @@ public class GameController implements WindowSubController {
     	eventLabel.setText(String.format("Evenement: %s", eventStr));
     }
     
-//    private void executeAndLoadCurrentPhase() {
-//        // execute automatic logic before loading the UI view
-//        game.executePhaseLogic();
-//        loadCurrentPhase();
-//    }
-    
-    private void executeCurrentPhase() {
-    	game.executePhaseLogic();
+    private void updateHudCrisisNavBar(int totalPages) {
+        if (currentCrisisPage > totalPages) {
+            currentCrisisPage = totalPages;
+        }
+        if (currentCrisisPage < 1) {
+            currentCrisisPage = 1;
+        }
+
+        crisisPageLabel.setText(currentCrisisPage + " / " + totalPages);
+
+        prevCrisisBtn.setDisable(currentCrisisPage == 1);
+        nextCrisisBtn.setDisable(currentCrisisPage == totalPages);
     }
-    
+
+    private void loadCrisisEmptyView() {
+    	currentCrisisPage = 1;
+    	crisisPageLabel.setText("0 / 0");
+    	prevCrisisBtn.setDisable(true);
+    	nextCrisisBtn.setDisable(true);
+
+    	Label calmLabel = new Label("le village est calme");
+    	calmLabel.setTextFill(javafx.scene.paint.Color.web("#64748b"));
+    	calmLabel.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontPosture.ITALIC, 13));
+    	calmLabel.setPadding(new javafx.geometry.Insets(30, 0, 0, 0));
+
+    	crisisContainer.getChildren().add(calmLabel);
+    }
+
+    // ------------------------- phase related UI helpers
+
     private void loadCurrentPhase() {
         // 4. Update the center viewport layout panel to the next phase sequence
         syncPhaseView();
 
         // 3. Re-render resources to immediately reflect deltas on the spot
         updateHudResources();
+        
+        if (game.getCurrentPhase().getType() == GamePhaseType.CRISIS_PHASE) {
+        	updateHudCrisis();
+        }
     }
     
     /** swaps center pane to load the current phase */
@@ -247,6 +298,12 @@ public class GameController implements WindowSubController {
     	if (window.root() != null) {
 			centerContainer.getChildren().add(window.root());
     	}
+    }
+
+    // ------------------------- logic helpers
+    
+    private void executeCurrentPhase() {
+    	game.executePhaseLogic();
     }
     
     private int getDeltaForType(List<ResourceSnapshot> deltas, ResourceType type) {
