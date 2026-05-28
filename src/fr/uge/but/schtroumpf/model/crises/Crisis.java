@@ -20,6 +20,7 @@ public interface Crisis {
 			case REVOLT -> new RevoltCrisis();
 			case MASSIVE_ATTACK -> new MassiveAttackCrisis();
 			case DARK_AGES -> new DarkAgesCrisis();
+			case BANKRUPTCY -> new BankruptcyCrisis();
 		};
 	}
 }

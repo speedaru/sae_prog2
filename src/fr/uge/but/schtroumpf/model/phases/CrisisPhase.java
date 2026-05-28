@@ -25,11 +25,6 @@ public class CrisisPhase implements GamePhase {
 		}
 		
 		village.setActiveCrises(activeCrises);
-		
-		if (ctx.currentRound() >= 2) {
-			village.getModifiers().addDouble(GameModifierType.EFFICIENCY_MULTIPLIER, 1);
-			Logger.LogDebug("efficiency multiplier: %f", village.getModifiers().getDouble(GameModifierType.EFFICIENCY_MULTIPLIER));
-		}
 	}
 
 	@Override
