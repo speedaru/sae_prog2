@@ -44,11 +44,13 @@ public class Smurfette implements SmurfCharacter {
 			"Rencontre avec des villages voisins pour tenter d'obtenir de l'or ou de la Salsepareille",
 			3,
 			List.of(
-					new ResourceSnapshot(ResourceType.DEFENSE, 4)
+					new ResourceSnapshot(ResourceType.DEFENSE, 1),
+					new ResourceSnapshot(ResourceType.GOLD, 2)
 				),
 			List.of(
-					new ResourceEffect(ResourceType.GOLD, 1),
-					new ResourceEffect(ResourceType.SARSAPARILLA, 1)
+					new ResourceEffect(ResourceType.BERRIES, 2),
+					new ResourceEffect(ResourceType.SARSAPARILLA, 1),
+					new ResourceEffect(ResourceType.GOLD,-2)
 				),
 			this::executeNegociate
 		);
@@ -87,24 +89,24 @@ public class Smurfette implements SmurfCharacter {
 	private AbilityResult executeNegociate(SmurfVillage village) {
 		final double successChance = 0.5;
 
-		ResourceEffect plusGold = new ResourceEffect(ResourceType.GOLD, 1);
+		ResourceEffect plusBerries = new ResourceEffect(ResourceType.BERRIES, 1);
 		ResourceEffect plusSarsaparilla = new ResourceEffect(ResourceType.SARSAPARILLA, 1);
-
+		ResourceEffect minusGold= new ResourceEffect(ResourceType.GOLD, -2);
 		String resMessage = "Schtroumpfette va parler aux villages voisins et a obtenu: ";
 		if (GameRandomness.rollChance(successChance)) {
 			Logger.LogTrace("Smurfette got gold");
 			return new AbilityResult(
 				AbilityResultType.NEUTRAL,
-				resMessage + plusGold,
-				List.of(plusGold)
+				resMessage + plusBerries + minusGold,
+				List.of(plusBerries,minusGold)
 			);
 		}
 		else { 
 			Logger.LogTrace("smurfette got sarsaparilla");
 			return new AbilityResult(
 				AbilityResultType.NEUTRAL,
-				resMessage + plusSarsaparilla,
-				List.of(plusSarsaparilla)
+				resMessage + plusSarsaparilla + minusGold,
+				List.of(plusSarsaparilla, minusGold)
 			);
 		}
 	}

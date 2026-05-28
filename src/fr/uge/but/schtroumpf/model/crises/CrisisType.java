@@ -12,7 +12,8 @@ public enum CrisisType {
     REVOLT(3, ResourceType.MORAL, "Révolte", "Le moral est à zéro. Les Schtroumpfs contestent l'autorité ; les chances de succès des compétences sont réduites de 25%."),
     MASSIVE_ATTACK(4, ResourceType.DEFENSE, "Attaque Massive", "Les fortifications sont détruites ! Le village subit des pillages constants, drainant de l'Or chaque mois."),
     DARK_AGES(5, ResourceType.KNOWLEDGE, "Oubli des Recettes", "Le savoir est perdu. Les Schtroumpfs oubrient les techniques agricoles, bloquant la production passive de nourriture."),
-	BANKRUPTCY(6,ResourceType.GOLD,"Crise économique","Le village n'a plus d'or, les commerces ferment et l'économie s'écroule ! ");
+	BANKRUPTCY(6,ResourceType.GOLD,"Crise économique","Le village n'a plus d'or, les commerces ferment et l'économie s'écroule ! "),
+	STONE_AGE(7,ResourceType.TOOLS,"Retour à l'age de pierre","Les Schtroumpfs manquent d'outils ! Ils ne peuvent plus travailler à leur plein potentiel.");
 	private final int code;
 	private final ResourceType cause;
 	private final String name;
