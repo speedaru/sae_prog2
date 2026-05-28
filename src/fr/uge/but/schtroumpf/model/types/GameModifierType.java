@@ -16,7 +16,7 @@ public enum GameModifierType {
     EFFICIENCY_MULTIPLIER(Double.class, "Bonus d'efficacite", 1.0,
     	obj -> formatPct(obj)
     ),
-    PRODUCTION_DELTA(Integer.class, "Production de ressources", 0,
+    PRODUCTION_DELTA(Integer.class, "Production", 0,
     	obj -> formatIntDelta(obj)
     ),
     ABILITIES_PER_TURN_DELTA(Integer.class, "Actions par tour", 0,

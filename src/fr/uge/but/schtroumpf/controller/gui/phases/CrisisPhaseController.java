@@ -62,7 +62,6 @@ public class CrisisPhaseController implements PhaseSubController {
         // create crisis widgets
         for (Crisis crisis : activeCrises) {
             CrisisSummaryRow crisisRow = new CrisisSummaryRow(crisis.getType());
-            Logger.LogDebug("added crisis, cause: %s", crisis.getType().getCause());
             crisisCardsContainer.getChildren().add(crisisRow);
         }
     }

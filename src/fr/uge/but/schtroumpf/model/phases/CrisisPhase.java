@@ -19,7 +19,7 @@ public class CrisisPhase implements GamePhase {
 		for (CrisisType crisisType : CrisisType.values()) {
 			if (crisisType.shouldTrigger(village)) {
 				activeCrises.add(Crisis.fromType(crisisType));
-				Logger.LogDebug("triggered %s crisis", crisisType.name());
+				Logger.LogDebug("triggered crisis: %s, cause: %s", crisisType.name(), crisisType.getCause().getDisplayName());
 			}
 		}
 		

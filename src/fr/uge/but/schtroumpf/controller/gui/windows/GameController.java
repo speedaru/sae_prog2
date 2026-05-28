@@ -19,13 +19,17 @@ import fr.uge.but.schtroumpf.model.crises.*;
 import fr.uge.but.schtroumpf.model.phases.*;
 import fr.uge.but.schtroumpf.model.save.GameSaveManager;
 import fr.uge.but.schtroumpf.model.types.EventHistory;
+import fr.uge.but.schtroumpf.model.types.GameModifierEffect;
+import fr.uge.but.schtroumpf.model.types.GameModifierType;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
+import fr.uge.but.schtroumpf.model.types.VillageModifierContext;
 import fr.uge.but.schtroumpf.model.types.WindowType;
 import fr.uge.but.schtroumpf.model.utils.FxmlUtils;
 import fr.uge.but.schtroumpf.model.utils.Logger;
 import fr.uge.but.schtroumpf.model.utils.FxmlUtils.FxWindow;
 import fr.uge.but.schtroumpf.view.components.CrisisWidget;
+import fr.uge.but.schtroumpf.view.components.GameModifierRow;
 import fr.uge.but.schtroumpf.view.components.ResourceSidebarWidget;
 
 public class GameController implements WindowSubController {
@@ -34,7 +38,7 @@ public class GameController implements WindowSubController {
 
     @FXML private Label monthLabel, phaseLabel, eventLabel;
     @FXML private Button mysteriousButton, encyclopediaButton, uiToggleButton, settingsButton, quitButton1;
-    @FXML private VBox resourcesContainer, crisisContainer;
+    @FXML private VBox resourcesContainer, crisisContainer, totalModifiersContainer;
     @FXML private StackPane centerContainer;
     @FXML private Label crisisTitleLabel, crisisCauseLabel, crisisEffectsLabel, crisisPageLabel;
     @FXML private Button prevCrisisBtn, nextCrisisBtn;
@@ -131,6 +135,9 @@ public class GameController implements WindowSubController {
         // load crisis widget
         CrisisWidget crisisWidget = new CrisisWidget(currentCrisis);
         crisisContainer.getChildren().add(crisisWidget);
+        
+        // update total modifiers list
+        updateHudTotalModifiers();
     }
     
     /** exposed publicly for phase controllers to call when finished */
@@ -236,6 +243,53 @@ public class GameController implements WindowSubController {
 
         prevCrisisBtn.setDisable(currentCrisisPage == 1);
         nextCrisisBtn.setDisable(currentCrisisPage == totalPages);
+    }
+    
+    public void updateHudTotalModifiers() {
+        totalModifiersContainer.getChildren().clear();
+
+        SmurfVillage village = game.getVillage();
+        VillageModifierContext currentContext = village.getModifiers();
+        
+        Logger.LogDebug("%d active crises", village.getActiveCrises().size());
+        
+        boolean hasActivePenalties = false;
+        
+        Logger.LogDebug("max energy delta: %d", currentContext.getInt(GameModifierType.MAX_ENERGY_DELTA));;
+
+        // Iterate through every declared modifier rule in your system
+        for (GameModifierType modType : GameModifierType.values()) {
+            Object currentValue = currentContext.get(modType);
+            Object defaultValue = modType.getDefaultValue();
+            
+            if (modType.getType() == Integer.class) {
+            	Logger.LogDebug("%s current val: %d, default: %d", modType.getName(), (int)currentValue, (int)defaultValue);
+            }
+
+            // If the current value matches the default state, ignore it!
+            if (currentValue.equals(defaultValue)) {
+                continue;
+            }
+
+            // We found an altered baseline property! Wrap it into an effect record
+            hasActivePenalties = true;
+            
+            // Using Java's pattern matching/raw cast structures safely
+            GameModifierEffect<?> activeEffect = new GameModifierEffect<>(modType, currentValue);
+            GameModifierRow visualRow = new GameModifierRow(activeEffect);
+            
+            totalModifiersContainer.getChildren().add(visualRow);
+        }
+
+        // Clean fallback view context state if the village has no active penalties
+        if (!hasActivePenalties) {
+            Label happyLabel = new Label("Aucun modificateur négatif passif.");
+            happyLabel.setTextFill(javafx.scene.paint.Color.web("#64748b"));
+            happyLabel.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontPosture.ITALIC, 12.0));
+            happyLabel.setPadding(new javafx.geometry.Insets(10, 0, 0, 4));
+            
+            totalModifiersContainer.getChildren().add(happyLabel);
+        }
     }
 
     private void loadCrisisEmptyView() {

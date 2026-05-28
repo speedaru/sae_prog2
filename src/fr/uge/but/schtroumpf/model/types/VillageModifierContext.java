@@ -4,6 +4,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import fr.uge.but.schtroumpf.model.save.GameSave;
+import fr.uge.but.schtroumpf.model.utils.Logger;
 
 public class VillageModifierContext {
     private final Map<GameModifierType, Object> modifiers = new EnumMap<>(GameModifierType.class);
@@ -22,9 +23,11 @@ public class VillageModifierContext {
         for (var entry : state.modifiers().entrySet()) {
         	GameModifierType type = entry.getKey();
         	Object val = entry.getValue();
+        	Logger.LogDebug("entry type: %s", type.getName());
         	
-        	// modifier unset
-        	if (val == null) {
+        	// modifier unset or default
+        	if (val == null || val == type.getDefaultValue()) {
+        		Logger.LogTrace("skipping");
         		continue;
         	}
         	
@@ -41,6 +44,19 @@ public class VillageModifierContext {
         		this.set(type, val);
         	}
         }
+        
+        Logger.LogDebug("loaded modifiers:\n%s", this.toString());
+    }
+    
+    @Override
+    public String toString() {
+    	StringBuilder sb = new StringBuilder("VillageModifierContext:\n");
+
+    	for (var entry : modifiers.entrySet()) {
+    		sb.append(String.format("%s: %s\n", entry.getKey().getName(), entry.getValue()));
+    	}
+
+    	return sb.toString().stripTrailing();
     }
     
     /** any type getter */
@@ -93,6 +109,7 @@ public class VillageModifierContext {
 			throw new IllegalArgumentException(String.format("cant set modifier %s to type %s. expected type: %s",
 					modifier.name(), value.getClass().getSimpleName(), modifier.getType().getSimpleName()));
         }
+        modifiers.put(modifier, value);
     }
 
     public void setBool(GameModifierType modifier, boolean value) {
