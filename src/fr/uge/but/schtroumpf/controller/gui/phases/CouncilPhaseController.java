@@ -182,9 +182,9 @@ public class CouncilPhaseController implements PhaseSubController {
     }
     
     private void updateEfficiencyBonusLabel() {
-    	GameModifierType modifier = GameModifierType.EFFICIENCY_MULTIPLIER;
-    	double efficiencyMultiplier = game.getVillage().getModifiers().getDouble(modifier);
-    	efficiencyBonusLabel.setText(modifier.formatDisplayValue(efficiencyMultiplier));
+    	GameModifierType modifier = GameModifierType.EFFICIENCY_DELTA;
+    	int efficiencyDelta = game.getVillage().getModifiers().getInt(modifier);
+    	efficiencyBonusLabel.setText(modifier.formatDisplayValue(efficiencyDelta));
     }
 
     private void setAbilityButtonConstraints(SmurfCharacter smurf, CharacterAbility ability, AbilityAccordionWidget widget) {

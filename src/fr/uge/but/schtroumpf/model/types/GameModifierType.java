@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 public enum GameModifierType {
-    SUCCESS_CHANCE_BONUS(Double.class, "Bonus de chance", 0.0,
+    SUCCESS_CHANCE_BONUS(Double.class, "Chance", 0.0,
     	obj -> formatPct(obj)
     ),
     ENERGY_RECHARGE_RATE_DELTA(Integer.class, "Recuperation d'energie", 0,
@@ -13,8 +13,8 @@ public enum GameModifierType {
     MAX_ENERGY_DELTA(Integer.class, "Max energie", 0, 
     	obj -> formatIntDelta(obj)
     ),
-    EFFICIENCY_MULTIPLIER(Double.class, "Bonus d'efficacite", 1.0,
-    	obj -> formatPct(obj)
+    EFFICIENCY_DELTA(Integer.class, "Efficacite des actions", 0,
+    	obj -> formatIntDelta(obj)
     ),
     PRODUCTION_DELTA(Integer.class, "Production", 0,
     	obj -> formatIntDelta(obj)
@@ -50,7 +50,7 @@ public enum GameModifierType {
     // ------------------------- private formaters
 
     private static String formatPct(Object obj) {
-    	int pct = (int) Math.round((((double) obj) - 1.0) * 100);
+    	int pct = (int) Math.round(((double) obj) * 100);
     	return String.format(pct > 0 ? "+%d%%" : "%d%%", pct);
 	}
 

@@ -25,18 +25,14 @@ public record CharacterAbility(
     Function<SmurfVillage, AbilityResult> actionLogic
 )
 {
-	/**
-	 * Structural categories to drive frontend presentation layer styles.
-	 */
+	/** for better ui presentation */
 	public enum AbilityResultType {
 	    SUCCESS,
 	    FAILURE,
 	    NEUTRAL
 	}
 
-	/**
-	 * Rich outcome payload returned directly by an action execution.
-	 */
+	/** data for ui and effect to apply on the village */
 	public record AbilityResult(
 	    AbilityResultType type,
 	    String message,

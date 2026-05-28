@@ -58,9 +58,7 @@ public class GameController implements WindowSubController {
 		game.startFirstMonth();
 		
 		// load first phase
-		executeCurrentPhase();
-    	loadCurrentPhase();
-    	updateHudCrisis();
+		loadAndExecuteCurrentPhase();
         
         Logger.LogDebug("GameController gui initialized");
     }
@@ -68,7 +66,7 @@ public class GameController implements WindowSubController {
     @FXML void handlePrevCrisis(ActionEvent event) {
         if (currentCrisisPage > 1) {
             currentCrisisPage--;
-            updateHudCrisis();
+            updateHudCrisisPage();
         }
     }
 
@@ -76,7 +74,7 @@ public class GameController implements WindowSubController {
     	int totalPages = game.getVillage().getActiveCrises().size();
         if (currentCrisisPage < totalPages) {
             currentCrisisPage++;
-            updateHudCrisis();
+            updateHudCrisisPage();
         }
     }
 
@@ -116,25 +114,7 @@ public class GameController implements WindowSubController {
     }
 
     public void updateHudCrisis() {
-        crisisContainer.getChildren().clear();
-
-        SmurfVillage village = game.getVillage();
-        List<Crisis> activeCrises = village.getActiveCrises();
-
-        // zero crises
-        if (activeCrises.isEmpty()) {
-        	loadCrisisEmptyView();
-            return;
-        }
-
-        int totalPages = activeCrises.size();
-        updateHudCrisisNavBar(totalPages);
-        
-        Crisis currentCrisis = activeCrises.get(currentCrisisPage - 1);
-
-        // load crisis widget
-        CrisisWidget crisisWidget = new CrisisWidget(currentCrisis);
-        crisisContainer.getChildren().add(crisisWidget);
+    	updateHudCrisisPage();
         
         // update total modifiers list
         updateHudTotalModifiers();
@@ -158,8 +138,7 @@ public class GameController implements WindowSubController {
         }
         else if (game.getGameState() == GameState.RUNNING) {
     		// execute and load new phase
-        	executeCurrentPhase();
-        	loadCurrentPhase();
+        	loadAndExecuteCurrentPhase();
     	}
     }
     
@@ -181,6 +160,7 @@ public class GameController implements WindowSubController {
     	Logger.LogDebug("loaded saved game from %s", path.toString());
     	
     	loadCurrentPhase();
+    	updateHudCrisis();
     }
 
     // ------------------------- private helpers
@@ -195,7 +175,6 @@ public class GameController implements WindowSubController {
 		resourcesContainer.getChildren().clear();
 
         initResourceWidgets();
-        updateHudResources();
     }
     
     private void initResourceWidgets() {
@@ -229,6 +208,28 @@ public class GameController implements WindowSubController {
     	}
     	
     	eventLabel.setText(String.format("Evenement: %s", eventStr));
+    }
+    
+    private void updateHudCrisisPage() {
+        crisisContainer.getChildren().clear();
+
+        SmurfVillage village = game.getVillage();
+        List<Crisis> activeCrises = village.getActiveCrises();
+
+        // zero crises
+        if (activeCrises.isEmpty()) {
+        	loadCrisisEmptyView();
+            return;
+        }
+
+        int totalPages = activeCrises.size();
+        updateHudCrisisNavBar(totalPages);
+        
+        Crisis currentCrisis = activeCrises.get(currentCrisisPage - 1);
+
+        // load crisis widget
+        CrisisWidget crisisWidget = new CrisisWidget(currentCrisis);
+        crisisContainer.getChildren().add(crisisWidget);
     }
     
     private void updateHudCrisisNavBar(int totalPages) {
@@ -356,8 +357,9 @@ public class GameController implements WindowSubController {
 
     // ------------------------- logic helpers
     
-    private void executeCurrentPhase() {
+    private void loadAndExecuteCurrentPhase() {
     	game.executePhaseLogic();
+    	loadCurrentPhase();
     }
     
     private int getDeltaForType(List<ResourceSnapshot> deltas, ResourceType type) {

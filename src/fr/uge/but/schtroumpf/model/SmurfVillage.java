@@ -13,6 +13,7 @@ import fr.uge.but.schtroumpf.model.types.GameModifierType;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 import fr.uge.but.schtroumpf.model.types.VillageModifierContext;
+import fr.uge.but.schtroumpf.model.utils.GameRandomness;
 import fr.uge.but.schtroumpf.model.utils.Logger;
 
 public class SmurfVillage {
@@ -77,6 +78,10 @@ public class SmurfVillage {
 
 	public int getResourceQuantity(ResourceType resourceType) {
 		return resourceManager.get(resourceType);
+	}
+	
+	public boolean isResourceFull(ResourceType resourceType) {
+		return resourceManager.get(resourceType) == ResourceManager.MAX_QUANTITY;
 	}
 
 	public void updateResource(ResourceType resource, int amount) {
@@ -236,19 +241,31 @@ public class SmurfVillage {
 		return GameRandomness.rollChance(finalChance);
 	}
 
+	public int getEffectDeltaWithEfficiencyModifier(ResourceEffect effect) {
+		int baseDelta = effect.delta();
+
+		// if effect always returns 0 then return 0
+		if (baseDelta == 0) {
+			return baseDelta;
+		}
+		
+		// apply efficiency modifier
+		
+		int efficiencyModifier = modifiers.getInt(GameModifierType.EFFICIENCY_DELTA);
+		
+		// if positive effect then modifier shouldn't reduce delta to 0
+		if (baseDelta > 0) {
+			return Math.max(1, baseDelta + efficiencyModifier);
+		}
+		
+		return baseDelta + efficiencyModifier;
+	}
+	
 	/** intercepts effect applications to apply efficiency multipliers */
 	public void applyEffects(List<ResourceEffect> resourceEffects) {
-		double efficienyMultiplier = modifiers.getDouble(GameModifierType.EFFICIENCY_MULTIPLIER);
-		
 		for (ResourceEffect effect : resourceEffects) {
-			int delta = effect.delta();
-
-			// apply active modifier for positive effects
-			if (delta > 0) {
-				delta = (int) Math.floor(delta * efficienyMultiplier);
-			}
-
-			updateResource(effect.resourceType(), delta);
+			int finalDelta = getEffectDeltaWithEfficiencyModifier(effect);
+			updateResource(effect.resourceType(), finalDelta);
 		}
 	}
 

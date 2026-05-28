@@ -20,7 +20,6 @@ import java.util.Objects;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility;
-import fr.uge.but.schtroumpf.model.types.GameModifierType;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 
 /**
@@ -208,7 +207,7 @@ public class AbilityAccordionWidget extends VBox {
             for (ResourceEffect effect : primaryEffects) {
                 // Instantiated with default true flag to display red/green delta values
                 ResourceSummaryRow row = new ResourceSummaryRow(effect.resourceType(), true);
-                row.updateDelta(applyEfficiencyMultiplier(effect.delta()));
+                row.updateDelta(village.getEffectDeltaWithEfficiencyModifier(effect));
                 this.effectsListContainer.getChildren().add(row);
             }
         }
@@ -271,10 +270,5 @@ public class AbilityAccordionWidget extends VBox {
             target = target.getParent();
         }
         return false;
-    }
-    
-    private int applyEfficiencyMultiplier(int baseQuantity) {
-    	double efficiencyMultiplier = village.getModifiers().getDouble(GameModifierType.EFFICIENCY_MULTIPLIER);
-    	return (int)Math.floor(baseQuantity* efficiencyMultiplier);
     }
 }

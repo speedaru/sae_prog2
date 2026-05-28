@@ -27,9 +27,9 @@ public final class Crises {
 
 	    @Override
 		public List<GameModifierEffect<?>> getModifierEffects() {
-	        // sick smurfs only produce 50% of standard ability yields
+	        // sick smurfs produce 1 less standard ability delta
 			return List.of(
-				new GameModifierEffect<>(GameModifierType.EFFICIENCY_MULTIPLIER, 0.5)
+				new GameModifierEffect<>(GameModifierType.EFFICIENCY_DELTA, -1)
 			);
 	    }
 	}

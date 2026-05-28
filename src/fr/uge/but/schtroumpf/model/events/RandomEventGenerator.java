@@ -2,7 +2,7 @@ package fr.uge.but.schtroumpf.model.events;
 
 import java.util.List;
 
-import fr.uge.but.schtroumpf.model.GameRandomness;
+import fr.uge.but.schtroumpf.model.utils.GameRandomness;
 
 public class RandomEventGenerator {
 	private static final List<GameEventType> availableTypes = List.of(GameEventType.values());

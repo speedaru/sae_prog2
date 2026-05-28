@@ -15,7 +15,6 @@ import fr.uge.but.schtroumpf.controller.gui.windows.GameController;
 import fr.uge.but.schtroumpf.model.Game;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.crises.Crisis;
-import fr.uge.but.schtroumpf.model.utils.Logger;
 import fr.uge.but.schtroumpf.view.components.*;
 
 public class CrisisPhaseController implements PhaseSubController {
