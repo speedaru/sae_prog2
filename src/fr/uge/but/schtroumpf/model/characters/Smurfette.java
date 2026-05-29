@@ -50,7 +50,7 @@ public class Smurfette implements SmurfCharacter {
 			),
 			List.of(
 				new ResourceEffect(ResourceType.BERRIES, 2),
-				new ResourceEffect(ResourceType.SARSAPARILLA, 1),
+				new ResourceEffect(ResourceType.SARSAPARILLA, 2),
 				new ResourceEffect(ResourceType.GOLD,-2)
 			),
 			this::executeNegociate
@@ -89,8 +89,8 @@ public class Smurfette implements SmurfCharacter {
 	private AbilityResult executeNegociate(SmurfVillage village) {
 		final double chance = 0.5;
 
-		ResourceEffect plusBerries = new ResourceEffect(ResourceType.BERRIES, 1);
-		ResourceEffect plusSarsaparilla = new ResourceEffect(ResourceType.SARSAPARILLA, 1);
+		ResourceEffect plusBerries = new ResourceEffect(ResourceType.BERRIES, 2);
+		ResourceEffect plusSarsaparilla = new ResourceEffect(ResourceType.SARSAPARILLA, 2);
 		ResourceEffect minusGold= new ResourceEffect(ResourceType.GOLD, -2);
 
 		String resMessage = "Schtroumpfette va parler aux villages voisins et a obtenu ";

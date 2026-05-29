@@ -52,15 +52,13 @@ public class GameController implements WindowSubController {
 
     @FXML
     public void initialize() {
-        initUI();
-
+		registerVillageCallbacks();
 		game.startFirstMonth();
 		
 		// load first phase
 		loadAndExecuteCurrentPhase();
-		updateHudCrisis();
-		registerVillageCallbacks();
-        
+
+        loadUI();
         Logger.LogDebug("GameController gui initialized");
     }
 
@@ -98,6 +96,24 @@ public class GameController implements WindowSubController {
     	router.navigate(NavigationAction.PUSH, WindowType.SETTINGS_WINDOW);
     }
 
+    public void saveGame(Path path) {
+		try {
+			GameSaveManager.serializeGame(game, path);
+			Logger.LogDebug("saved game to %s", path.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    public void loadGame(Path path) {
+    	game = GameSaveManager.deserializeGame(path);
+		registerVillageCallbacks();
+    	Logger.LogDebug("loaded saved game from %s", path.toString());
+    	
+    	loadCurrentPhase();
+    	loadUI();
+    }
+
     public void updateHudResources() {
         SmurfVillage village = game.getVillage();
         List<ResourceSnapshot> snapshots = village.getResources();
@@ -114,13 +130,6 @@ public class GameController implements WindowSubController {
         }
     }
 
-    public void updateHudCrisis() {
-    	updateHudCrisisPage();
-        
-        // update total modifiers list
-        updateHudTotalModifiers();
-    }
-    
     /** exposed publicly for phase controllers to call when finished */
     public void advanceTurn() {
     	if (game.getGameState() != GameState.RUNNING) {
@@ -146,39 +155,20 @@ public class GameController implements WindowSubController {
     public AppController getRouter() {
     	return router;
     }
-    
-    public void saveGame(Path path) {
-		try {
-			GameSaveManager.serializeGame(game, path);
-			Logger.LogDebug("saved game to %s", path.toString());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    }
-    
-    public void loadGame(Path path) {
-    	game = GameSaveManager.deserializeGame(path);
-    	Logger.LogDebug("loaded saved game from %s", path.toString());
-    	
-    	loadCurrentPhase();
-    	updateHudCrisis();
-    }
 
     // ------------------------- private helpers
     
     // ------------------------- UI helpers
     
-    private void initUI() {
-    	// clear existing stuff
-    	if (resourceSidebarWidgets.size() > 0) {
-			resourceSidebarWidgets.clear();
-    	}
-		resourcesContainer.getChildren().clear();
-
+    private void loadUI() {
         initResourceWidgets();
+        
+        updateHudResources();
+		updateHudCrisis();
     }
     
     private void initResourceWidgets() {
+		resourcesContainer.getChildren().clear();
     	if (resourceSidebarWidgets.size() > 0) {
     		resourceSidebarWidgets.clear();
     	}
@@ -196,6 +186,8 @@ public class GameController implements WindowSubController {
 			updateHudCrisis();
 			updateHudTotalModifiers();
 		});
+		
+		Logger.LogTrace("registered village callbacks");
     }
 
     private void updateHudRoundIndicator(int round) {
@@ -217,6 +209,13 @@ public class GameController implements WindowSubController {
     	}
     	
     	eventLabel.setText(String.format("Evenement: %s", eventStr));
+    }
+
+    private void updateHudCrisis() {
+    	updateHudCrisisPage();
+        
+        // update total modifiers list
+        updateHudTotalModifiers();
     }
     
     /** also updates navigation buttons */

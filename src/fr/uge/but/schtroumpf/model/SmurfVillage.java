@@ -363,7 +363,7 @@ public class SmurfVillage {
 			// no shields so just set crises
 			activeCrises.addAll(crises);
 		}
-		
+
 		// use shields
 		List<Crisis> unblockedCrises = blockCrises(shieldCount, crises);
 		activeCrises.addAll(unblockedCrises);
@@ -376,7 +376,7 @@ public class SmurfVillage {
 				modifiers.accumulateTempEffect(effect);
 			}
 
-			// apply immediate resource changes
+			// apply resource changes when exiting phae
 			crisis.applyImmediateEffects(this);
 		}
 		

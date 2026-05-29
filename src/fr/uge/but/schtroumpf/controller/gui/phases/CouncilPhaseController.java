@@ -33,7 +33,7 @@ public class CouncilPhaseController implements PhaseSubController {
     @FXML private VBox detailAbilitiesContainer, detailPanelContent, emptyPlaceholderCard, smurfsListContainer;
     @FXML private HBox detailCardContainer;
     @FXML private Button finishButton;
-    @FXML private Label statusFeedbackLabel, actionsCounterLabel, efficiencyBonusLabel;
+    @FXML private Label statusFeedbackLabel, actionsCounterLabel;
     @FXML private ScrollPane councilScrollPane, abilityScrollPane;
     
 	 // View State Layers
@@ -58,7 +58,6 @@ public class CouncilPhaseController implements PhaseSubController {
 		 // 2. Initialize and load council members list layout
         initUI();
 		updateRemainingAbilitiesCounter();
-		updateEfficiencyBonusLabel();
 	}
 
     @FXML
@@ -179,12 +178,6 @@ public class CouncilPhaseController implements PhaseSubController {
     	int remaining = max - used;
     	
     	actionsCounterLabel.setText(String.format("%d/%d", remaining, max));
-    }
-    
-    private void updateEfficiencyBonusLabel() {
-    	GameModifierType modifier = GameModifierType.EFFICIENCY_DELTA;
-    	int efficiencyDelta = game.getVillage().getModifier(modifier);
-    	efficiencyBonusLabel.setText(modifier.formatDisplayValue(efficiencyDelta));
     }
 
     private void setAbilityButtonConstraints(SmurfCharacter smurf, CharacterAbility ability, AbilityAccordionWidget widget) {

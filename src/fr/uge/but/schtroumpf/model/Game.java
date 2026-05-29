@@ -35,12 +35,6 @@ public class Game {
         	village.updateResource(type, INITIAL_RESOURCE_VALUES);
         }
         
-		for (ResourceType type : ResourceType.values()) {
-			village.setResourceQuantity(type, 10);
-		}
-		village.setResourceQuantity(ResourceType.BERRIES, 8);
-		village.setResourceQuantity(ResourceType.SARSAPARILLA, 9);
-
         village.saveRoundResources();
         
         Logger.LogDebug("game model initialized, starting month 1");

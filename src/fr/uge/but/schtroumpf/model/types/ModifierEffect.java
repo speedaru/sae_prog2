@@ -18,7 +18,7 @@ public class ModifierEffect {
         this.remainingRounds = duration;
         this.isCrisis = isCrisis;
     }
-    
+
     public static ModifierEffect crisisModifierEffect(GameModifierType type, Object value) {
     	return new ModifierEffect(type, value, 1, true);
     }

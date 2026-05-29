@@ -12,7 +12,8 @@ import fr.uge.but.schtroumpf.model.types.GameModifierType;
 import fr.uge.but.schtroumpf.model.types.ModifierEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
-import fr.uge.but.schtroumpf.model.utils.GameRandomness;
+import fr.uge.but.schtroumpf.model.utils.OutcomeChoice;
+import fr.uge.but.schtroumpf.model.utils.WeightedOutcomeSelector;
 
 public class BrainySmurf implements SmurfCharacter {
     private int energy = 10;
@@ -40,34 +41,40 @@ public class BrainySmurf implements SmurfCharacter {
 
     @Override
     public List<CharacterAbility> getAbilities() {
+        // translate formula
+        CharacterAbility translateFormula = new CharacterAbility(
+            "traduire une formule",
+            "le schtroumpf a lunettes traduit un vieux texte, donne de la defense ou du moral.",
+            1,
+            List.of(
+                new ResourceSnapshot(ResourceType.KNOWLEDGE, 2)
+            ),
+            List.of(
+            	new ResourceEffect(ResourceType.DEFENSE, 1),
+            	new ResourceEffect(ResourceType.MORAL, 1)
+			),
+            this::executeTranslateFormula
+        );
+
         // study a scroll
         CharacterAbility studyScroll = new CharacterAbility(
             "etudier un parchemin",
-            "le schtroumpf a lunettes etudie et trouve de la salsepareille.",
+            "le schtroumpf a lunettes etudie un parchemin. Consomme du savoir mais permet de produire plus de resources "
+            + "le mois prochain",
             2,
             List.of(
                 new ResourceSnapshot(ResourceType.KNOWLEDGE, 1)
             ),
             List.of(
-                new ResourceEffect(ResourceType.SARSAPARILLA, +1)
+                new ResourceEffect(ResourceType.KNOWLEDGE, -1)
             ),
             this::executeStudyScroll
-        );
-
-        // translate formula
-        CharacterAbility translateFormula = new CharacterAbility(
-            "traduire une formule",
-            "il traduit un vieux texte, ca donne de la defense ou du moral.",
-            1,
-            List.of(),
-            List.of(),
-            this::executeTranslateFormula
         );
 
         // write history
         CharacterAbility writeHistory = new CharacterAbility(
             "etudie l'histoire",
-            "il predit l'avenir et augmente la chance pour touts les shtroumpfs du village ce mois.",
+            "le schtroumpf a lunettes predit l'avenir et augmente la chance du village de 200% pendant 2 mois.",
             3,
             List.of(new ResourceSnapshot(ResourceType.KNOWLEDGE, 3)),
             List.of(),
@@ -75,35 +82,45 @@ public class BrainySmurf implements SmurfCharacter {
         );
 
         return List.of(
-            studyScroll,
             translateFormula,
+            studyScroll,
             writeHistory
         );
     }
 
     private AbilityResult executeStudyScroll(SmurfVillage village) {
-        ResourceEffect plusSarsaparilla = new ResourceEffect(ResourceType.SARSAPARILLA, 1);
+        ResourceEffect minusKnowledge = new ResourceEffect(ResourceType.KNOWLEDGE, -1);
+        ModifierEffect moreProduction = new ModifierEffect(GameModifierType.PRODUCTION_DELTA, 2, 1, false);
+        
+        GameModifierType type = moreProduction.getType();
+        String moreProductionStr = String.format("%s %s", type.formatDisplayValue(moreProduction.getValue()), type.getName());
+        
+        village.accumulateTempModifier(moreProduction);
+
         return new AbilityResult(
             AbilityResultType.NEUTRAL,
-            "le schtroumpf a lunettes a etudie un parchemin " + plusSarsaparilla,
-            List.of(plusSarsaparilla)
+            String.format("le schtroumpf a lunettes a etudie un parchemin %s %s", minusKnowledge, moreProductionStr),
+            List.of(minusKnowledge)
         );
     }
 
     private AbilityResult executeTranslateFormula(SmurfVillage village) {
-        ResourceEffect randomBonus;
-        // 50% to get moral
-        if (GameRandomness.randomChoice(0, 2) == 0) {
-            randomBonus = new ResourceEffect(ResourceType.DEFENSE, 1);
-        } else {
-            randomBonus = new ResourceEffect(ResourceType.MORAL, 1);
-        }
+        double chance = 0.5;
 
-        return new AbilityResult(
-            AbilityResultType.NEUTRAL,
-            "le schtroumpf a lunettes a traduit une formule " + randomBonus,
-            List.of(randomBonus)
-        );
+        return new WeightedOutcomeSelector()
+        	.addChoice(new OutcomeChoice(
+				chance,
+        		AbilityResultType.NEUTRAL,
+        		"le schtroumpf a lunettes a traduit une formule ",
+        		List.of(new ResourceEffect(ResourceType.DEFENSE, 1))
+        	))
+        	.addChoice(new OutcomeChoice(
+				chance,
+        		AbilityResultType.NEUTRAL,
+        		"le schtroumpf a lunettes a traduit une formule ",
+        		List.of(new ResourceEffect(ResourceType.MORAL, 1))
+			))
+        	.selectAndExecute(village, null);
     }
 
     private AbilityResult executeWriteHistory(SmurfVillage village) {
