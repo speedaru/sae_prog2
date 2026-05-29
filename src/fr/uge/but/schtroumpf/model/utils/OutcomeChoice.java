@@ -5,9 +5,6 @@ import java.util.Objects;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResultType;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 
-/**
- * Represents a single potential result of a random operation.
- */
 public record OutcomeChoice(
     double baseWeight,
     AbilityResultType resultType,

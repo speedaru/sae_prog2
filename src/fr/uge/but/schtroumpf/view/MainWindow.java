@@ -10,6 +10,7 @@ public class MainWindow extends Application {
 	static final int WINDOW_WIDTH = 1280;
 	static final int WINDOW_HEIGHT = 720;
 	static final String WINDOW_TITLE = "Village des Schtroumpfs";
+	public static AppController appController;
 	
 	Scene scene;
 	Stage primaryStage;
@@ -25,7 +26,7 @@ public class MainWindow extends Application {
 		primaryStage.show();
 
 		// transition control to the global app controller that handles windows
-		AppController appController = new AppController(scene);
+		appController = new AppController(scene);
 		appController.loadStartWindow();
 	}
 

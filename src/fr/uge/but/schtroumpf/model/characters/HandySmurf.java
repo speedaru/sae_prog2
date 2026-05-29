@@ -9,11 +9,17 @@ import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResultType
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 import fr.uge.but.schtroumpf.model.utils.Logger;
+import fr.uge.but.schtroumpf.model.utils.OutcomeChoice;
+import fr.uge.but.schtroumpf.model.utils.WeightedOutcomeSelector;
 
 public class HandySmurf implements SmurfCharacter {
 	private int energy = 10;
 	private final Map<CharacterAttribute, Integer> attributes = new HashMap<>();
 
+	public HandySmurf() {
+        attributes.put(CharacterAttribute.BUILDING, 0);
+	}
+	
 	@Override public SmurfType getType() { return SmurfType.HANDY_SMURF; }
 	@Override public int getEnergy() { return energy; }
 	@Override public void setEnergy(int value) { energy = value; }
@@ -41,22 +47,38 @@ public class HandySmurf implements SmurfCharacter {
 
 	@Override
 	public List<CharacterAbility> getAbilities() {
+		CharacterAbility repairHouses = new CharacterAbility(
+			"Réparer les maisons",
+			"Le Schtroumpf Bricoleur utilise de la salsepareille pour fabriquer des outils. Augmente ses capacites de construction.",
+			2,
+			List.of(new ResourceSnapshot(ResourceType.SARSAPARILLA, 1)),
+			List.of(new ResourceEffect(ResourceType.TOOLS, 1),
+			new ResourceEffect(ResourceType.SARSAPARILLA, -1)),
+			this::executeRepairHouses
+		);
 
-		CharacterAbility repairHouses = new CharacterAbility("Réparer les maisons",
-				"Le Schtroumpf Bricoleur utilise de la salsepareille pour fabriquer des outils.", 2,
-				List.of(new ResourceSnapshot(ResourceType.SARSAPARILLA, 1)),
-				List.of(new ResourceEffect(ResourceType.TOOLS, 1), new ResourceEffect(ResourceType.SARSAPARILLA, -1)),
-				this::executeRepairHouses);
+		CharacterAbility buildTrap = new CharacterAbility(
+			"Fabriquer un piège",
+			"Le Schtroumpf Bricoleur utilise des outils pour renforcer les défenses du village. Augmente ses capacites de construction.",
+			2,
+			List.of(new ResourceSnapshot(ResourceType.TOOLS, 1)),
+			List.of(new ResourceEffect(ResourceType.DEFENSE, 1),
+			new ResourceEffect(ResourceType.TOOLS, -1)),
+			this::executeBuildTrap
+		);
 
-		CharacterAbility buildTrap = new CharacterAbility("Fabriquer un piège",
-				"Le Schtroumpf Bricoleur utilise des outils pour renforcer les défenses du village.", 2,
-				List.of(new ResourceSnapshot(ResourceType.TOOLS, 1)),
-				List.of(new ResourceEffect(ResourceType.DEFENSE, 1), new ResourceEffect(ResourceType.TOOLS, -1)),
-				this::executeBuildTrap);
-
-		CharacterAbility inventGadget = new CharacterAbility("Inventer un gadget",
-				"Le Schtroumpf Bricoleur tente une invention imprévisible.", 3, List.of(), List.of(),
-				this::executeInventGadget);
+		CharacterAbility inventGadget = new CharacterAbility(
+			"Inventer un gadget",
+			"Le Schtroumpf Bricoleur tente une invention imprévisible. Augmente ses capacites de construction s'il reussie.",
+			3,
+			List.of(new ResourceSnapshot(ResourceType.TOOLS, 1)),
+			List.of(
+				new ResourceEffect(ResourceType.TOOLS, 2),
+				new ResourceEffect(ResourceType.MORAL, 1),
+				new ResourceEffect(ResourceType.TOOLS, -1)
+			),
+			this::executeInventGadget
+		);
 
 		return List.of(repairHouses, buildTrap, inventGadget);
 	}
@@ -67,6 +89,7 @@ public class HandySmurf implements SmurfCharacter {
 		ResourceEffect plusTools = new ResourceEffect(ResourceType.TOOLS, 1);
 		ResourceEffect minusSals = new ResourceEffect(ResourceType.SARSAPARILLA, -1);
 
+		updateAttribute(CharacterAttribute.BUILDING, 1);
 		return new AbilityResult(AbilityResultType.SUCCESS,
 				"Le Schtroumpf Bricoleur a réparé les maisons : " + plusTools + ", " + minusSals,
 				List.of(plusTools, minusSals));
@@ -78,6 +101,7 @@ public class HandySmurf implements SmurfCharacter {
 		ResourceEffect plusDefense = new ResourceEffect(ResourceType.DEFENSE, 1);
 		ResourceEffect minusTools = new ResourceEffect(ResourceType.TOOLS, -1);
 
+		updateAttribute(CharacterAttribute.BUILDING, 1);
 		return new AbilityResult(AbilityResultType.SUCCESS,
 				"Le Schtroumpf Bricoleur a fabriqué un piège : " + plusDefense + ", " + minusTools,
 				List.of(plusDefense, minusTools));
@@ -86,23 +110,32 @@ public class HandySmurf implements SmurfCharacter {
 	private AbilityResult executeInventGadget(SmurfVillage village) {
 		Logger.LogDebug("Handy Smurf invented a gadget");
 
-		final double SUCCESS_CHANCE = 0.3;
-		final double NEUTRAL_CHANCE = 0.5;
+		int buildingSkills = getAttribute(CharacterAttribute.BUILDING);
 
-		if (village.rollChance(SUCCESS_CHANCE)) {
-			ResourceEffect plusTools = new ResourceEffect(ResourceType.TOOLS, 2);
-
-			return new AbilityResult(AbilityResultType.SUCCESS, "Succès ! Le gadget améliore les outils : " + plusTools,
-					List.of(plusTools));
-		} else if (village.rollChance(NEUTRAL_CHANCE)) {
-			ResourceEffect plusMoral = new ResourceEffect(ResourceType.MORAL, 1);
-
-			return new AbilityResult(AbilityResultType.NEUTRAL, "Le gadget amuse le village : " + plusMoral,
-					List.of(plusMoral));
-		} else {
-			ResourceEffect minusTools = new ResourceEffect(ResourceType.TOOLS, -1);
-			return new AbilityResult(AbilityResultType.FAILURE, "Échec ! Le gadget explose : " + minusTools,
-					List.of(minusTools));
-		}
+		final double betterToolsChance = 0.3 + buildingSkills * 0.1;
+		final double moreMoralChance = 0.5 + buildingSkills * 0.05;
+		final double failureChance = 0.2;
+		
+		return new WeightedOutcomeSelector()
+			.addChoice(new OutcomeChoice(
+				betterToolsChance,
+				AbilityResultType.SUCCESS,
+				"Succès ! Le gadget améliore les outils ",
+				List.of(new ResourceEffect(ResourceType.TOOLS, 2)),
+				() -> updateAttribute(CharacterAttribute.BUILDING, 2)
+			))
+			.addChoice(new OutcomeChoice(
+				moreMoralChance,
+				AbilityResultType.SUCCESS,
+				"Le gadget amuse le village ",
+				List.of(new ResourceEffect(ResourceType.MORAL, 1))
+			))
+			.addChoice(new OutcomeChoice(
+				failureChance,
+				AbilityResultType.FAILURE,
+				"Échec ! Le gadget explose ",
+				List.of(new ResourceEffect(ResourceType.TOOLS, -1))
+			))
+			.selectAndExecute(village, null);
 	}
 }

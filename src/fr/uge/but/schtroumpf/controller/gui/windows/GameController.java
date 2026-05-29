@@ -59,6 +59,7 @@ public class GameController implements WindowSubController {
 		
 		// load first phase
 		loadAndExecuteCurrentPhase();
+		updateHudCrisis();
         
         Logger.LogDebug("GameController gui initialized");
     }
@@ -116,6 +117,11 @@ public class GameController implements WindowSubController {
     public void updateHudCrisis() {
     	updateHudCrisisPage();
         
+        // update total modifiers list
+        updateHudTotalModifiers();
+    }
+    
+    public void updateHudEffects() {
         // update total modifiers list
         updateHudTotalModifiers();
     }
@@ -284,7 +290,7 @@ public class GameController implements WindowSubController {
 
         // Clean fallback view context state if the village has no active penalties
         if (!hasActivePenalties) {
-            Label happyLabel = new Label("Aucun modificateur négatif passif.");
+            Label happyLabel = new Label("Aucun modificateur");
             happyLabel.setTextFill(javafx.scene.paint.Color.web("#64748b"));
             happyLabel.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontPosture.ITALIC, 12.0));
             happyLabel.setPadding(new javafx.geometry.Insets(10, 0, 0, 4));

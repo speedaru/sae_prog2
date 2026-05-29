@@ -3,7 +3,6 @@ package fr.uge.but.schtroumpf.model.events;
 import module java.base;
 
 import fr.uge.but.schtroumpf.model.*;
-import fr.uge.but.schtroumpf.model.characters.*;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 
@@ -15,7 +14,7 @@ public class GargamelAttack implements GameEvent {
 		List<ResourceEffect> impacts = new ArrayList<ResourceEffect>();
 		
 		// always lose defense
-		impacts.add(new ResourceEffect(ResourceType.DEFENSE, -4));
+		impacts.add(new ResourceEffect(ResourceType.DEFENSE, -3));
 		
 		// always lose moral
 		impacts.add(new ResourceEffect(ResourceType.MORAL, -2));

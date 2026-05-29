@@ -24,7 +24,10 @@ public enum GameModifierType {
 	),
     PASSIVE_FOOD_PRODUCTION_BLOCKED(Boolean.class, "Production baies bloque", false,
     	obj -> formatBool(obj)
-    );
+    ),
+	CRISIS_SHIELD_COUNT(Integer.class, "Bouclier de crise", 0, 
+		obj -> formatIntDelta(obj)
+	);
 	
     private final Class<?> type;
     private final String name;

@@ -4,13 +4,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fr.uge.but.schtroumpf.controller.gui.windows.GameController;
 import fr.uge.but.schtroumpf.model.*;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResultType;
+import fr.uge.but.schtroumpf.model.types.GameModifierType;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
+import fr.uge.but.schtroumpf.model.types.WindowType;
 import fr.uge.but.schtroumpf.model.utils.GameRandomness;
+import fr.uge.but.schtroumpf.view.MainWindow;
 
 public class BrainySmurf implements SmurfCharacter {
     private int energy = 10;
@@ -64,10 +68,10 @@ public class BrainySmurf implements SmurfCharacter {
 
         // write history
         CharacterAbility writeHistory = new CharacterAbility(
-            "ecrire l'histoire",
-            "il consigne les evenements pour annuler un malus futur.",
+            "etudie l'histoire",
+            "il predit l'avenir et augmente la chance pour touts les shtroumpfs du village ce mois.",
             3,
-            List.of(),
+            List.of(new ResourceSnapshot(ResourceType.KNOWLEDGE, 3)),
             List.of(),
             this::executeWriteHistory
         );
@@ -105,10 +109,16 @@ public class BrainySmurf implements SmurfCharacter {
     }
 
     private AbilityResult executeWriteHistory(SmurfVillage village) {
-        return new AbilityResult(
+    	AbilityResult res = new AbilityResult(
             AbilityResultType.NEUTRAL,
-            "le schtroumpf a lunettes ecrit l'histoire et annule un malus futur.",
+            "le schtroumpf a lunettes a augmente la chance de 200%.",
             List.of()
         );
+    	
+    	village.getModifiers().addDouble(GameModifierType.SUCCESS_CHANCE_BONUS, 2.0);
+    	GameController gameController = MainWindow.appController.getWindowController(WindowType.GAME_WINDOW);
+    	gameController.updateHudEffects();
+    	
+        return res;
     }
 }

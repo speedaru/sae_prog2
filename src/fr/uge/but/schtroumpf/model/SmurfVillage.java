@@ -314,7 +314,12 @@ public class SmurfVillage {
 	/** recalculates active crises and modifiers */
 	public void setActiveCrises(List<Crisis> crises) {
 		activeCrises.clear();
-		activeCrises.addAll(crises);
+		
+		// block crisis if has shields
+		setCrisesAndUseShields(activeCrises, crises);
+		if (activeCrises.isEmpty()) {
+			return;
+		}
 
 		// recalculate all modifiers
 		VillageModifierContext newModifiers = new VillageModifierContext();
@@ -349,6 +354,27 @@ public class SmurfVillage {
 	}
 
 	// ------------------------- private helpers -------------------------
+	
+	private void setCrisesAndUseShields(List<Crisis> outCrises, List<Crisis> inCrises) {
+		int shieldCount = modifiers.getInt(GameModifierType.CRISIS_SHIELD_COUNT);
+		if (shieldCount > 0) {
+			int shieldsUsed = 0;
+
+			if (shieldCount > inCrises.size()) {
+				shieldsUsed = inCrises.size();
+			}
+			else {
+				outCrises.addAll(inCrises.subList(shieldCount, shieldCount));
+				shieldsUsed = shieldCount;
+			}
+			
+			// use shields in modifiers
+			modifiers.addInt(GameModifierType.CRISIS_SHIELD_COUNT, -shieldsUsed);
+		}
+		else {
+			outCrises.addAll(inCrises);
+		}
+	}
 	
 	private static List<SmurfCharacter> createSmurfs() {
 		return List.of(

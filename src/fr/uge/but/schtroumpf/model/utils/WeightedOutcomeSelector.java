@@ -15,34 +15,73 @@ public class WeightedOutcomeSelector {
 
     public WeightedOutcomeSelector addChoice(OutcomeChoice choice) {
         choices.add(choice);
-        return this; // so we can do .addchoice().addchoice()
+        return this;
     }
 
-    /**
-     * filters out options where the resource is already full and selects 1 option based on
-     * odds adjusted with modifiers
-     **/
     public AbilityResult selectAndExecute(SmurfVillage village, OutcomeChoice fallback) {
-        double successModifier = village.getModifiers().getDouble(GameModifierType.SUCCESS_CHANCE_BONUS);
+        List<OutcomeChoice> validChoices = new ArrayList<>();
+        double sumSuccess = 0.0, sumFailure = 0.0, sumNeutral = 0.0;
 
-        List<OutcomeChoice> validChoices = getValidAdjustedChoices(village, successModifier);
-        double totalWeight = 0.0;
+        // filter invalid choices and sum up weights by category
+        for (OutcomeChoice choice : choices) {
+            if (choice.baseWeight() <= 0.0 || isAnyResourceFull(village, choice.effects())) {
+                continue;
+            }
+            validChoices.add(choice);
+            
+            if (choice.resultType() == AbilityResultType.SUCCESS) sumSuccess += choice.baseWeight();
+            else if (choice.resultType() == AbilityResultType.FAILURE) sumFailure += choice.baseWeight();
+            else sumNeutral += choice.baseWeight();
+        }
+
+        double totalRawWeight = sumSuccess + sumFailure + sumNeutral;
+
+        // fallback if nothing is valid
+        if (validChoices.isEmpty() || totalRawWeight <= 0.0) {
+            return fallback != null ? buildResult(fallback) : buildEmptyResult();
+        }
+
+        // convert into probabilities 0.0 to 1.0
+        double probSuccess = sumSuccess / totalRawWeight;
+        double probFailure = sumFailure / totalRawWeight;
+        double probNeutral = sumNeutral / totalRawWeight;
+
+        // apply modifier
+        double modifier = village.getModifiers().getDouble(GameModifierType.SUCCESS_CHANCE_BONUS);
+        double shift = Math.max(-probSuccess, Math.min(modifier, probFailure));
+
+        double newProbSuccess = probSuccess + shift;
+        double newProbFailure = probFailure - shift;
+        
+        // ensure probabilities add up to 1
+        double checkSum = newProbSuccess + newProbFailure + probNeutral;
+        if (Math.abs(checkSum - 1.0) > 0.0001) {
+            throw new IllegalStateException("probability broken sum: " + checkSum);
+        }
+
+        double roll = random.nextDouble();
+        double currentSum = 0.0;
+        OutcomeChoice selectedChoice = validChoices.get(validChoices.size() - 1);
+
         for (OutcomeChoice choice : validChoices) {
-        	totalWeight += choice.baseWeight();
+            double finalProbability = 0.0;
+            
+            if (choice.resultType() == AbilityResultType.SUCCESS) {
+                finalProbability = (choice.baseWeight() / sumSuccess) * newProbSuccess;
+            } else if (choice.resultType() == AbilityResultType.FAILURE) {
+                finalProbability = (choice.baseWeight() / sumFailure) * newProbFailure;
+            } else {
+                finalProbability = (choice.baseWeight() / sumNeutral) * probNeutral;
+            }
+
+            currentSum += finalProbability;
+            if (roll <= currentSum) {
+                selectedChoice = choice;
+                break;
+            }
         }
 
-        // if no valid choices use fallback choice
-        if (validChoices.isEmpty() || totalWeight <= 0.0) {
-        	if (fallback == null) {
-        		return buildEmptyResult();
-        	}
-            return buildResult(fallback);
-        }
-
-        // select random choice
-        OutcomeChoice selectedChoice = selectChoiceByRoll(validChoices, totalWeight);
-
-        // execute callback if present
+        // execute hooks
         if (selectedChoice.onSuccessHook() != null) {
             selectedChoice.onSuccessHook().run();
         }
@@ -50,65 +89,6 @@ public class WeightedOutcomeSelector {
         return buildResult(selectedChoice);
     }
 
-    /**
-     * removes choices which produced resources are already full
-     * @return valid choices
-     **/
-    private List<OutcomeChoice> getValidAdjustedChoices(SmurfVillage village, double successModifier) {
-        List<OutcomeChoice> validChoices = new ArrayList<>();
-
-        for (OutcomeChoice choice : this.choices) {
-            if (isAnyResourceFull(village, choice.effects())) {
-                continue;
-            }
-
-            double adjustedWeight = calculateAdjustedWeight(choice, successModifier);
-            
-            if (adjustedWeight > 0.0) {
-                validChoices.add(new OutcomeChoice(
-                    adjustedWeight,
-                    choice.resultType(),
-                    choice.messagePrefix(),
-                    choice.effects(),
-                    choice.onSuccessHook()
-                ));
-            }
-        }
-        return validChoices;
-    }
-
-    /** adjusts weight of choice based on success modifier */
-    private double calculateAdjustedWeight(OutcomeChoice choice, double successModifier) {
-        double adjustedWeight = choice.baseWeight();
-        if (successModifier == 0.0) {
-            return adjustedWeight;
-        }
-
-        if (choice.resultType() == fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResultType.SUCCESS) {
-            return Math.max(0.0, adjustedWeight + successModifier);
-        } 
-        
-        if (choice.resultType() == fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResultType.FAILURE) {
-            return Math.max(0.0, adjustedWeight - successModifier);
-        }
-
-        return adjustedWeight;
-    }
-
-    private OutcomeChoice selectChoiceByRoll(List<OutcomeChoice> validChoices, double totalWeight) {
-        double roll = random.nextDouble() * totalWeight;
-        double currentSum = 0.0;
-
-        for (OutcomeChoice choice : validChoices) {
-            currentSum += choice.baseWeight();
-            if (roll <= currentSum) {
-                return choice;
-            }
-        }
-        return validChoices.getLast();
-    }
-
-    /** block if any resource is already full */
     private boolean isAnyResourceFull(SmurfVillage village, List<ResourceEffect> effects) {
         for (ResourceEffect effect : effects) {
             if (effect.delta() > 0 && village.isResourceFull(effect.resourceType())) {
@@ -119,10 +99,10 @@ public class WeightedOutcomeSelector {
     }
 
     private AbilityResult buildResult(OutcomeChoice choice) {
-    	String finalMessage = choice.messagePrefix();
-    	for (var effect : choice.effects()) {
-    		finalMessage += effect.toString() + " ";
-    	}
+        String finalMessage = choice.messagePrefix();
+        for (var effect : choice.effects()) {
+            finalMessage += " " + effect.toString();
+        }
         return new AbilityResult(choice.resultType(), finalMessage.stripLeading(), choice.effects());
     }
 

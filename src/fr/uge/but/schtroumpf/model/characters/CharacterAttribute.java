@@ -4,7 +4,8 @@ import java.util.Objects;
 
 public enum CharacterAttribute {
 	WISDOM(1, "Sagesse"),
-	KINDNESS(2, "Gentillesse");
+	KINDNESS(2, "Gentillesse"),
+	BUILDING(3, "Bricolage");
 	
 	private final int code;
     private final String name;
