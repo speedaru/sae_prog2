@@ -4,13 +4,13 @@ import java.util.List;
 
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.crises.Crises.*;
-import fr.uge.but.schtroumpf.model.types.GameModifierEffect;
+import fr.uge.but.schtroumpf.model.types.ModifierEffect;
 
 public interface Crisis {
 	CrisisType getType();
 	
 	/** @return list of modifier effects */
-	List<GameModifierEffect<?>> getModifierEffects();
+	List<ModifierEffect> getModifierEffects();
 	
 	/** apply immediate effects like decreasing resources. default bcs not all crises need this  */
 	default void applyImmediateEffects(SmurfVillage village) { }

@@ -5,101 +5,124 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fr.uge.but.schtroumpf.model.save.GameSave;
+import fr.uge.but.schtroumpf.model.utils.Logger;
+
 public class VillageModifierContext {
     private final Map<GameModifierType, Object> persistentModifiers = new HashMap<>();
-    private final List<GameModifierEffect> temporaryModifiers = new ArrayList<>();
+    private final List<ModifierEffect> temporaryModifiers = new ArrayList<>();
 
-    public VillageModifierContext() { }
+    public VillageModifierContext() {}
+    
+    /** constructor from deserialized data */
+    public VillageModifierContext(GameSave.VillageModifierCtxState state) {
+    	// load persisten modifiers
+    	for (var entry : state.persistentModifiers().entrySet()) {
+    		this.persistentModifiers.put(entry.getKey(), entry.getValue());
+    	}
 
-    /** handles infinite stacking properties via the map */
-    public void addPersistentInt(GameModifierType type, int delta) {
-        int current = 0;
-        if (persistentModifiers.containsKey(type)) {
-            current = (Integer) persistentModifiers.get(type);
+    	// restore temp modifiers
+        for (var tempState : state.temporaryModifiers()) {
+            this.temporaryModifiers.add(new ModifierEffect(
+                tempState.type(),
+                tempState.value(),
+                tempState.remainingRounds(),
+                tempState.isCrisis()
+            ));
         }
-        
-        int newValue = current + delta;
-		persistentModifiers.put(type, newValue);
     }
 
-    /** temporary effects that last fixed rounds amount */
-    public void addTemporaryEffect(GameModifierType type, Object value, int duration, boolean isCrisis) {
-        temporaryModifiers.add(new GameModifierEffect(type, value, duration, isCrisis));
+    public GameSave.VillageModifierCtxState serialize() {
+    	// copy persistent modifiers
+		Map<GameModifierType, Object> persistentStates = new HashMap<>(this.persistentModifiers);
+
+		// get temp state
+		List<GameSave.TemporaryModifierState> tempStates = new java.util.ArrayList<>();
+		for (ModifierEffect effect : this.temporaryModifiers) {
+			tempStates.add(new GameSave.TemporaryModifierState(
+				effect.getType(),
+				effect.getValue(),
+				effect.getRemainingRounds(),
+				effect.isCrisis(),
+				effect.started()
+			));
+		}
+		
+		return new GameSave.VillageModifierCtxState(persistentStates, tempStates);
+    }
+
+    /** stores modifiers in map */
+    public void accumulatePersistentEffect(GameModifierType type, Object deltaVal) {
+        if (!type.getType().isInstance(deltaVal)) {
+            throw new IllegalArgumentException("deltaVal for modifier is not expected type: " + type.getName());
+        }
+
+        Object current = persistentModifiers.getOrDefault(type, type.getDefaultValue());
+        Object newValue = type.combine(current, deltaVal);
+        persistentModifiers.put(type, newValue);
+    }
+    
+    /** stores each modifier separately in a list */
+    public void accumulateTempEffect(ModifierEffect effect) {
+    	temporaryModifiers.add(effect);
     }
 
     /** decrements all temporary effect durations and remove finished */
     public void tickRounds() {
-        List<GameModifierEffect> activeOnly = new ArrayList<>();
-        for (GameModifierEffect effect : temporaryModifiers) {
+        List<ModifierEffect> activeOnly = new ArrayList<>();
+        for (ModifierEffect effect : temporaryModifiers) {
             boolean expired = effect.tick();
             if (!expired) {
                 activeOnly.add(effect);
+            }
+            else {
+            	Logger.LogDebug("finished temp modifier: %s", effect.getType().getName());
             }
         }
         temporaryModifiers.clear();
         temporaryModifiers.addAll(activeOnly);
     }
 
-    /** removes all temp effects that were added by crisis */
+    /** removes all temp effects that were added by crises */
     public void clearCrisisEffects() {
-        List<GameModifierEffect> smurfBuffsOnly = new ArrayList<>();
-        for (GameModifierEffect effect : temporaryModifiers) {
+        List<ModifierEffect> nonCrisisModifier = new ArrayList<>();
+        for (ModifierEffect effect : temporaryModifiers) {
             if (!effect.isCrisis()) {
-                smurfBuffsOnly.add(effect);
+                nonCrisisModifier.add(effect);
             }
         }
         temporaryModifiers.clear();
-        temporaryModifiers.addAll(smurfBuffsOnly);
+        temporaryModifiers.addAll(nonCrisisModifier);
+    }
+    
+    @SuppressWarnings("unchecked")
+	public <T> T get(GameModifierType type) {
+		Object total = type.getDefaultValue();
+		
+		// add persisiten modifiers
+		if (persistentModifiers.containsKey(type)) {
+			total = type.combine(total, persistentModifiers.get(type));
+		}
+		
+		for (ModifierEffect effect : temporaryModifiers) {
+			if (effect.getType() == type) {
+				total = type.combine(total, effect.getValue());
+			}
+		}
+		
+		return (T)total;
+		
     }
 
     public int getInt(GameModifierType type) {
-        int total = (Integer) type.getDefaultValue();
-
-        // get persistent amount
-        if (persistentModifiers.containsKey(type)) {
-            total += (Integer) persistentModifiers.get(type);
-        }
-
-        // get temp amount
-        for (GameModifierEffect effect : temporaryModifiers) {
-            if (effect.getType() == type) {
-                total += (Integer) effect.getValue();
-            }
-        }
-        return total;
+        return get(type);
     }
 
     public double getDouble(GameModifierType type) {
-        double total = (Double) type.getDefaultValue();
-
-        // get persistent amount
-        if (persistentModifiers.containsKey(type)) {
-            total += (Double) persistentModifiers.get(type);
-        }
-
-        // get temp amount
-        for (GameModifierEffect effect : temporaryModifiers) {
-            if (effect.getType() == type) {
-                total += (Double) effect.getValue();
-            }
-        }
-        return total;
+        return get(type);
     }
 
     public boolean getBool(GameModifierType type) {
-        boolean total = (Boolean) type.getDefaultValue();
-
-        // get persistent amount
-        if (persistentModifiers.containsKey(type)) {
-            total = total || (Boolean) persistentModifiers.get(type);
-        }
-
-        // or at least 1 persistent amount
-        for (GameModifierEffect effect : temporaryModifiers) {
-            if (effect.getType() == type) {
-                total = total || (Boolean) effect.getValue();
-            }
-        }
-        return total;
+    	return get(type);
     }
 }

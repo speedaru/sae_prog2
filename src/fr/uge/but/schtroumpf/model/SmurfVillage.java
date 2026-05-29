@@ -8,10 +8,11 @@ import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
 import fr.uge.but.schtroumpf.model.crises.*;
 import fr.uge.but.schtroumpf.model.save.GameSave;
 import fr.uge.but.schtroumpf.model.types.EventHistory;
-import fr.uge.but.schtroumpf.model.types.GameModifierEffect;
+import fr.uge.but.schtroumpf.model.types.ModifierEffect;
 import fr.uge.but.schtroumpf.model.types.GameModifierType;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
+import fr.uge.but.schtroumpf.model.types.VillageCallbackType;
 import fr.uge.but.schtroumpf.model.types.VillageModifierContext;
 import fr.uge.but.schtroumpf.model.utils.GameRandomness;
 import fr.uge.but.schtroumpf.model.utils.Logger;
@@ -30,6 +31,7 @@ public class SmurfVillage {
 	// modifier engine and crisis state
 	private final ArrayList<Crisis> activeCrises = new ArrayList<>();
 	private VillageModifierContext modifiers = new VillageModifierContext();
+	private Map<VillageCallbackType, Runnable> callbacks = new HashMap<>();
 
 	public SmurfVillage() {
 		councilMembers = createSmurfs();
@@ -89,10 +91,6 @@ public class SmurfVillage {
 	}
 
 	public void setResourceQuantity(ResourceType resource, int amount) {
-		int max = ResourceManager.MAX_QUANTITY;
-		if (amount < 0 || amount > max) {
-			throw new IllegalArgumentException(String.format("Amount (%d) must be between 0 and %d", amount, max));
-		}
 		resourceManager.set(resource, amount);
 	}
 
@@ -161,6 +159,12 @@ public class SmurfVillage {
     }
 
 	// ------------------------- round and snapshot tracking -------------------------
+    
+    public void prepareNextRound() {
+        saveRoundResources(); // save resources
+        resetTurnAbilitiesCounter(); // reset council member ability counter
+		applyActiveCrisesModifiers(); // apply modifiers
+    }
 
 	public void saveRoundResources() {
 		previousRoundResources = resourceManager.getResourcesSnap();
@@ -226,8 +230,13 @@ public class SmurfVillage {
 
 	// ------------------------- hooks for modifier engine -------------------------
 
-	public VillageModifierContext getModifiers() {
+	/** shouldnt be called to update a modifier manually */
+	public VillageModifierContext getModifiersView() {
 		return modifiers;
+	}
+	
+	public <T> T getModifier(GameModifierType type) {
+		return modifiers.get(type);
 	}
 	
 	/**
@@ -241,7 +250,7 @@ public class SmurfVillage {
 		return GameRandomness.rollChance(finalChance);
 	}
 
-	public int getEffectDeltaWithEfficiencyModifier(ResourceEffect effect) {
+	public int getDynamicEffectDelta(ResourceEffect effect) {
 		int baseDelta = effect.delta();
 
 		// if effect always returns 0 then return 0
@@ -264,7 +273,7 @@ public class SmurfVillage {
 	/** intercepts effect applications to apply efficiency multipliers */
 	public void applyEffects(List<ResourceEffect> resourceEffects) {
 		for (ResourceEffect effect : resourceEffects) {
-			int finalDelta = getEffectDeltaWithEfficiencyModifier(effect);
+			int finalDelta = getDynamicEffectDelta(effect);
 			updateResource(effect.resourceType(), finalDelta);
 		}
 	}
@@ -278,8 +287,11 @@ public class SmurfVillage {
 		Logger.LogDebug("recharged %s energy by %d (+%d modifier)", smurf, finalRate, energyRechargeRateDelta);
 	}
 	
-	public ArrayList<ResourceType> getProductionAllowedResourceTypes() {
+	public ArrayList<ResourceType> getProductionAllowedResources() {
 		ArrayList<ResourceType> allowedTypes = new ArrayList<>(Arrays.asList(ResourceType.values()));
+		
+		// dont produce resources that are full
+		allowedTypes.removeIf(this::isResourceFull);
 
 		// dont include berries if food production blocked
 		if (modifiers.getBool(GameModifierType.PASSIVE_FOOD_PRODUCTION_BLOCKED)) {
@@ -308,33 +320,69 @@ public class SmurfVillage {
 		int finalProductionRate = BASE_PRODUCTION_RATE + productionDelta;
 		return Math.max(1, finalProductionRate);
 	}
+	
+	/** used to apply a modifier, also calls the modifier updated callback */
+	public void accumulateTempModifier(ModifierEffect modifier) {
+		modifiers.accumulateTempEffect(modifier);
+		runCallback(VillageCallbackType.MODIFIERS_UPDATED);
+	}
+	
+	/** used to apply a modifier, also calls the modifier updated callback */
+	public void accumulatePersistenModifier(GameModifierType type, Object val) {
+		modifiers.accumulatePersistentEffect(type, val);
+		runCallback(VillageCallbackType.MODIFIERS_UPDATED);
+	}
+
+	// ------------------------- callbacks -------------------------
+	
+	public void registerCallback(VillageCallbackType callbackType, Runnable callback) {
+		if (callbacks.containsKey(callbackType)) {
+			throw new IllegalStateException("callback type already registered: " + callbackType.name());
+		}
+		
+		callbacks.put(callbackType, callback);
+	}
+	
+	/** runs a callback for the registered type if a callback is registered */
+	public void runCallback(VillageCallbackType callbackType) {
+		Runnable callback = callbacks.getOrDefault(callbackType, null);
+		if (callback != null) {
+			callback.run();
+		}
+	}
 
 	// ------------------------- crisis and end conditions -------------------------
 	
 	/** recalculates active crises and modifiers */
-	public void setActiveCrises(List<Crisis> crises) {
+	public void applyCrises(List<Crisis> crises) {
 		activeCrises.clear();
 		
 		// block crisis if has shields
-		setCrisesAndUseShields(activeCrises, crises);
-		if (activeCrises.isEmpty()) {
-			return;
+		int shieldCount = modifiers.getInt(GameModifierType.CRISIS_SHIELD_COUNT);
+		if (shieldCount <= 0) {
+			// no shields so just set crises
+			activeCrises.addAll(crises);
 		}
+		
+		// use shields
+		List<Crisis> unblockedCrises = blockCrises(shieldCount, crises);
+		activeCrises.addAll(unblockedCrises);
+	}
 
-		// recalculate all modifiers
-		VillageModifierContext newModifiers = new VillageModifierContext();
-
+	public void applyActiveCrisesModifiers() {
 		for (Crisis crisis : activeCrises) {
 			// apply modifier effects
-			for (GameModifierEffect<?> effect : crisis.getModifierEffects()) {
-				newModifiers.accumulateEffect(effect);
+			for (ModifierEffect effect : crisis.getModifierEffects()) {
+				modifiers.accumulateTempEffect(effect);
 			}
 
 			// apply immediate resource changes
 			crisis.applyImmediateEffects(this);
 		}
-
-		this.modifiers = newModifiers;
+		
+		// decrease round counter
+		modifiers.tickRounds();
+		runCallback(VillageCallbackType.MODIFIERS_UPDATED);
 	}
 
 	public List<Crisis> getActiveCrises() {
@@ -343,37 +391,29 @@ public class SmurfVillage {
 
 	/** must be called when crises are up to date, after checkAndUpdateCrises() */
 	public boolean isDefeated() {
-//		int crisisCount = 0;
-//		for (ResourceType type : ResourceType.values()) {
-//			if (resourceManager.get(type) <= 0) {
-//				crisisCount += 1;
-//			}
-//		}
-//		return crisisCount >= 3;
 		return activeCrises.size() >= MAX_CRISES;
 	}
 
 	// ------------------------- private helpers -------------------------
 	
-	private void setCrisesAndUseShields(List<Crisis> outCrises, List<Crisis> inCrises) {
-		int shieldCount = modifiers.getInt(GameModifierType.CRISIS_SHIELD_COUNT);
-		if (shieldCount > 0) {
-			int shieldsUsed = 0;
+	private List<Crisis> blockCrises(int shieldCount, List<Crisis> crises) {
+		ArrayList<Crisis> unblockedCrises = new ArrayList<>();
+		int shieldsUsed = 0;
 
-			if (shieldCount > inCrises.size()) {
-				shieldsUsed = inCrises.size();
-			}
-			else {
-				outCrises.addAll(inCrises.subList(shieldCount, shieldCount));
-				shieldsUsed = shieldCount;
-			}
-			
-			// use shields in modifiers
-			modifiers.addInt(GameModifierType.CRISIS_SHIELD_COUNT, -shieldsUsed);
+		// if can block all crises 
+		if (shieldCount >= crises.size()) {
+			shieldsUsed = crises.size();
 		}
 		else {
-			outCrises.addAll(inCrises);
+			// partially block
+			unblockedCrises.addAll(crises.subList(shieldCount, shieldCount));
+			shieldsUsed = shieldCount;
 		}
+		
+		// decrease modifiers
+		modifiers.accumulatePersistentEffect(GameModifierType.CRISIS_SHIELD_COUNT, -shieldsUsed);
+
+		return List.copyOf(unblockedCrises);
 	}
 	
 	private static List<SmurfCharacter> createSmurfs() {

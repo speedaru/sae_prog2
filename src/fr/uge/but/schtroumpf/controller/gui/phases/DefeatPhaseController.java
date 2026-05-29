@@ -28,7 +28,11 @@ public class DefeatPhaseController implements PhaseSubController {
         fatalCrisesContainer.getChildren().clear();
 
         // loop through the crises that triggered the game over and generate cards
+        int counter = 0;
         for (Crisis crisis : game.getVillage().getActiveCrises()) {
+        	// only display 3 crises
+        	if (++counter > 3) break;
+
             CrisisSummaryRow row = new CrisisSummaryRow(crisis.getType());
             fatalCrisesContainer.getChildren().add(row);
         }

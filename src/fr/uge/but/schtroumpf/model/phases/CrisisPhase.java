@@ -23,7 +23,7 @@ public class CrisisPhase implements GamePhase {
 			}
 		}
 		
-		village.setActiveCrises(activeCrises);
+		village.applyCrises(activeCrises);
 	}
 
 	@Override

@@ -3,7 +3,7 @@ package fr.uge.but.schtroumpf.model.crises;
 import java.util.List;
 
 import fr.uge.but.schtroumpf.model.SmurfVillage;
-import fr.uge.but.schtroumpf.model.types.GameModifierEffect;
+import fr.uge.but.schtroumpf.model.types.ModifierEffect;
 import fr.uge.but.schtroumpf.model.types.GameModifierType;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 
@@ -14,10 +14,10 @@ public final class Crises {
 		@Override public CrisisType getType() { return CrisisType.FAMINE; }
 
 		@Override
-		public List<GameModifierEffect<?>> getModifierEffects() {
+		public List<ModifierEffect> getModifierEffects() {
 			// starving smurfs have less stamina
 			return List.of(
-				new GameModifierEffect<>(GameModifierType.MAX_ENERGY_DELTA, -2)
+				ModifierEffect.crisisModifierEffect(GameModifierType.MAX_ENERGY_DELTA, -2)
 			);
 		}
 	}
@@ -26,10 +26,10 @@ public final class Crises {
 	    @Override public CrisisType getType() { return CrisisType.EPIDEMIC; }
 
 	    @Override
-		public List<GameModifierEffect<?>> getModifierEffects() {
+		public List<ModifierEffect> getModifierEffects() {
 	        // sick smurfs produce 1 less standard ability delta
 			return List.of(
-				new GameModifierEffect<>(GameModifierType.EFFICIENCY_DELTA, -1)
+				ModifierEffect.crisisModifierEffect(GameModifierType.EFFICIENCY_DELTA, -1)
 			);
 	    }
 	}
@@ -38,10 +38,10 @@ public final class Crises {
 	    @Override public CrisisType getType() { return CrisisType.REVOLT; }
 
 	    @Override
-		public List<GameModifierEffect<?>> getModifierEffects() {
+		public List<ModifierEffect> getModifierEffects() {
 	        // uncooperative Smurfs -25% flat chance to all dice rolls
 			return List.of(
-				new GameModifierEffect<>(GameModifierType.SUCCESS_CHANCE_BONUS, -0.25)
+				ModifierEffect.crisisModifierEffect(GameModifierType.SUCCESS_CHANCE_BONUS, -0.25)
 			);
 	    }
 	}
@@ -50,10 +50,10 @@ public final class Crises {
 	    @Override public CrisisType getType() { return CrisisType.MASSIVE_ATTACK; }
 
 	    @Override
-		public List<GameModifierEffect<?>> getModifierEffects() {
+		public List<ModifierEffect> getModifierEffects() {
 	        // attackers cause panic, tiring out the defenders
 			return List.of(
-				new GameModifierEffect<>(GameModifierType.MAX_ENERGY_DELTA, -3)
+				ModifierEffect.crisisModifierEffect(GameModifierType.MAX_ENERGY_DELTA, -3)
 			);
 	    }
 
@@ -69,10 +69,10 @@ public final class Crises {
 	    @Override public CrisisType getType() { return CrisisType.DARK_AGES; }
 
 	    @Override
-		public List<GameModifierEffect<?>> getModifierEffects() {
+		public List<ModifierEffect> getModifierEffects() {
 	        // disables passive generation of berries during production phase
 			return List.of(
-				new GameModifierEffect<>(GameModifierType.PASSIVE_FOOD_PRODUCTION_BLOCKED, true)
+				ModifierEffect.crisisModifierEffect(GameModifierType.PASSIVE_FOOD_PRODUCTION_BLOCKED, true)
 			);
 	    }
 	}
@@ -80,10 +80,10 @@ public final class Crises {
 	    @Override public CrisisType getType() { return CrisisType.BANKRUPTCY; }
 
 	    @Override
-		public List<GameModifierEffect<?>> getModifierEffects() {
+		public List<ModifierEffect> getModifierEffects() {
 	        // retire une action pour le conseil
 			return List.of(
-				new GameModifierEffect<>(GameModifierType.ABILITIES_PER_TURN_DELTA, -1)
+				ModifierEffect.crisisModifierEffect(GameModifierType.ABILITIES_PER_TURN_DELTA, -1)
 			);
 	    }
 	}
@@ -91,10 +91,10 @@ public final class Crises {
 	    @Override public CrisisType getType() { return CrisisType.STONE_AGE; }
 
 	    @Override
-		public List<GameModifierEffect<?>> getModifierEffects() {
+		public List<ModifierEffect> getModifierEffects() {
 	        // retire un de chaque production
 			return List.of(
-				new GameModifierEffect<>(GameModifierType.PRODUCTION_DELTA, -1)
+				ModifierEffect.crisisModifierEffect(GameModifierType.PRODUCTION_DELTA, -1)
 			);
 	    }
 	}
