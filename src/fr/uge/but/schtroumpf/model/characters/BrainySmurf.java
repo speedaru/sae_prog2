@@ -45,13 +45,13 @@ public class BrainySmurf implements SmurfCharacter {
         // study a scroll
         CharacterAbility studyScroll = new CharacterAbility(
             "etudier un parchemin",
-            "le schtroumpf a lunettes etudie, ce qui coute du savoir mais donnera un bonus futur.",
+            "le schtroumpf a lunettes etudie et trouve de la salsepareille.",
             2,
             List.of(
                 new ResourceSnapshot(ResourceType.KNOWLEDGE, 1)
             ),
             List.of(
-                new ResourceEffect(ResourceType.KNOWLEDGE, -1)
+                new ResourceEffect(ResourceType.SARSAPARILLA, +1)
             ),
             this::executeStudyScroll
         );
@@ -84,11 +84,11 @@ public class BrainySmurf implements SmurfCharacter {
     }
 
     private AbilityResult executeStudyScroll(SmurfVillage village) {
-        ResourceEffect minusKnowledge = new ResourceEffect(ResourceType.KNOWLEDGE, -1);
+        ResourceEffect plusSarsaparilla = new ResourceEffect(ResourceType.SARSAPARILLA, 1);
         return new AbilityResult(
             AbilityResultType.NEUTRAL,
-            "le schtroumpf a lunettes a etudie un parchemin pour plus tard : " + minusKnowledge,
-            List.of(minusKnowledge)
+            "le schtroumpf a lunettes a etudie un parchemin " + plusSarsaparilla,
+            List.of(plusSarsaparilla)
         );
     }
 
@@ -103,7 +103,7 @@ public class BrainySmurf implements SmurfCharacter {
 
         return new AbilityResult(
             AbilityResultType.NEUTRAL,
-            "le schtroumpf a lunettes a traduit une formule : " + randomBonus,
+            "le schtroumpf a lunettes a traduit une formule " + randomBonus,
             List.of(randomBonus)
         );
     }
