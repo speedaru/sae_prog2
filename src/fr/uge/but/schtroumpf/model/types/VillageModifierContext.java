@@ -1,131 +1,105 @@
 package fr.uge.but.schtroumpf.model.types;
 
-import java.util.EnumMap;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import fr.uge.but.schtroumpf.model.save.GameSave;
-import fr.uge.but.schtroumpf.model.utils.Logger;
-
 public class VillageModifierContext {
-    private final Map<GameModifierType, Object> modifiers = new EnumMap<>(GameModifierType.class);
-    
-    public VillageModifierContext() {
-        // initialize all modifiers to defaults
-        for (GameModifierType modifier : GameModifierType.values()) {
-            modifiers.put(modifier, modifier.getDefaultValue());
-        }
-    }
-    
-    public VillageModifierContext(GameSave.VillageModifierCtxState state) {
-    	// init all modifiers to default
-        this();
+    private final Map<GameModifierType, Object> persistentModifiers = new HashMap<>();
+    private final List<GameModifierEffect> temporaryModifiers = new ArrayList<>();
 
-        for (var entry : state.modifiers().entrySet()) {
-        	GameModifierType type = entry.getKey();
-        	Object val = entry.getValue();
-        	Logger.LogDebug("entry type: %s", type.getName());
-        	
-        	// modifier unset or default
-        	if (val == null || val == type.getDefaultValue()) {
-        		Logger.LogTrace("skipping");
-        		continue;
-        	}
-        	
-        	// handle doubles deserializing manually
-        	if (type.getType() == Double.class) {
-        		Number num = (Number)val;
-        		this.set(type, num.doubleValue());
-        	}
-        	else if (type.getType() == Integer.class) {
-        		Number num = (Number)val;
-        		this.set(type, num.intValue());
-        	}
-        	else {
-        		this.set(type, val);
-        	}
+    public VillageModifierContext() { }
+
+    /** handles infinite stacking properties via the map */
+    public void addPersistentInt(GameModifierType type, int delta) {
+        int current = 0;
+        if (persistentModifiers.containsKey(type)) {
+            current = (Integer) persistentModifiers.get(type);
         }
         
-        Logger.LogDebug("loaded modifiers:\n%s", this.toString());
-    }
-    
-    @Override
-    public String toString() {
-    	StringBuilder sb = new StringBuilder("VillageModifierContext:\n");
-
-    	for (var entry : modifiers.entrySet()) {
-    		sb.append(String.format("%s: %s\n", entry.getKey().getName(), entry.getValue()));
-    	}
-
-    	return sb.toString().stripTrailing();
-    }
-    
-    /** any type getter */
-    @SuppressWarnings("unchecked")
-    public <T> T get(GameModifierType modifier) {
-        Object value = modifiers.getOrDefault(modifier, modifier.getDefaultValue());
-        return (T)modifier.getType().cast(value);
+        int newValue = current + delta;
+		persistentModifiers.put(type, newValue);
     }
 
-    /** apply a modifier effect */
-	public void accumulateEffect(GameModifierEffect<?> effect) {
-		GameModifierType modifierType = effect.type();
-		Object effectVal = effect.value();
-
-		if (modifierType.getType() == Integer.class) {
-			int current = this.getInt(modifierType);
-			int delta = (Integer) effectVal;
-			this.set(modifierType, current + delta);
-		} else if (modifierType.getType() == Double.class) {
-			double current = this.getDouble(modifierType);
-			double delta = (Double) effectVal;
-			this.set(modifierType, current + delta);
-		} else if (modifierType.getType() == Boolean.class) {
-			boolean current = this.getBool(modifierType);
-			boolean newVal = (Boolean)effectVal;
-			// accumulate effects so if at least 1 effect sets to true it should remain true
-			this.set(modifierType, current || newVal);
-		}
-	}
-
-    // ------------------------- types getters
-    
-    public double getDouble(GameModifierType modifier) {
-        return get(modifier);
+    /** temporary effects that last fixed rounds amount */
+    public void addTemporaryEffect(GameModifierType type, Object value, int duration, boolean isCrisis) {
+        temporaryModifiers.add(new GameModifierEffect(type, value, duration, isCrisis));
     }
 
-    public int getInt(GameModifierType modifier) {
-        return get(modifier);
-    }
-
-    public boolean getBool(GameModifierType modifier) {
-        return get(modifier);
-    }
-
-    // ------------------------- types setters
-
-    /** updates modifier value and check type */
-    public void set(GameModifierType modifier, Object value) {
-        if (!modifier.getType().isInstance(value)) {
-			throw new IllegalArgumentException(String.format("cant set modifier %s to type %s. expected type: %s",
-					modifier.name(), value.getClass().getSimpleName(), modifier.getType().getSimpleName()));
+    /** decrements all temporary effect durations and remove finished */
+    public void tickRounds() {
+        List<GameModifierEffect> activeOnly = new ArrayList<>();
+        for (GameModifierEffect effect : temporaryModifiers) {
+            boolean expired = effect.tick();
+            if (!expired) {
+                activeOnly.add(effect);
+            }
         }
-        modifiers.put(modifier, value);
+        temporaryModifiers.clear();
+        temporaryModifiers.addAll(activeOnly);
     }
 
-    public void setBool(GameModifierType modifier, boolean value) {
-        set(modifier, value);
+    /** removes all temp effects that were added by crisis */
+    public void clearCrisisEffects() {
+        List<GameModifierEffect> smurfBuffsOnly = new ArrayList<>();
+        for (GameModifierEffect effect : temporaryModifiers) {
+            if (!effect.isCrisis()) {
+                smurfBuffsOnly.add(effect);
+            }
+        }
+        temporaryModifiers.clear();
+        temporaryModifiers.addAll(smurfBuffsOnly);
     }
 
-    public void addInt(GameModifierType modifier, int delta) {
-        set(modifier, getInt(modifier) + delta);
+    public int getInt(GameModifierType type) {
+        int total = (Integer) type.getDefaultValue();
+
+        // get persistent amount
+        if (persistentModifiers.containsKey(type)) {
+            total += (Integer) persistentModifiers.get(type);
+        }
+
+        // get temp amount
+        for (GameModifierEffect effect : temporaryModifiers) {
+            if (effect.getType() == type) {
+                total += (Integer) effect.getValue();
+            }
+        }
+        return total;
     }
 
-    public void addDouble(GameModifierType modifier, double delta) {
-        set(modifier, getDouble(modifier) + delta);
+    public double getDouble(GameModifierType type) {
+        double total = (Double) type.getDefaultValue();
+
+        // get persistent amount
+        if (persistentModifiers.containsKey(type)) {
+            total += (Double) persistentModifiers.get(type);
+        }
+
+        // get temp amount
+        for (GameModifierEffect effect : temporaryModifiers) {
+            if (effect.getType() == type) {
+                total += (Double) effect.getValue();
+            }
+        }
+        return total;
     }
 
-    /** copy of modifiers map */
-    public Map<GameModifierType, Object> getModifiers() {
-        return Map.copyOf(modifiers);
+    public boolean getBool(GameModifierType type) {
+        boolean total = (Boolean) type.getDefaultValue();
+
+        // get persistent amount
+        if (persistentModifiers.containsKey(type)) {
+            total = total || (Boolean) persistentModifiers.get(type);
+        }
+
+        // or at least 1 persistent amount
+        for (GameModifierEffect effect : temporaryModifiers) {
+            if (effect.getType() == type) {
+                total = total || (Boolean) effect.getValue();
+            }
+        }
+        return total;
     }
 }

@@ -1,16 +1,29 @@
 package fr.uge.but.schtroumpf.model.types;
 
-import java.util.Objects;
+public class GameModifierEffect {
+    private final GameModifierType type;
+    private final Object value;
+    private int remainingRounds;
+    private final boolean isCrisis;
 
-public record GameModifierEffect<T>(GameModifierType type, T value) {
-	public GameModifierEffect {
-        Objects.requireNonNull(type, "GameModifierType cannot be null.");
-        Objects.requireNonNull(value, "Modifier value cannot be null.");
+    public GameModifierEffect(GameModifierType type, Object value, int duration, boolean isCrisis) {
+        this.type = type;
+        this.value = value;
+        this.remainingRounds = duration;
+        this.isCrisis = isCrisis;
+    }
 
-        // ensure T is the type of type.type
-        if (!type.getType().isInstance(value)) {
-			throw new IllegalArgumentException(String.format("T: %s is not the same type as %s: %s",
-					value.getClass().getSimpleName(), type.name(), type.getType().getSimpleName()));
-        }
+    public GameModifierType getType() { return type; }
+    public Object getValue() { return value; }
+    public int getRemainingRounds() { return remainingRounds; }
+    public boolean isCrisis() { return isCrisis; }
+
+    /**
+     * decrements round counter
+     * @return true if the effect has expired
+     **/
+    public boolean tick() {
+        remainingRounds--;
+        return remainingRounds <= 0;
     }
 }
