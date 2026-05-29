@@ -1,131 +1,128 @@
 package fr.uge.but.schtroumpf.model.types;
 
-import java.util.EnumMap;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import fr.uge.but.schtroumpf.model.save.GameSave;
 import fr.uge.but.schtroumpf.model.utils.Logger;
 
 public class VillageModifierContext {
-    private final Map<GameModifierType, Object> modifiers = new EnumMap<>(GameModifierType.class);
+    private final Map<GameModifierType, Object> persistentModifiers = new HashMap<>();
+    private final List<ModifierEffect> temporaryModifiers = new ArrayList<>();
+
+    public VillageModifierContext() {}
     
-    public VillageModifierContext() {
-        // initialize all modifiers to defaults
-        for (GameModifierType modifier : GameModifierType.values()) {
-            modifiers.put(modifier, modifier.getDefaultValue());
-        }
-    }
-    
+    /** constructor from deserialized data */
     public VillageModifierContext(GameSave.VillageModifierCtxState state) {
-    	// init all modifiers to default
-        this();
-
-        for (var entry : state.modifiers().entrySet()) {
-        	GameModifierType type = entry.getKey();
-        	Object val = entry.getValue();
-        	Logger.LogDebug("entry type: %s", type.getName());
-        	
-        	// modifier unset or default
-        	if (val == null || val == type.getDefaultValue()) {
-        		Logger.LogTrace("skipping");
-        		continue;
-        	}
-        	
-        	// handle doubles deserializing manually
-        	if (type.getType() == Double.class) {
-        		Number num = (Number)val;
-        		this.set(type, num.doubleValue());
-        	}
-        	else if (type.getType() == Integer.class) {
-        		Number num = (Number)val;
-        		this.set(type, num.intValue());
-        	}
-        	else {
-        		this.set(type, val);
-        	}
-        }
-        
-        Logger.LogDebug("loaded modifiers:\n%s", this.toString());
-    }
-    
-    @Override
-    public String toString() {
-    	StringBuilder sb = new StringBuilder("VillageModifierContext:\n");
-
-    	for (var entry : modifiers.entrySet()) {
-    		sb.append(String.format("%s: %s\n", entry.getKey().getName(), entry.getValue()));
+    	// load persisten modifiers
+    	for (var entry : state.persistentModifiers().entrySet()) {
+    		this.persistentModifiers.put(entry.getKey(), entry.getValue());
     	}
 
-    	return sb.toString().stripTrailing();
-    }
-    
-    /** any type getter */
-    @SuppressWarnings("unchecked")
-    public <T> T get(GameModifierType modifier) {
-        Object value = modifiers.getOrDefault(modifier, modifier.getDefaultValue());
-        return (T)modifier.getType().cast(value);
-    }
-
-    /** apply a modifier effect */
-	public void accumulateEffect(GameModifierEffect<?> effect) {
-		GameModifierType modifierType = effect.type();
-		Object effectVal = effect.value();
-
-		if (modifierType.getType() == Integer.class) {
-			int current = this.getInt(modifierType);
-			int delta = (Integer) effectVal;
-			this.set(modifierType, current + delta);
-		} else if (modifierType.getType() == Double.class) {
-			double current = this.getDouble(modifierType);
-			double delta = (Double) effectVal;
-			this.set(modifierType, current + delta);
-		} else if (modifierType.getType() == Boolean.class) {
-			boolean current = this.getBool(modifierType);
-			boolean newVal = (Boolean)effectVal;
-			// accumulate effects so if at least 1 effect sets to true it should remain true
-			this.set(modifierType, current || newVal);
-		}
-	}
-
-    // ------------------------- types getters
-    
-    public double getDouble(GameModifierType modifier) {
-        return get(modifier);
-    }
-
-    public int getInt(GameModifierType modifier) {
-        return get(modifier);
-    }
-
-    public boolean getBool(GameModifierType modifier) {
-        return get(modifier);
-    }
-
-    // ------------------------- types setters
-
-    /** updates modifier value and check type */
-    public void set(GameModifierType modifier, Object value) {
-        if (!modifier.getType().isInstance(value)) {
-			throw new IllegalArgumentException(String.format("cant set modifier %s to type %s. expected type: %s",
-					modifier.name(), value.getClass().getSimpleName(), modifier.getType().getSimpleName()));
+    	// restore temp modifiers
+        for (var tempState : state.temporaryModifiers()) {
+            this.temporaryModifiers.add(new ModifierEffect(
+                tempState.type(),
+                tempState.value(),
+                tempState.remainingRounds(),
+                tempState.isCrisis()
+            ));
         }
-        modifiers.put(modifier, value);
     }
 
-    public void setBool(GameModifierType modifier, boolean value) {
-        set(modifier, value);
+    public GameSave.VillageModifierCtxState serialize() {
+    	// copy persistent modifiers
+		Map<GameModifierType, Object> persistentStates = new HashMap<>(this.persistentModifiers);
+
+		// get temp state
+		List<GameSave.TemporaryModifierState> tempStates = new java.util.ArrayList<>();
+		for (ModifierEffect effect : this.temporaryModifiers) {
+			tempStates.add(new GameSave.TemporaryModifierState(
+				effect.getType(),
+				effect.getValue(),
+				effect.getRemainingRounds(),
+				effect.isCrisis(),
+				effect.started()
+			));
+		}
+		
+		return new GameSave.VillageModifierCtxState(persistentStates, tempStates);
     }
 
-    public void addInt(GameModifierType modifier, int delta) {
-        set(modifier, getInt(modifier) + delta);
+    /** stores modifiers in map */
+    public void accumulatePersistentEffect(GameModifierType type, Object deltaVal) {
+        if (!type.getType().isInstance(deltaVal)) {
+            throw new IllegalArgumentException("deltaVal for modifier is not expected type: " + type.getName());
+        }
+
+        Object current = persistentModifiers.getOrDefault(type, type.getDefaultValue());
+        Object newValue = type.combine(current, deltaVal);
+        persistentModifiers.put(type, newValue);
+    }
+    
+    /** stores each modifier separately in a list */
+    public void accumulateTempEffect(ModifierEffect effect) {
+    	temporaryModifiers.add(effect);
     }
 
-    public void addDouble(GameModifierType modifier, double delta) {
-        set(modifier, getDouble(modifier) + delta);
+    /** decrements all temporary effect durations and remove finished */
+    public void tickRounds() {
+        List<ModifierEffect> activeOnly = new ArrayList<>();
+        for (ModifierEffect effect : temporaryModifiers) {
+            boolean expired = effect.tick();
+            if (!expired) {
+                activeOnly.add(effect);
+            }
+            else {
+            	Logger.LogDebug("finished temp modifier: %s", effect.getType().getName());
+            }
+        }
+        temporaryModifiers.clear();
+        temporaryModifiers.addAll(activeOnly);
     }
 
-    /** copy of modifiers map */
-    public Map<GameModifierType, Object> getModifiers() {
-        return Map.copyOf(modifiers);
+    /** removes all temp effects that were added by crises */
+    public void clearCrisisEffects() {
+        List<ModifierEffect> nonCrisisModifier = new ArrayList<>();
+        for (ModifierEffect effect : temporaryModifiers) {
+            if (!effect.isCrisis()) {
+                nonCrisisModifier.add(effect);
+            }
+        }
+        temporaryModifiers.clear();
+        temporaryModifiers.addAll(nonCrisisModifier);
+    }
+    
+    @SuppressWarnings("unchecked")
+	public <T> T get(GameModifierType type) {
+		Object total = type.getDefaultValue();
+		
+		// add persisiten modifiers
+		if (persistentModifiers.containsKey(type)) {
+			total = type.combine(total, persistentModifiers.get(type));
+		}
+		
+		for (ModifierEffect effect : temporaryModifiers) {
+			if (effect.getType() == type) {
+				total = type.combine(total, effect.getValue());
+			}
+		}
+		
+		return (T)total;
+		
+    }
+
+    public int getInt(GameModifierType type) {
+        return get(type);
+    }
+
+    public double getDouble(GameModifierType type) {
+        return get(type);
+    }
+
+    public boolean getBool(GameModifierType type) {
+    	return get(type);
     }
 }

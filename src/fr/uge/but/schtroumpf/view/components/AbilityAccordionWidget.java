@@ -207,7 +207,7 @@ public class AbilityAccordionWidget extends VBox {
             for (ResourceEffect effect : primaryEffects) {
                 // Instantiated with default true flag to display red/green delta values
                 ResourceSummaryRow row = new ResourceSummaryRow(effect.resourceType(), true);
-                row.updateDelta(village.getEffectDeltaWithEfficiencyModifier(effect));
+                row.updateDelta(village.getDynamicEffectDelta(effect));
                 this.effectsListContainer.getChildren().add(row);
             }
         }

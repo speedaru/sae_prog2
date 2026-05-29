@@ -183,7 +183,7 @@ public class CouncilPhaseController implements PhaseSubController {
     
     private void updateEfficiencyBonusLabel() {
     	GameModifierType modifier = GameModifierType.EFFICIENCY_DELTA;
-    	int efficiencyDelta = game.getVillage().getModifiers().getInt(modifier);
+    	int efficiencyDelta = game.getVillage().getModifier(modifier);
     	efficiencyBonusLabel.setText(modifier.formatDisplayValue(efficiencyDelta));
     }
 

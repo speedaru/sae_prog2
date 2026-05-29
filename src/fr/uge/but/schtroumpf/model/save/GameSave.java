@@ -41,7 +41,16 @@ public record GameSave(
 		CrisisType type
     ) {}
     
-    public record VillageModifierCtxState(
-		Map<GameModifierType, Object> modifiers
-	) {}
+	public record VillageModifierCtxState(
+        Map<GameModifierType, Object> persistentModifiers,
+        List<TemporaryModifierState> temporaryModifiers
+    ) {}
+
+    public record TemporaryModifierState(
+        GameModifierType type,
+        Object value,
+        int remainingRounds,
+        boolean isCrisis,
+        boolean started
+    ) {}
 }

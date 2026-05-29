@@ -7,7 +7,6 @@ import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.events.*;
 import fr.uge.but.schtroumpf.model.types.EventHistory;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
-import fr.uge.but.schtroumpf.model.characters.*;
 import fr.uge.but.schtroumpf.model.crises.*;
 
 public class GameWindow implements Window {

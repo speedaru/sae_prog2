@@ -6,7 +6,6 @@ import fr.uge.but.schtroumpf.model.events.*;
 import fr.uge.but.schtroumpf.model.types.EventHistory;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.utils.Logger;
-import fr.uge.but.schtroumpf.model.characters.*;
 
 public class EventPhase implements GamePhase {
 	@Override public GamePhaseType getType() { return GamePhaseType.EVENT_PHASE; }

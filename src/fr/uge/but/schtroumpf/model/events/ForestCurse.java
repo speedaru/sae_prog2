@@ -3,15 +3,10 @@ package fr.uge.but.schtroumpf.model.events;
 import module java.base;
 
 import fr.uge.but.schtroumpf.model.*;
-import fr.uge.but.schtroumpf.model.characters.*;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 
 public class ForestCurse implements GameEvent {
-	
-	
-	
-	
 	@Override public GameEventType getEventType() { return GameEventType.FOREST_CURSE; }
 
 	@Override
@@ -21,8 +16,6 @@ public class ForestCurse implements GameEvent {
 		// lose knowledge after a few turns passed
 		// this isn't actually behaviour that I know how to add
 		impacts.add(new ResourceEffect(ResourceType.KNOWLEDGE, -3));
-		
-		
 		
 		return impacts;
 	}

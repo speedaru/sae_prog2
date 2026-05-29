@@ -47,7 +47,7 @@ public class WeightedOutcomeSelector {
         double probNeutral = sumNeutral / totalRawWeight;
 
         // apply modifier
-        double modifier = village.getModifiers().getDouble(GameModifierType.SUCCESS_CHANCE_BONUS);
+        double modifier = village.getModifier(GameModifierType.SUCCESS_CHANCE_BONUS);
         double shift = Math.max(-probSuccess, Math.min(modifier, probFailure));
 
         double newProbSuccess = probSuccess + shift;

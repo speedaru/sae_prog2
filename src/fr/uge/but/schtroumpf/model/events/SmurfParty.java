@@ -3,7 +3,6 @@ package fr.uge.but.schtroumpf.model.events;
 import module java.base;
 
 import fr.uge.but.schtroumpf.model.*;
-import fr.uge.but.schtroumpf.model.characters.*;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 

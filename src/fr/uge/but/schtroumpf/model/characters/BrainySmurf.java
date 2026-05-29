@@ -4,17 +4,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import fr.uge.but.schtroumpf.controller.gui.windows.GameController;
 import fr.uge.but.schtroumpf.model.*;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResultType;
 import fr.uge.but.schtroumpf.model.types.GameModifierType;
+import fr.uge.but.schtroumpf.model.types.ModifierEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
-import fr.uge.but.schtroumpf.model.types.WindowType;
 import fr.uge.but.schtroumpf.model.utils.GameRandomness;
-import fr.uge.but.schtroumpf.view.MainWindow;
 
 public class BrainySmurf implements SmurfCharacter {
     private int energy = 10;
@@ -115,10 +113,8 @@ public class BrainySmurf implements SmurfCharacter {
             List.of()
         );
     	
-    	village.getModifiers().addDouble(GameModifierType.SUCCESS_CHANCE_BONUS, 2.0);
-    	GameController gameController = MainWindow.appController.getWindowController(WindowType.GAME_WINDOW);
-    	gameController.updateHudEffects();
-    	
+		village.accumulateTempModifier(new ModifierEffect(GameModifierType.SUCCESS_CHANCE_BONUS, 2.0, 1, false));
+
         return res;
     }
 }

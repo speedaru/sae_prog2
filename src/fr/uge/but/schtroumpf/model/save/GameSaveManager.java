@@ -96,9 +96,7 @@ public class GameSaveManager {
         }
 
         // game modifiers
-        GameSave.VillageModifierCtxState modifiersState = new GameSave.VillageModifierCtxState(
-			village.getModifiers().getModifiers()
-		);
+        GameSave.VillageModifierCtxState modifiersState = village.getModifiersView().serialize();
         
         return new GameSave.VillageState(
         	village.getAbilitiesUsedThisTurn(),

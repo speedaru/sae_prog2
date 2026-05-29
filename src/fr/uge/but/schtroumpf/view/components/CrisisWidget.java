@@ -16,7 +16,7 @@ import javafx.scene.text.FontWeight;
 import java.util.List;
 
 import fr.uge.but.schtroumpf.model.crises.Crisis;
-import fr.uge.but.schtroumpf.model.types.GameModifierEffect;
+import fr.uge.but.schtroumpf.model.types.ModifierEffect;
 import fr.uge.but.schtroumpf.model.utils.ColorUtils;
 import fr.uge.but.schtroumpf.view.themes.ThemeManager;
 
@@ -118,7 +118,7 @@ public class CrisisWidget extends VBox {
     }
     
     private void loadEffectWidgets() {
-    	List<GameModifierEffect<?>> effects = crisis.getModifierEffects();
+    	List<ModifierEffect> effects = crisis.getModifierEffects();
     	if (effects.isEmpty()) {
     		Label noneLabel = new Label("Aucun effet passif");
     		noneLabel.setTextFill(Color.web("#64748b"));
@@ -128,8 +128,8 @@ public class CrisisWidget extends VBox {
     	}
     	
     	// has passive effects
-    	for (GameModifierEffect<?> effect : effects) {
-    		GameModifierRow row = new GameModifierRow(effect);
+    	for (ModifierEffect effect : effects) {
+    		GameModifierRow row = new GameModifierRow(effect.getType(), effect.getValue());
     		this.effectsContentContainer.getChildren().add(row);
     	}
     }

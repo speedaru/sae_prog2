@@ -19,11 +19,10 @@ import fr.uge.but.schtroumpf.model.crises.*;
 import fr.uge.but.schtroumpf.model.phases.*;
 import fr.uge.but.schtroumpf.model.save.GameSaveManager;
 import fr.uge.but.schtroumpf.model.types.EventHistory;
-import fr.uge.but.schtroumpf.model.types.GameModifierEffect;
 import fr.uge.but.schtroumpf.model.types.GameModifierType;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
-import fr.uge.but.schtroumpf.model.types.VillageModifierContext;
+import fr.uge.but.schtroumpf.model.types.VillageCallbackType;
 import fr.uge.but.schtroumpf.model.types.WindowType;
 import fr.uge.but.schtroumpf.model.utils.FxmlUtils;
 import fr.uge.but.schtroumpf.model.utils.Logger;
@@ -60,6 +59,7 @@ public class GameController implements WindowSubController {
 		// load first phase
 		loadAndExecuteCurrentPhase();
 		updateHudCrisis();
+		registerVillageCallbacks();
         
         Logger.LogDebug("GameController gui initialized");
     }
@@ -121,11 +121,6 @@ public class GameController implements WindowSubController {
         updateHudTotalModifiers();
     }
     
-    public void updateHudEffects() {
-        // update total modifiers list
-        updateHudTotalModifiers();
-    }
-    
     /** exposed publicly for phase controllers to call when finished */
     public void advanceTurn() {
     	if (game.getGameState() != GameState.RUNNING) {
@@ -134,7 +129,7 @@ public class GameController implements WindowSubController {
     	}
     	
     	// tell game to go to next phase
-        game.advance();
+    	game.advance();
 
         if (game.getGameState() == GameState.VICTORY) {
         	loadCenterView(GamePhaseType.VICTORY.getFxmlFile());
@@ -194,6 +189,14 @@ public class GameController implements WindowSubController {
             resourcesContainer.getChildren().add(widget);
         }
     }
+    
+    private void registerVillageCallbacks() {
+    	// callback for updating modifiers
+		game.getVillage().registerCallback(VillageCallbackType.MODIFIERS_UPDATED, () -> {
+			updateHudCrisis();
+			updateHudTotalModifiers();
+		});
+    }
 
     private void updateHudRoundIndicator(int round) {
     	monthLabel.setText(String.format("%d (%s)", round, getMonthFromNumber(round)));
@@ -216,6 +219,7 @@ public class GameController implements WindowSubController {
     	eventLabel.setText(String.format("Evenement: %s", eventStr));
     }
     
+    /** also updates navigation buttons */
     private void updateHudCrisisPage() {
         crisisContainer.getChildren().clear();
 
@@ -256,40 +260,26 @@ public class GameController implements WindowSubController {
         totalModifiersContainer.getChildren().clear();
 
         SmurfVillage village = game.getVillage();
-        VillageModifierContext currentContext = village.getModifiers();
         
-        Logger.LogDebug("%d active crises", village.getActiveCrises().size());
+        boolean hasModifiers = false;
         
-        boolean hasActivePenalties = false;
-        
-        Logger.LogDebug("max energy delta: %d", currentContext.getInt(GameModifierType.MAX_ENERGY_DELTA));;
-
-        // Iterate through every declared modifier rule in your system
         for (GameModifierType modType : GameModifierType.values()) {
-            Object currentValue = currentContext.get(modType);
+            Object currentValue = village.getModifier(modType);
             Object defaultValue = modType.getDefaultValue();
-            
-            if (modType.getType() == Integer.class) {
-            	Logger.LogDebug("%s current val: %d, default: %d", modType.getName(), (int)currentValue, (int)defaultValue);
-            }
 
-            // If the current value matches the default state, ignore it!
+            // ignore default values
             if (currentValue.equals(defaultValue)) {
                 continue;
             }
 
-            // We found an altered baseline property! Wrap it into an effect record
-            hasActivePenalties = true;
+            hasModifiers = true;
             
-            // Using Java's pattern matching/raw cast structures safely
-            GameModifierEffect<?> activeEffect = new GameModifierEffect<>(modType, currentValue);
-            GameModifierRow visualRow = new GameModifierRow(activeEffect);
-            
-            totalModifiersContainer.getChildren().add(visualRow);
+            GameModifierRow row = new GameModifierRow(modType, currentValue);
+            totalModifiersContainer.getChildren().add(row);
         }
 
         // Clean fallback view context state if the village has no active penalties
-        if (!hasActivePenalties) {
+        if (!hasModifiers) {
             Label happyLabel = new Label("Aucun modificateur");
             happyLabel.setTextFill(javafx.scene.paint.Color.web("#64748b"));
             happyLabel.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontPosture.ITALIC, 12.0));
@@ -322,9 +312,9 @@ public class GameController implements WindowSubController {
         // 3. Re-render resources to immediately reflect deltas on the spot
         updateHudResources();
         
-        if (game.getCurrentPhase().getType() == GamePhaseType.CRISIS_PHASE) {
-        	updateHudCrisis();
-        }
+//        if (game.getCurrentPhase().getType() == GamePhaseType.CRISIS_PHASE) {
+//        	updateHudCrisis();
+//        }
     }
     
     /** swaps center pane to load the current phase */

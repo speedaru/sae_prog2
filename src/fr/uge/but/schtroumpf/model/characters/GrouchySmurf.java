@@ -5,15 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 import fr.uge.but.schtroumpf.model.*;
-import fr.uge.but.schtroumpf.controller.gui.windows.GameController;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResultType;
 import fr.uge.but.schtroumpf.model.types.GameModifierType;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
-import fr.uge.but.schtroumpf.model.types.WindowType;
-import fr.uge.but.schtroumpf.view.MainWindow;
 
 public class GrouchySmurf implements SmurfCharacter {
     private int energy = 10;
@@ -113,9 +110,7 @@ public class GrouchySmurf implements SmurfCharacter {
             List.of(new ResourceEffect(ResourceType.DEFENSE, -3))
         );
     	
-    	village.getModifiers().addInt(GameModifierType.CRISIS_SHIELD_COUNT, 1);
-    	GameController gameController = MainWindow.appController.getWindowController(WindowType.GAME_WINDOW);
-    	gameController.updateHudEffects();
+    	village.accumulatePersistenModifier(GameModifierType.CRISIS_SHIELD_COUNT, 1);
     	
     	return result;
     }
