@@ -13,14 +13,14 @@ public class FoodRule implements ConsumptionRule {
     public ConsumptionRuleResult evaluate(SmurfVillage village, int turnNumber) {
         int population = village.getAvailableSmurfs().size();
         
-        // Balanced scaling consumption step rate to respect the max 10 storage cap
+        // 1 berries for 1 smurf
         int foodRequired = Math.max(1, population / 3);
         int currentBerries = village.getResourceQuantity(ResourceType.BERRIES);
 
         List<ResourceEffect> appliedEffects = new ArrayList<>();
 
+        // normal decrease resources
         if (currentBerries >= foodRequired) {
-            // Normal operation path: deduct resource stock
             village.updateResource(ResourceType.BERRIES, -foodRequired);
             appliedEffects.add(new ResourceEffect(ResourceType.BERRIES, -foodRequired));
 
@@ -31,11 +31,11 @@ public class FoodRule implements ConsumptionRule {
                 ""
             );
         } else {
-            // Famine strike path: drain whatever partial berries are remaining to 0
+        	// if no more berries then apply more penalties
             village.setResourceQuantity(ResourceType.BERRIES, 0);
             appliedEffects.add(new ResourceEffect(ResourceType.BERRIES, -currentBerries));
             
-            // Instantly penalize village state parameters due to starvation 
+            // reduce gold and moral
             village.updateResource(ResourceType.MORAL, -2);
             appliedEffects.add(new ResourceEffect(ResourceType.MORAL, -2));
             village.updateResource(ResourceType.GOLD, -3);

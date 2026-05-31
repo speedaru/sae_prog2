@@ -11,17 +11,26 @@ import fr.uge.but.schtroumpf.model.utils.GameRandomness;
 import fr.uge.but.schtroumpf.model.characters.SmurfCharacter;
 
 public class OverpopulationRule implements ConsumptionRule {
+	private static String TITLE = "Tensions Démographiques";
+	private static int MIN_OVERPOPULATION = 5;
+	
+	// odds
+	private static double BASE_DRAMA_CHANCE = 0.20;;
+	private static double DRAMA_POPULATION_INC_RATE = 0.10;
+	private static double DRAMA_TIRED_INC_RATE = 0.40;
+	private static double MAX_DRAMA_CHANCE = 0.90;
+	
     @Override
     public ConsumptionRuleResult evaluate(SmurfVillage village, int turnNumber) {
         var smurfs = village.getAvailableSmurfs();
         int population = smurfs.size();
 
-        // Rule Precondition Gate: No risk of overpopulation friction if village is tiny
-        if (population < 5) {
-            return new ConsumptionRuleResult("Tensions Démographiques", List.of(), false, "");
+        // 
+        if (population < MIN_OVERPOPULATION) {
+            return new ConsumptionRuleResult(TITLE, List.of(), false, "");
         }
 
-        // Calculate maximum potential energy vs current collective remaining energy
+        // calculate max energy vs current energy
         int currentTotalEnergy = 0;
         int maxPossibleEnergy = 0;
 
@@ -30,32 +39,29 @@ public class OverpopulationRule implements ConsumptionRule {
             maxPossibleEnergy += village.getDynamicMaxEnergy(smurf);
         }
 
-        // Calculate exhaustion percentage (0.0 = completely full, 1.0 = entirely exhausted)
-        double exhaustionFactor = 1.0 - ((double) currentTotalEnergy / maxPossibleEnergy);
+        double populationTiredFactor = 1.0 - ((double) currentTotalEnergy / maxPossibleEnergy);
 
-        // Base chance scales with population density, multiplied by exhaustion crankiness!
-        double baseDensityChance = 0.20 + ((population - 5) * 0.10); // 5 Smurfs = 20%, 6 = 30%, etc.
-        double finalDramaChance = Math.clamp(baseDensityChance + (exhaustionFactor * 0.40), 0.0, 0.90);
+        double densityChance = BASE_DRAMA_CHANCE + ((population - MIN_OVERPOPULATION) * DRAMA_POPULATION_INC_RATE);
+        double finalDramaChance = Math.clamp(densityChance + (populationTiredFactor * DRAMA_TIRED_INC_RATE), 0.0, MAX_DRAMA_CHANCE);
 
         List<ResourceEffect> resourceEffects = new ArrayList<>();
 
-        // Roll the dice through your game loop randomness engine
+        // random chance for drama to appear
         if (GameRandomness.rollChance(finalDramaChance)) {
-            // A fight breaks out! Slashing village social harmony counters
             village.updateResource(ResourceType.MORAL, -1);
             resourceEffects.add(new ResourceEffect(ResourceType.MORAL, -1));
 
             return new ConsumptionRuleResult(
-                "Tensions Démographiques",
+            	TITLE,
                 resourceEffects,
                 true,
                 String.format("⚠️ DISPUTE : Des Schtroumpfs surmenés et fatigués se sont battus dans le village ! (-1 Moral, Risque était de %.0f%%)", finalDramaChance * 100)
             );
         }
 
-        // Peace prevailed this month
+        // no drama
         return new ConsumptionRuleResult(
-            "Tensions Démographiques",
+			TITLE,
             List.of(),
             false,
             ""

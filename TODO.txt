@@ -1,3 +1,4 @@
 - fix ability feedback label wront effect values bcs doesnt take into accoutn modfiiers
 - fenetre de encyclopedie
 - fix is started flag in modifier effect and maybe add more features like starting round
+- redo consumption rules

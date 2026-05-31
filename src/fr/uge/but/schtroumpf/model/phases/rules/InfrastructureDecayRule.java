@@ -9,39 +9,49 @@ import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 
 public class InfrastructureDecayRule implements ConsumptionRule {
+	private static String TITLE = "Maintenance des Infrastructures";
 
     @Override
     public ConsumptionRuleResult evaluate(SmurfVillage village, int turnNumber) {
         int currentTools = village.getResourceQuantity(ResourceType.TOOLS);
-        int toolsRequired = 1; // Continuous constant maintenance cost
+        int toolsRequired = 1;
 
         List<ResourceEffect> appliedEffects = new ArrayList<>();
 
+        // random chance to consume tools
+        double baseTriggerOdds = 0.5;
+
+        // check for false bcs its negative effect, so more luck should mean higher fail rate
+        if (!village.rollChance(baseTriggerOdds)) {
+			return new ConsumptionRuleResult(TITLE, List.of(), false, "");
+        }
+        
+        // consume tools
+        
         if (currentTools >= toolsRequired) {
-            // Nominal operation path: consume tools for standard structural upkeep
+        	// normal
             village.updateResource(ResourceType.TOOLS, -toolsRequired);
             appliedEffects.add(new ResourceEffect(ResourceType.TOOLS, -toolsRequired));
 
             return new ConsumptionRuleResult(
-                "Maintenance des Infrastructures",
+            	TITLE,
                 appliedEffects,
                 false,
                 ""
             );
         } else {
-            // Infrastructure Decay path: out of tools to maintain fences and bridges
+        	// no more tools so apply other penalites
             if (currentTools > 0) {
                 village.setResourceQuantity(ResourceType.TOOLS, 0);
                 appliedEffects.add(new ResourceEffect(ResourceType.TOOLS, -currentTools));
             }
 
-            // Severe physical penalty: the village fortifications crumble away
             int defensePenalty = -2;
             village.updateResource(ResourceType.DEFENSE, defensePenalty);
             appliedEffects.add(new ResourceEffect(ResourceType.DEFENSE, defensePenalty));
 
             return new ConsumptionRuleResult(
-                "Maintenance des Infrastructures",
+            	TITLE,
                 appliedEffects,
                 true,
                 "⚠️ LABRELEMENT : Faute d'Outils, les palissades du village s'effondrent et tombent en ruine ! (-2 Défense)"

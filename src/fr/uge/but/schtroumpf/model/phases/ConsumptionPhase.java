@@ -28,7 +28,7 @@ public class ConsumptionPhase implements GamePhase {
         List<ConsumptionRuleResult> results = new ArrayList<>();
         List<String> crises = new ArrayList<>();
 
-        // Execute the rule engine loops sequentially
+        // loop and execute rules
         for (ConsumptionRule rule : rules) {
             ConsumptionRuleResult res = rule.evaluate(village, currentRound);
             results.add(res);
@@ -37,7 +37,6 @@ public class ConsumptionPhase implements GamePhase {
             }
         }
 
-        // Compile the generic summary report for the waiting View layer
         String season = determineSeason(currentRound);
         this.currentReport = new ConsumptionReport(currentRound, season, results, crises);
 	}

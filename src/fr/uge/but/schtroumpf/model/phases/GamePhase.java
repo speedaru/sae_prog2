@@ -3,13 +3,12 @@ package fr.uge.but.schtroumpf.model.phases;
 public interface GamePhase {
 	GamePhaseType getType();
 	
-	/** triggered automatically when this phase becomes active */
+	/** triggered automatically when phase becomes active */
     void onEnter(GamePhaseContext ctx);
     
-    /** triggered when the player clicks "valider" to finalize choices before leaving */
+    /** triggered before going to next phase */
     void onExit(GamePhaseContext ctx);
     
-    /** factory method that returns the next phase */
     GamePhase getNextPhase();
     
 	public static GamePhase fromType(GamePhaseType type) {

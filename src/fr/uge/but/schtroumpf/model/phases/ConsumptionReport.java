@@ -5,8 +5,8 @@ import java.util.List;
 public record ConsumptionReport(
 	int turnNumber,
 	String seasonName,
-	List<ConsumptionRuleResult> ruleResults, // Dynamic tracking list
-	List<String> activeCrises                // Collects "FAMINE", "FREEZING", "DECAY", etc.
+	List<ConsumptionRuleResult> ruleResults,
+	List<String> activeCrises
 ) {
 	public boolean hasAnyCrisis() {
 		return !activeCrises.isEmpty();
