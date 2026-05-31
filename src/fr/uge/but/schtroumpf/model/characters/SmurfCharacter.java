@@ -12,7 +12,7 @@ public interface SmurfCharacter {
     void updateEnergy(SmurfVillage village, int delta);
     default int getBaseMaxEnergy() { return 10; }
 
-    // Dynamic attributes tracking (Sagesse, Individual Moral, etc. as required by PDF)
+    // dynamic attributes tracking
     int getAttribute(CharacterAttribute attrib);
     void updateAttribute(CharacterAttribute attrib, int delta);
 

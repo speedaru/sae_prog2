@@ -277,7 +277,7 @@ public class GameController implements WindowSubController {
             totalModifiersContainer.getChildren().add(row);
         }
 
-        // Clean fallback view context state if the village has no active penalties
+        // clean view if the village has no active penalties
         if (!hasModifiers) {
             Label happyLabel = new Label("Aucun modificateur");
             happyLabel.setTextFill(javafx.scene.paint.Color.web("#64748b"));
@@ -305,10 +305,8 @@ public class GameController implements WindowSubController {
     // ------------------------- phase related UI helpers
 
     private void loadCurrentPhase() {
-        // 4. Update the center viewport layout panel to the next phase sequence
         syncPhaseView();
 
-        // 3. Re-render resources to immediately reflect deltas on the spot
         updateHudResources();
         
 //        if (game.getCurrentPhase().getType() == GamePhaseType.CRISIS_PHASE) {
@@ -367,7 +365,7 @@ public class GameController implements WindowSubController {
     	throw new IllegalStateException(String.format("ressource %s not found", type));
     }
     
-    /** January is 1 */
+    /** january is 1 */
     private String getMonthFromNumber(int month) {
     	return switch (month) {
     	case 1 -> "Janvier";

@@ -27,7 +27,6 @@ public class SettingsController implements WindowSubController {
 		this.router = router;
 	}
 
-    /** Called automatically by JavaFX after the FXML is loaded */
     @FXML
     public void initialize() {
         populateSettings();
@@ -36,12 +35,11 @@ public class SettingsController implements WindowSubController {
     private void populateSettings() {
         settingsListContainer.getChildren().clear();
 
-        // --- WIDGET 1 : Mode Daltonien (Colorblind Mode) ---
         SettingToggleWidget colorblindSetting = new SettingToggleWidget(
             "Mode Daltonien",
             "Ajuste les couleurs des interfaces (vert/rouge) pour améliorer la lisibilité pour les joueurs atteints de daltonisme.",
-            "colorblind_icon.png", // Just place a 64x64 icon in your resources/icons/ folder
-            false,                 // Initial state (false by default)
+            "colorblind_icon.png",
+            false,
             (isActivated) -> {
             	if (isActivated) {
 					ThemeManager.setCurrentTheme(ResourceTheme.COLOR_BLIND);
@@ -55,7 +53,6 @@ public class SettingsController implements WindowSubController {
         saveButton = new Button("sauvegarder");
         saveButton.setOnAction(ev -> handleSaveButton(ev));
 
-        // inject the widgets into the fxml layout
         settingsListContainer.getChildren().addAll(colorblindSetting, saveButton);
     }
 

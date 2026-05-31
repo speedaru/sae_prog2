@@ -8,6 +8,7 @@ import fr.uge.but.schtroumpf.model.types.ResourceType;
 
 public class SarsaparillaStorm implements GameEvent {
 	// constants
+
 	/** knowledge required to study storm */
 	final int REQUIRED_KNOWLEDGE = 3;
 	

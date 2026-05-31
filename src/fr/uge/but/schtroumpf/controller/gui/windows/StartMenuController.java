@@ -19,9 +19,7 @@ public class StartMenuController implements WindowSubController {
     @Override public void setRouter(AppController router) { this.router = router; }
 
     @FXML
-    public void initialize() {
-        System.out.println("Start Menu Loaded Successfully.");
-    }
+    public void initialize() {}
 
     @FXML
     void handleNewGame(ActionEvent event) {

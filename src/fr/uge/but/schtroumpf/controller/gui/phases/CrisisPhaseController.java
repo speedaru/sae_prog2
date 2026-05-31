@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import java.util.List;
 import java.util.Objects;
 
+import fr.uge.but.schtroumpf.controller.Navigation.NavigationAction;
 import fr.uge.but.schtroumpf.controller.PhaseSubController;
 import fr.uge.but.schtroumpf.controller.gui.windows.GameController;
 import fr.uge.but.schtroumpf.model.Game;
@@ -36,13 +37,12 @@ public class CrisisPhaseController implements PhaseSubController {
 
     @FXML
     void handleNextMonth(ActionEvent event) {
-        // Automatically resets energy and increments the turn counter in your Game loop
         masterController.advanceTurn(); 
     }
 
     @FXML
     void handleQuit(ActionEvent event) {
-        System.exit(0); // Or route back to a Main Menu if you build one later
+    	masterController.getRouter().navigate(NavigationAction.EXIT, null);
     }
 
     private void renderCrises() {

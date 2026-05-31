@@ -16,7 +16,6 @@ import fr.uge.but.schtroumpf.model.Game;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
-import fr.uge.but.schtroumpf.model.types.GameModifierType;
 import fr.uge.but.schtroumpf.model.utils.Logger;
 import fr.uge.but.schtroumpf.model.characters.SmurfCharacter;
 import fr.uge.but.schtroumpf.model.characters.SmurfType;
@@ -36,7 +35,7 @@ public class CouncilPhaseController implements PhaseSubController {
     @FXML private Label statusFeedbackLabel, actionsCounterLabel;
     @FXML private ScrollPane councilScrollPane, abilityScrollPane;
     
-	 // View State Layers
+    // ui stuff
     private final SmurfDetailCard detailHeaderCard = new SmurfDetailCard();
     private final List<SmurfListRow> renderedRows = new ArrayList<>();
     private SmurfListRow currentlySelectedRow = null;
@@ -51,11 +50,10 @@ public class CouncilPhaseController implements PhaseSubController {
 		this.masterController = masterController;
 		this.game = game;
 		
-		// 1. Programmatically inject our beautiful header profile widget into the FXML HBox card holder
         detailCardContainer.getChildren().clear();
         detailCardContainer.getChildren().add(detailHeaderCard);
 		
-		 // 2. Initialize and load council members list layout
+        // load council members list
         initUI();
 		updateRemainingAbilitiesCounter();
 	}
@@ -71,18 +69,13 @@ public class CouncilPhaseController implements PhaseSubController {
 		CoolScrollPane.setScrollBarStyle(abilityScrollPane);
     }
 
-	/**
-     * Queries the village model to render the left-side master list rows.
-     */
     private void loadCouncilMembers() {
         smurfsListContainer.getChildren().clear();
         renderedRows.clear();
         
-        // Ensure our views are in the correct initial default state (Dorian-friendly stability)
         emptyPlaceholderCard.setVisible(true);
         detailPanelContent.setVisible(false);
 
-        // Fetch your array list of council characters from your backing model layer
         List<SmurfCharacter> councilMembers = game.getVillage().getAvailableSmurfs();
         Logger.LogDebug("council members: %d", councilMembers.size());
 
@@ -90,7 +83,7 @@ public class CouncilPhaseController implements PhaseSubController {
         for (SmurfCharacter member : councilMembers) {
             SmurfListRow rowWidget = new SmurfListRow(village, member);
             
-            // Set up click actions to register selection changes cleanly
+            // register on click event to render selected smurf 
             rowWidget.setOnMouseClicked(_ -> selectCouncilMember(rowWidget));
 
             renderedRows.add(rowWidget);
@@ -98,37 +91,28 @@ public class CouncilPhaseController implements PhaseSubController {
         }
     }
 
-    /**
-     * Handles selection context mutations. Swaps active selections and targets cards.
-     */
+    /** handle new smurf selected */
     private void selectCouncilMember(SmurfListRow selectedRow) {
-        // 1. Clear highlight out of former active row node components
         if (currentlySelectedRow != null) {
             currentlySelectedRow.setSelectedState(false);
         }
 
-        // 2. Assign and activate new selection visual state properties
         currentlySelectedRow = selectedRow;
         currentlySelectedRow.setSelectedState(true);
 
-        // 3. Structural swap: Hide placeholder card, display work panel context track
         emptyPlaceholderCard.setVisible(false);
         detailPanelContent.setVisible(true);
 
-        // 4. Update the detail card headers with the Smurf's active properties
         SmurfCharacter smurf = selectedRow.getSmurf();
         SmurfType smurfType = smurf.getType();
         int finalMaxEnergy = game.getVillage().getDynamicMaxEnergy(smurf);
         detailHeaderCard.updateData(smurfType.getName(), smurfType.getRoleDescription(), smurf.getEnergy(), finalMaxEnergy);
         detailHeaderCard.setPortrait(smurf.getType().getSpritePath());
 
-        // 5. Populate actionable ability loops
+        // load abilities
         loadAbilitiesForSelectedMember(smurf);
     }
 
-    /**
-     * Generates accordion panels dynamically based on character configuration metrics.
-     */
     private void loadAbilitiesForSelectedMember(SmurfCharacter smurf) {
     	SmurfVillage village = game.getVillage();
         List<CharacterAbility> characterAbilities = village.getCouncilMember(smurf.getType()).getAbilities();
@@ -144,7 +128,7 @@ public class CouncilPhaseController implements PhaseSubController {
             abilityWidget.populateEffectsDisplay(ability);
             setAbilityButtonConstraints(smurf, ability, abilityWidget);
 
-            // Bind the click action confirmation callback hook
+            // on click
             abilityWidget.setOnAbilityActivated(_ -> {
             	executeAbility(smurf, ability);
             	updateAbilityRows(smurf); // disable some rows if not enough energy now
@@ -156,7 +140,7 @@ public class CouncilPhaseController implements PhaseSubController {
         }
     }
     
-    /** reevaluates  */
+    /** rechecks if we can still click activate button */
     private void updateAbilityRows(SmurfCharacter smurf) {
     	SmurfVillage village = game.getVillage();
         List<CharacterAbility> characterAbilities = village.getCouncilMember(smurf.getType()).getAbilities();

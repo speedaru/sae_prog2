@@ -39,7 +39,7 @@ public final class Crises {
 
 	    @Override
 		public List<ModifierEffect> getModifierEffects() {
-	        // uncooperative Smurfs -25% flat chance to all dice rolls
+	        // uncooperative smurfs -25% chance to all abilties success luck
 			return List.of(
 				ModifierEffect.crisisModifierEffect(GameModifierType.SUCCESS_CHANCE_BONUS, -0.25)
 			);
@@ -51,7 +51,7 @@ public final class Crises {
 
 	    @Override
 		public List<ModifierEffect> getModifierEffects() {
-	        // attackers cause panic, tiring out the defenders
+	    	// smurfs get tired because of attack
 			return List.of(
 				ModifierEffect.crisisModifierEffect(GameModifierType.MAX_ENERGY_DELTA, -3)
 			);
@@ -59,7 +59,7 @@ public final class Crises {
 
 	    @Override
 	    public void applyImmediateEffects(SmurfVillage village) {
-	        // village gets pillaged and loses tools and gold
+	        // village gets pillaged and lose tools and gold
 	        village.updateResource(ResourceType.TOOLS, -1);
 	        village.updateResource(ResourceType.GOLD, -3);
 	    }
@@ -81,7 +81,7 @@ public final class Crises {
 
 	    @Override
 		public List<ModifierEffect> getModifierEffects() {
-	        // retire une action pour le conseil
+	    	// bankrupt council has 1 less ability
 			return List.of(
 				ModifierEffect.crisisModifierEffect(GameModifierType.ABILITIES_PER_TURN_DELTA, -1)
 			);
@@ -92,7 +92,7 @@ public final class Crises {
 
 	    @Override
 		public List<ModifierEffect> getModifierEffects() {
-	        // retire un de chaque production
+	    	// stone age village produces less resources
 			return List.of(
 				ModifierEffect.crisisModifierEffect(GameModifierType.PRODUCTION_DELTA, -1)
 			);

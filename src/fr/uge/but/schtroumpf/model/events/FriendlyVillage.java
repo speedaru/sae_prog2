@@ -8,10 +8,6 @@ import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 
 public class FriendlyVillage implements GameEvent {
-	
-	
-	
-	
 	@Override public GameEventType getEventType() { return GameEventType.FRIENDLY_VILLAGE; }
 
 	@Override

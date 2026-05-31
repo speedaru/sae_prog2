@@ -46,15 +46,10 @@ public class ConsumptionPhaseController implements PhaseSubController {
     	masterController.advanceTurn();
     }
 
-	/**
-     * Reads the dynamic rule payload from the model phase and cleanly paints the screen graph layout.
-     */
     private void renderConsumptionReport() {
-        // 1. Defensively clear layout tracks to avoid duplication bugs on refresh
         consumptionEffectsContainer.getChildren().clear();
         penaltyEffectsContainer.getChildren().clear();
 
-        // 2. Safely extract the active model phase reference context
         if (game.getCurrentPhase() == null) {
         	return;
         }
@@ -65,27 +60,21 @@ public class ConsumptionPhaseController implements PhaseSubController {
         	return;
         }
 
-        // Update the baseline demographic metrics counter
         int populationCount = game.getVillage().getAvailableSmurfs().size();
         populationLabel.setText(String.format("%d Schtroumpfs", populationCount));
 
-        // ==========================================
-        // 3. LEFT PANEL: Dynamic Resource Ledger Generation
-        // ==========================================
         for (ConsumptionRuleResult result : report.ruleResults()) {
-            // Skip rules that didn't apply any modifications this turn (e.g. Winter rules during Summer)
+        	// skip rules that didnt do any modifications
             if (result.effectsApplied().isEmpty()) {
                 continue;
             }
 
-            // Generate a clean sub-header for this specific rule group (Elsa-approved scanning)
             Label ruleHeaderLabel = new Label(result.ruleName().toUpperCase());
             ruleHeaderLabel.setTextFill(Color.web("#64748b")); // Clean muted steel-blue
             ruleHeaderLabel.setFont(Font.font("System", FontWeight.BOLD, 10));
             VBox.setMargin(ruleHeaderLabel, new Insets(6, 0, 2, 0));
             consumptionEffectsContainer.getChildren().add(ruleHeaderLabel);
 
-            // Dynamically instantiate rows for every modified item inside the rule
             for (ResourceEffect effect : result.effectsApplied()) {
                 ResourceSummaryRow row = new ResourceSummaryRow(effect.resourceType());
                 row.updateDelta(effect.delta());
@@ -93,18 +82,12 @@ public class ConsumptionPhaseController implements PhaseSubController {
             }
         }
 
-        // ==========================================
-        // 4. RIGHT PANEL: Global Crisis Context Rendering
-        // ==========================================
         if (report.hasAnyCrisis()) {
-            // CRITICAL CRISIS ALERTS STATE (High-contrast crimson border for Thierry)
             statusCardFrame.setStyle("-fx-background-color: #202225; -fx-border-color: #ef4444; -fx-border-width: 1.5; -fx-border-radius: 8; -fx-background-radius: 8;");
             statusBadgeHeader.setStyle("-fx-background-color: #ef4444; -fx-background-radius: 6;");
             
-            // Format title explicitly to include the current season token
             statusTitleLabel.setText(String.format("⚠️ ALERTES : %s", report.seasonName().toUpperCase()));
 
-            // Aggregate all active rule failure descriptions cleanly into a single vertical paragraph block
             String combinedCrisisMessages = report.ruleResults().stream()
                 .filter(ConsumptionRuleResult::crisisTriggered)
                 .map(ConsumptionRuleResult::crisisMessage)
@@ -112,11 +95,9 @@ public class ConsumptionPhaseController implements PhaseSubController {
             
             statusMessageLabel.setText(combinedCrisisMessages);
 
-            // Populate the separate penalty tracker below the text area for explicit visual feedback
             for (ConsumptionRuleResult result : report.ruleResults()) {
                 if (result.crisisTriggered()) {
                     for (ResourceEffect effect : result.effectsApplied()) {
-                        // Highlight only negative impacts in the crisis panel tracking list
                         if (effect.delta() < 0) {
                             ResourceSummaryRow penaltyRow = new ResourceSummaryRow(effect.resourceType());
                             penaltyRow.updateDelta(effect.delta());
@@ -126,7 +107,6 @@ public class ConsumptionPhaseController implements PhaseSubController {
                 }
             }
         } else {
-            // NOMINAL PROSPEROUS OPERATION STATE (Cozy emerald green success theme for Elsa)
             statusCardFrame.setStyle("-fx-background-color: #202225; -fx-border-color: #3f444c; -fx-border-width: 1.5; -fx-border-radius: 8; -fx-background-radius: 8;");
             statusBadgeHeader.setStyle("-fx-background-color: #10b981; -fx-background-radius: 6;");
             
@@ -134,7 +114,6 @@ public class ConsumptionPhaseController implements PhaseSubController {
             statusMessageLabel.setText("Toutes les contraintes écologiques et rationnements ont été honorés avec succès. Votre village est en parfaite santé et aucun incident n'est à déplorer ce mois-ci !");
         }
 
-        // 5. Force background tracking HUD updates to sync remaining storage metrics immediately on the spot
         masterController.updateHudResources();
     }
 }

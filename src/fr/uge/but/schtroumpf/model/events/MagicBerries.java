@@ -7,10 +7,6 @@ import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 
 public class MagicBerries implements GameEvent {
-	
-	
-	
-	
 	@Override public GameEventType getEventType() { return GameEventType.MAGIC_BERRIES; }
 
 	@Override

@@ -10,7 +10,6 @@ public class SmurfParty implements GameEvent {
 	//constant
 	final int REQUIRED_BERRIES = 2;
 	
-	
 	@Override public GameEventType getEventType() { return GameEventType.SMURF_PARTY; }
 
 	@Override
