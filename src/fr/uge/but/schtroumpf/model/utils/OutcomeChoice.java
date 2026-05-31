@@ -21,7 +21,7 @@ public record OutcomeChoice(
         }
     }
 
-    /** simple constructor for simple choices without callbacks */
+    /** constructor for choices without callbacks */
     public OutcomeChoice(double baseWeight, AbilityResultType resultType, String messagePrefix, List<ResourceEffect> effects) {
         this(baseWeight, resultType, messagePrefix, effects, null);
     }

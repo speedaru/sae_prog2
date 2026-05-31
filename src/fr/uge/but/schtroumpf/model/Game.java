@@ -24,7 +24,6 @@ public class Game {
     private GamePhase currentPhase;
     private GameState gameState;
 
-    /** this method should be called once when a new game begins */
     public void startFirstMonth() {
         this.currentRound = 1;
         this.gameState = GameState.RUNNING;
@@ -44,23 +43,15 @@ public class Game {
     	executePhaseCallback(GamePhase::onEnter);
     }
     
-    /**
-     * advances the game state by executing the current phase exactly once.
-     * this is the core non-blocking "tick" of the game engine. if the execution
-     * completes a month, it automatically handles end of month checks and
-     * prepares the state for the next month.
-     *
-     * @param context The context required for the phase execution.
-     */
+    /** called to advance to the next game phase / next round */
     public void advance() {
     	if (!executePhaseCallback(GamePhase::onExit)) {
     		return; // failed to execute onEnd
     	}
     	
-    	// go to next phase
         currentPhase = currentPhase.getNextPhase();
 
-        // check if the month (round) has ended
+        // check if the month has ended
         if (currentPhase == null) {
             handleMonthEnd();
         }

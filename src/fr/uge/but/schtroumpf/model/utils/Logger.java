@@ -21,7 +21,6 @@ public class Logger {
 	public static void LogTrace(String message, Object... args) { Log(LoggerFlag.TRACE, String.format(message, args)); }
 	public static void LogError(String message, Object... args) { Log(LoggerFlag.ERROR, String.format(message, args)); }
 
-	// main logging function, can change to log to file maybe
 	private static void Log(LoggerFlag level, String message) {
 		Objects.requireNonNull(logLevel);
 		if (flagSet(level)) {

@@ -11,7 +11,7 @@ import fr.uge.but.schtroumpf.model.types.EventHistory;
 import fr.uge.but.schtroumpf.model.types.GameModifierType;
 import fr.uge.but.schtroumpf.model.types.ResourceMap;
 
-/** data object representing state of a save file */
+/** represents state of save file */
 public record GameSave(
     EngineState engineState,
     VillageState villageState

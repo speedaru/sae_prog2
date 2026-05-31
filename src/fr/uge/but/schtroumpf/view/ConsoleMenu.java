@@ -27,8 +27,6 @@ public class ConsoleMenu {
 			String promptMessage = "\n> ";
 			String input = IO.readln(promptMessage);
 			
-			// try to convert input to int and then return selected choice if it's
-			// in the list of choices, otherwise prompt again
 			try {
 				int num = Integer.parseInt(input);
 				for (var choice : choices) {

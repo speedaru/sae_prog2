@@ -142,10 +142,6 @@ public class SmurfVillage {
 	
 	// ------------------------- smurf abilities -------------------------
 
-    /**
-     * Resets the turn's action counter. 
-     * Call this at the start of a new turn (e.g., when saving round resources or replenishing energy).
-     */
     public void resetTurnAbilitiesCounter() {
         this.abilitiesUsedThisTurn = 0;
     }
@@ -230,19 +226,17 @@ public class SmurfVillage {
 
 	// ------------------------- hooks for modifier engine -------------------------
 
-	/** shouldnt be called to update a modifier manually */
+	/** shouldn't be called to update a modifier manually */
 	public VillageModifierContext getModifiersView() {
 		return modifiers;
 	}
 	
+	/** get modifier value */
 	public <T> T getModifier(GameModifierType type) {
 		return modifiers.get(type);
 	}
 	
-	/**
-	 * replaces standard GameRandomness.rollChance applies active crisis penalties
-	 * to random roll
-	 */
+	/** replaces GameRandomness.rollChance, applies sucess chance modifier */
 	public boolean rollChance(double baseChance) {
 		double sucessChanceModifier = modifiers.getDouble(GameModifierType.SUCCESS_CHANCE_BONUS);
 		double finalChance = baseChance + sucessChanceModifier;
@@ -270,7 +264,7 @@ public class SmurfVillage {
 		return baseDelta + efficiencyModifier;
 	}
 	
-	/** intercepts effect applications to apply efficiency multipliers */
+	/** applies effects with efficiency multipliers */
 	public void applyEffects(List<ResourceEffect> resourceEffects) {
 		for (ResourceEffect effect : resourceEffects) {
 			int finalDelta = getDynamicEffectDelta(effect);
@@ -278,6 +272,7 @@ public class SmurfVillage {
 		}
 	}
 
+	/** recharge smurf energy with energy recharge rate delta modifier */
 	public void rechargeSmurfEnergy(SmurfCharacter smurf, int baseRate) {
 		int energyRechargeRateDelta = modifiers.getInt(GameModifierType.ENERGY_RECHARGE_RATE_DELTA);
 		int finalRate = baseRate + energyRechargeRateDelta;
@@ -287,6 +282,7 @@ public class SmurfVillage {
 		Logger.LogDebug("recharged %s energy by %d (+%d modifier)", smurf, finalRate, energyRechargeRateDelta);
 	}
 	
+	/** get list of resources allowed in production phase (excludes maxed out resorces and stuff) */
 	public ArrayList<ResourceType> getProductionAllowedResources() {
 		ArrayList<ResourceType> allowedTypes = new ArrayList<>(Arrays.asList(ResourceType.values()));
 		
@@ -389,7 +385,7 @@ public class SmurfVillage {
 		return List.copyOf(activeCrises);
 	}
 
-	/** must be called when crises are up to date, after checkAndUpdateCrises() */
+	/** must be called when crises are up to date to work properly */
 	public boolean isDefeated() {
 		return activeCrises.size() >= MAX_CRISES;
 	}

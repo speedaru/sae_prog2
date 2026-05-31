@@ -27,23 +27,19 @@ public class GameSaveManager {
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
     }
 
-    /** serialize Game and outputs json file in a specified file path */
+    /** serialize Game and output json file in a specified file path */
     public static void serializeGame(Game game, Path targetPath) throws IOException {
         SmurfVillage village = game.getVillage();
 
         GameSave.EngineState engineState = serialEngine(game);
         GameSave.VillageState villageState = serializeVillage(village);
 
-        // Assemble unified contract and save to disk
         GameSave saveFileContent = new GameSave(engineState, villageState);
         objectMapper.writeValue(targetPath.toFile(), saveFileContent);
     }
 
-    /**
-     * Deserializes a file from a path back into an initialized operational Game loop model.
-     */
+    /** deserializes a file from a path into a Game instance */
     public static Game deserializeGame(Path sourcePath) {
-        // read json file into game save struct
         GameSave save;
 		try {
 			save = objectMapper.readValue(sourcePath.toFile(), GameSave.class);

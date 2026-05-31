@@ -96,10 +96,7 @@ public class GameWindow implements Window {
 		IO.println("description de l'evenement : " + eventType.getDescription());
 	}
 	
-	/**
-	 * @return a string like (+2) or (-1) to show by how much a resource changed
-	 * returns, an empty string if delta is 0
-	 */
+	/** @return a string like (+2) or (-1) to show by how much a resource changed, empty string if delta is 0 */
 	private String getResourceDeltaStr(int delta) {
 		if (delta > 0) {
 			return String.format(" (+%d)", delta);
