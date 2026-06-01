@@ -57,7 +57,7 @@ public class GluttonSmurf implements SmurfCharacter {
 			List.of(new ResourceSnapshot(ResourceType.DEFENSE,3)),
 			List.of(
 				new ResourceEffect(ResourceType.DEFENSE, -2),
-				new ResourceEffect(ResourceType.BERRIES, 2)
+				new ResourceEffect(ResourceType.BERRIES, 3)
 			),
 			this::executeStealBerries
 		);
