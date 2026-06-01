@@ -2,6 +2,7 @@ package fr.uge.but.schtroumpf.controller.gui.windows;
 
 import fr.uge.but.schtroumpf.controller.AppController;
 import fr.uge.but.schtroumpf.controller.WindowSubController;
+import fr.uge.but.schtroumpf.model.save.GameSaveManager;
 import fr.uge.but.schtroumpf.model.types.WindowType;
 import fr.uge.but.schtroumpf.model.utils.Logger;
 import fr.uge.but.schtroumpf.view.themes.ThemeManager;
@@ -32,13 +33,23 @@ public class SaveController implements WindowSubController {
 
     @FXML
     void handleCreateSave(ActionEvent event) {
+    	String saveName = saveNameField.getText().toLowerCase();
+
+    	// check if save already exists
+    	for (String existingSave : GameSaveManager.getSaveNames()) {
+    		if (existingSave.toLowerCase().equals(saveName)) {
+    			setStatus(String.format("la sauvegarde '%s' existe deja !", saveName),
+    					ThemeManager.getFailColor());
+    			return;
+    		}
+    	}
+
     	GameController gameController = router.getWindowController(WindowType.GAME_WINDOW);
     	if (gameController == null) {
     		Logger.LogError("failed to get game controller");
     		return;
     	}
 
-    	String saveName = saveNameField.getText();
 		gameController.saveGame(saveName);
 
 		setStatus(String.format("partie '%s' sauvegardée !", saveName),

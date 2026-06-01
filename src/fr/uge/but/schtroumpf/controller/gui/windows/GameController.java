@@ -5,6 +5,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -36,7 +44,7 @@ public class GameController implements WindowSubController {
     private Game game = new Game();
 
     @FXML private Label monthLabel, phaseLabel, eventLabel;
-    @FXML private Button mysteriousButton, encyclopediaButton, uiToggleButton, settingsButton, quitButton1;
+    @FXML private ImageView settingsButton, quitButton;
     @FXML private VBox resourcesContainer, crisisContainer, totalModifiersContainer;
     @FXML private StackPane centerContainer;
     @FXML private Label crisisTitleLabel, crisisCauseLabel, crisisEffectsLabel, crisisPageLabel;
@@ -77,23 +85,12 @@ public class GameController implements WindowSubController {
         }
     }
 
-    @FXML void handleMysteriousButton(ActionEvent event) {
-        Logger.LogDebug("Secret tunnel trigger! Berries added to reserves.");
-        game.getVillage().applyEffects(List.of(new ResourceEffect(ResourceType.BERRIES, 1)));
-        updateHudResources();
-    }
-
-    @FXML void handleQuitButton1(ActionEvent event) {
-        Logger.LogDebug("Click quit button, going back to start fxWindow");
-        router.navigate(NavigationAction.POP, null);
-    }
-
-    // button handlers
-    @FXML void handleOpenEncyclopedia(ActionEvent event) { }
-    @FXML void handleToggleUI(ActionEvent event) { }
-
-    @FXML void handleOpenSettings(ActionEvent event) {
+    @FXML void handleOpenSettings(MouseEvent event) {
     	router.navigate(NavigationAction.PUSH, WindowType.SETTINGS_WINDOW);
+    }
+
+    @FXML void handleQuitButton(MouseEvent event) {
+        router.navigate(NavigationAction.POP, null);
     }
 
     public void saveGame(String saveName) {
@@ -161,10 +158,24 @@ public class GameController implements WindowSubController {
     // ------------------------- UI helpers
     
     private void loadUI() {
+    	initNavButtons();
         initResourceWidgets();
         
         updateHudResources();
 		updateHudCrisis();
+    }
+    
+    private void initNavButtons() {
+    	Path settingsIconPath = Path.of("src/main/resources/icons/settings.png");
+    	Path quitIconPath = Path.of("src/main/resources/icons/quit.png");
+    	
+    	settingsButton.setImage(new Image(settingsIconPath.toUri().toString()));
+    	settingsButton.setOnMouseClicked(this::handleOpenSettings);
+
+    	quitButton.setImage(new Image(quitIconPath.toUri().toString()));
+    	quitButton.setOnMouseClicked(this::handleQuitButton);
+    	
+    	Logger.LogDebug("seetings icon path: %s", settingsIconPath.toUri().toString());
     }
     
     private void initResourceWidgets() {
