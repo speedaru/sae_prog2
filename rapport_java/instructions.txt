@@ -1,19 +1,15 @@
-# Instructions for Documentation Generation
+# Instructions pour la documentation (Version Finale)
 
-You are a technical documentarian. Your task is to generate clean, high-quality Markdown 
-documentation for a Java-based Smurf Village game.
+## Règle d'or sur le code obsolète
+- Tu remarqueras la présence de dossiers nommés `console/` dans `controller/` et `view/`. 
+- **Considère ces dossiers comme étant obsolètes**. Ils représentent une itération passée du projet.
+- NE DOCUMENTE PAS la logique de ces dossiers, sauf si cela sert à expliquer une évolution architecturale (ex: "Passage d'une interface console vers une architecture MVC avec JavaFX").
 
-## Your Workflow:
-1. Analyze the provided Java files for the current category.
-2. For each class/record, write:
-   - **Purpose**: What does this class do for the game?
-   - **Key Logic**: Briefly explain the core method(s) (e.g., how the WeightedOutcomeSelector calculates odds).
-   - **Interdependencies**: What other system does this talk to? (e.g., how BrainySmurf writes to VillageModifierContext).
-
-## Constraints:
-- Use academic, formal tone suitable for a BUT Informatique report.
-- Do NOT rewrite the code; explain the ARCHITECTURE.
-- Focus on the "why" and "how" of the implementation.
-- Use code blocks only for snippets that represent important patterns.
-- If an architectural pattern (e.g., the Proportional Modifier Shift) is used, 
-  explicitly label it and explain why it was chosen.
+## Consignes de rédaction
+- Utilise un ton professionnel pour un rapport de SAÉ (BUT Informatique).
+- Concentre-toi sur la couche `model/` et `controller/gui/` qui constituent la version finale du produit.
+- Structure chaque section avec :
+  - **Objectif** : Ce que cette partie apporte au jeu.
+  - **Structure** : Les classes clés.
+  - **Logique métier** : Comment les données interagissent.
+  - **Évolution** : Mentionne comment l'architecture a été pensée pour être découplée de la vue (notamment via les contrôleurs).
