@@ -22,10 +22,6 @@ import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 
-/**
- * Interactive accordion widget representing a council member's active ability.
- * Upgraded with multi-line wrap text formatting for missing resources and explicit cost vs output details.
- */
 public class AbilityAccordionWidget extends VBox {
 
     @FunctionalInterface
@@ -61,9 +57,6 @@ public class AbilityAccordionWidget extends VBox {
             "-fx-border-width: 0 0 1 0;" 
         );
 
-        // ==========================================
-        // 1. Always Visible Header Row
-        // ==========================================
         HBox outerRow = new HBox();
         outerRow.setPadding(new Insets(6, 12, 6, 12));
         outerRow.setStyle(
@@ -96,7 +89,6 @@ public class AbilityAccordionWidget extends VBox {
         Region regionSeparator = new Region();
         HBox.setHgrow(regionSeparator, Priority.ALWAYS);
 
-        // MODIFIED: Increased width/height to properly contain wrapped text like "Ressources manquantes"
         this.activateButton = new Button("Activer");
         {
         	double width = 90;
@@ -115,11 +107,8 @@ public class AbilityAccordionWidget extends VBox {
 
         outerRow.getChildren().addAll(this.chevronLabel, nameLabel, regionSeparator, costBadge, this.activateButton);
 
-        // ==========================================
-        // 2. Collapsible Details Dropdown Panel
-        // ==========================================
         this.detailsContainer = new VBox();
-        this.detailsContainer.setSpacing(12); // Slightly increased spacing between text blocks
+        this.detailsContainer.setSpacing(12);
         this.detailsContainer.setPadding(new Insets(10, 12, 10, 12)); 
         this.detailsContainer.setStyle(
             "-fx-background-color: #1a1c1e; " +
@@ -129,14 +118,12 @@ public class AbilityAccordionWidget extends VBox {
         this.detailsContainer.setVisible(false);
         this.detailsContainer.managedProperty().bind(this.detailsContainer.visibleProperty());
 
-        // Narrative Description Label
         this.descriptionLabel = new Label(ability.description());
         this.descriptionLabel.setTextFill(Color.web("#cbd5e1"));
         this.descriptionLabel.setFont(Font.font("System", 11));
         this.descriptionLabel.setWrapText(true);
         this.descriptionLabel.maxWidthProperty().bind(this.widthProperty().subtract(40));
 
-        // Paragraph 1: Resources Required (Costs)
         this.requirementsSection = new VBox(6);
         Label reqHeader = new Label("Ressources requises :");
         reqHeader.setTextFill(Color.web("#fca5a5")); // Soft alert red for cost requirements
@@ -144,7 +131,6 @@ public class AbilityAccordionWidget extends VBox {
         this.requirementsContainer = new VBox(2);
         this.requirementsSection.getChildren().addAll(reqHeader, this.requirementsContainer);
 
-        // Paragraph 2: Potential Effects Produced (Yields)
         this.effectsSection = new VBox(6);
         Label effHeader = new Label("Effets potentiels produits :");
         effHeader.setTextFill(Color.web("#34d399")); // Emerald green for produced yields
@@ -155,9 +141,6 @@ public class AbilityAccordionWidget extends VBox {
         this.detailsContainer.getChildren().addAll(this.descriptionLabel, this.requirementsSection, this.effectsSection);
         this.getChildren().addAll(outerRow, this.detailsContainer);
 
-        // ==========================================
-        // 3. Interactive Toggling Filter Mechanics
-        // ==========================================
         this.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
             if (isClickTargetingNode(event, this.activateButton)) {
                 return;
@@ -166,17 +149,12 @@ public class AbilityAccordionWidget extends VBox {
             event.consume();
         });
 
-        // Auto-populate all sub-row displays inside the panels
         populateEffectsDisplay(ability);
     }
 
-    /**
-     * Rebuilds the dynamic costs and produced outputs lists.
-     */
     public void populateEffectsDisplay(CharacterAbility ability) {
         Objects.requireNonNull(ability, "L'abilité ne peut pas être nulle.");
         
-        // 1. Populate Required Resources (Flat quantities)
         this.requirementsContainer.getChildren().clear();
         List<ResourceSnapshot> requiredResources = ability.requiredResources();
         
@@ -187,14 +165,12 @@ public class AbilityAccordionWidget extends VBox {
             this.requirementsSection.setVisible(true);
             this.requirementsSection.setManaged(true);
             for (ResourceSnapshot req : requiredResources) {
-                // Instantiated with false flag to display flat uncolored quantities
                 ResourceSummaryRow row = new ResourceSummaryRow(req.type(), false);
                 row.updateDelta(req.quantity());
                 this.requirementsContainer.getChildren().add(row);
             }
         }
 
-        // 2. Populate Potential Yields (Delta-colored tracking changes)
         this.effectsListContainer.getChildren().clear();
         List<ResourceEffect> primaryEffects = ability.primaryEffects();
         
@@ -205,7 +181,6 @@ public class AbilityAccordionWidget extends VBox {
             this.effectsSection.setVisible(true);
             this.effectsSection.setManaged(true);
             for (ResourceEffect effect : primaryEffects) {
-                // Instantiated with default true flag to display red/green delta values
                 ResourceSummaryRow row = new ResourceSummaryRow(effect.resourceType(), true);
                 row.updateDelta(village.getDynamicEffectDelta(effect));
                 this.effectsListContainer.getChildren().add(row);
