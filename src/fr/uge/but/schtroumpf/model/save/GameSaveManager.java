@@ -1,11 +1,10 @@
 package fr.uge.but.schtroumpf.model.save;
 
-import com.fasterxml.jackson.core.exc.StreamReadException;
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +19,9 @@ import fr.uge.but.schtroumpf.model.types.ResourceMap;
 import fr.uge.but.schtroumpf.model.utils.Logger;
 
 public class GameSaveManager {
+    private static final Path SAVE_PATH = Path.of("saves/");
+    private static final String SAVE_FILE_FMT = "save_%s.json";
+
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     public static void init() {
@@ -28,39 +30,31 @@ public class GameSaveManager {
     }
 
     /** serialize Game and output json file in a specified file path */
-    public static void serializeGame(Game game, Path targetPath) throws IOException {
+    public static void saveGame(Game game, String saveName) throws IOException {
         SmurfVillage village = game.getVillage();
 
         GameSave.EngineState engineState = serialEngine(game);
         GameSave.VillageState villageState = serializeVillage(village);
 
         GameSave saveFileContent = new GameSave(engineState, villageState);
-        objectMapper.writeValue(targetPath.toFile(), saveFileContent);
+        saveFile(saveName, saveFileContent);
     }
 
     /** deserializes a file from a path into a Game instance */
-    public static Game deserializeGame(Path sourcePath) {
-        GameSave save;
-		try {
-			save = objectMapper.readValue(sourcePath.toFile(), GameSave.class);
+    public static Game loadGame(String saveName) {
+        GameSave save = loadFile(saveName);
+        if (save == null) {
+			Logger.LogError("failed to load save");
+			return null;
+        }
 
-			Game game = new Game();
-			SmurfVillage village = game.getVillage();
+		Game game = new Game();
+		SmurfVillage village = game.getVillage();
 
-			game.loadSave(save);
-			village.loadSave(save.villageState());
-
-			return game;
-		} catch (StreamReadException e) {
-			e.printStackTrace();
-		} catch (DatabindException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-        
-		Logger.LogError("failed to load save");
-		return null;
+		game.loadSave(save);
+		village.loadSave(save.villageState());
+		
+		return game;
     }
     
     private static GameSave.EngineState serialEngine(Game game) {
@@ -117,6 +111,37 @@ public class GameSaveManager {
     
     // ------------------------- helpers
     
+    private static Path getSaveFile(String fileName) {
+    	return SAVE_PATH.resolve(String.format(SAVE_FILE_FMT, fileName)).toAbsolutePath();
+    }
+    
+    private static void saveFile(String fileName, GameSave data) {
+    	Path file = getSaveFile(fileName);
+
+        try {
+            Path parent = file.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
+
+			objectMapper.writeValue(file.toFile(), data);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+
+    private static GameSave loadFile(String fileName) {
+    	Path file = getSaveFile(fileName);
+
+		try {
+			return objectMapper.readValue(file.toFile(), GameSave.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+    }
+
     private static ResourceMap resourcesSnapToMap(List<ResourceSnapshot> snapshots) {
         ResourceMap map = new ResourceMap();
         
