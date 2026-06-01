@@ -15,7 +15,6 @@ import fr.uge.but.schtroumpf.model.ResourceManager;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 
 public class ResourceSidebarWidget extends VBox {
-    // 1. Restore the dynamic ratio tracker!
     private final DoubleProperty fillRatio = new SimpleDoubleProperty(0.0);
     private final ResourceType type;
     private final Rectangle progressFill;
@@ -24,7 +23,6 @@ public class ResourceSidebarWidget extends VBox {
 
     private final Runnable themeUpdater = this::applyCurrentThemeColors;
 
-    // 2. Remove the 'parent' argument. It's no longer needed!
     public ResourceSidebarWidget(ResourceType type) {
         this.type = type;
         
@@ -32,7 +30,6 @@ public class ResourceSidebarWidget extends VBox {
         this.setStyle("-fx-background-color: #2d3139; -fx-background-radius: 8;");
         this.setPadding(new Insets(10, 10, 10 ,10));
         
-        // 3. THE FIX: Tell JavaFX this widget is allowed to stretch infinitely to fill its parent VBox.
         this.setMaxWidth(Double.MAX_VALUE);
         
         Label nameLabel = new Label(type.getDisplayName());
@@ -41,7 +38,7 @@ public class ResourceSidebarWidget extends VBox {
         
         StackPane progressStack = new StackPane();
         progressStack.setAlignment(Pos.CENTER_LEFT);
-        HBox.setHgrow(progressStack, Priority.ALWAYS); // Push everything to the right
+        HBox.setHgrow(progressStack, Priority.ALWAYS);
         progressStack.setPadding(new Insets(4, 0, 4, 0));
         
         Rectangle backgroundTrack = new Rectangle(0, 24.0, Color.web("#1e1e24"));
@@ -49,7 +46,6 @@ public class ResourceSidebarWidget extends VBox {
         backgroundTrack.setArcHeight(8.0);
         backgroundTrack.setStroke(Color.web("#4b5563"));
         
-        // This bind is safe because it binds to the StackPane, which is controlled by the VBox
         backgroundTrack.setManaged(false);
         backgroundTrack.widthProperty().bind(progressStack.widthProperty());
         
@@ -58,7 +54,6 @@ public class ResourceSidebarWidget extends VBox {
         progressFill.setArcHeight(6.0);
         StackPane.setMargin(progressFill, new Insets(0, 0, 0, 1.0));
         
-        // 4. Restore the internal fill binding!
         progressFill.setManaged(false);
         progressFill.widthProperty().bind(progressStack.widthProperty().multiply(fillRatio));
         
@@ -98,9 +93,8 @@ public class ResourceSidebarWidget extends VBox {
             deltaLabel.setText("");
         }
         
-        // 5. Restore the ratio update logic!
         double ratio = (double) quantity / ResourceManager.MAX_QUANTITY;
-        fillRatio.set(Math.max(0.0, Math.min(1.0, ratio))); // Clamped for safety
+        fillRatio.set(Math.max(0.0, Math.min(1.0, ratio)));
     }
 
     public void refreshColors() {

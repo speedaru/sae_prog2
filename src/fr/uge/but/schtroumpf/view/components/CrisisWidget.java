@@ -47,7 +47,6 @@ public class CrisisWidget extends VBox {
         this.titleLabel.setFont(Font.font("System", FontWeight.BOLD, 14.0));
         this.headerBadge.getChildren().add(this.titleLabel);
 
-        // cause container
         causesCardBox = new VBox(8.0);
         causesCardBox.setBackground(new Background(new BackgroundFill(
 			Color.web("#2d3139"), new CornerRadii(8), Insets.EMPTY
@@ -56,32 +55,28 @@ public class CrisisWidget extends VBox {
         causesCardBox.setPrefHeight(85.0);
 
         Label causesHeaderLabel = new Label("Cause de la crise :");
-        causesHeaderLabel.setTextFill(Color.WHITE); // Soft warning red/pink
+        causesHeaderLabel.setTextFill(Color.WHITE);
         causesHeaderLabel.setFont(Font.font("System", FontWeight.BOLD, 13.0));
         
-        // causes widgets
         this.causesContentContainer = new VBox();
         VBox.setVgrow(this.causesContentContainer, Priority.ALWAYS);
         loadCauseWidget();
         
         causesCardBox.getChildren().addAll(causesHeaderLabel, this.causesContentContainer);
 
-        // effects container
         effectsCardBox = new VBox(8.0);
         effectsCardBox.setBackground(new Background(new BackgroundFill(
 			Color.web("#2d3139"), new CornerRadii(8), Insets.EMPTY
         )));
         effectsCardBox.setPadding(new Insets(12.0));
-        VBox.setVgrow(effectsCardBox, Priority.ALWAYS); // Let the effects box absorb remaining height
+        VBox.setVgrow(effectsCardBox, Priority.ALWAYS);
 
         Label effectsHeaderLabel = new Label("Effets produits :");
         effectsHeaderLabel.setTextFill(Color.WHITE);
         effectsHeaderLabel.setFont(Font.font("System", FontWeight.BOLD, 13.0));
 
-        // effects widgets
         this.effectsContentContainer = new VBox(4.0);
         this.effectsContentContainer.setPadding(new Insets(0));
-//        this.effectsContentContainer.setStyle("-fx-border-color: lime; -fx-border-width: 2;");
         VBox.setVgrow(this.effectsContentContainer, Priority.ALWAYS);
         loadEffectWidgets();
         
@@ -127,16 +122,9 @@ public class CrisisWidget extends VBox {
             return;
     	}
     	
-    	// has passive effects
     	for (ModifierEffect effect : effects) {
     		GameModifierRow row = new GameModifierRow(effect.getType(), effect.getValue());
     		this.effectsContentContainer.getChildren().add(row);
     	}
     }
-    
-    
-//    // Getters allowing parent view subcontrollers to dynamically bind custom subcomponents later
-//    public VBox getCausesContentContainer() { return this.causesContentContainer; }
-//    public VBox getEffectsContentContainer() { return this.effectsContentContainer; }
-//    public Crisis getCrisis() { return this.crisis; }
 }

@@ -13,10 +13,6 @@ import fr.uge.but.schtroumpf.model.crises.CrisisType;
 import fr.uge.but.schtroumpf.model.utils.ColorUtils;
 import fr.uge.but.schtroumpf.view.themes.ThemeManager;
 
-/**
- * A reusable vertical alert card representing an active village crisis.
- * Displays the crisis name, the missing resource cause, and the systemic penalty.
- */
 public class CrisisSummaryRow extends VBox {
     private final CrisisType crisisType;
 
@@ -28,39 +24,34 @@ public class CrisisSummaryRow extends VBox {
         Color resourceColor = ThemeManager.getResourceColor(crisisType.getCause());
         String hexColor = ColorUtils.colorToHex(resourceColor);
         
-        // 1. Configure parent container constraints (Alert Card Style)
         this.setSpacing(6.0);
         this.setPadding(new Insets(12.0));
         this.setStyle(
             "-fx-background-color: #2d3139; " +
             "-fx-border-color: " + hexColor + "; " + 
-            "-fx-border-width: 2; " +      // Thick accent line on the left side
+            "-fx-border-width: 2; " +
             "-fx-background-radius: 4; " +
             "-fx-border-radius: 4;"
         );
 
-        // 2. Build the Header Row (Icon, Title, and Cause)
         HBox headerRow = new HBox(10.0);
         headerRow.setAlignment(Pos.CENTER_LEFT);
 
         Label titleLabel = new Label(crisisType.getName().toUpperCase());
-        titleLabel.setTextFill(Color.web("#fca5a5")); // Soft alert red
+        titleLabel.setTextFill(Color.web("#fca5a5"));
         titleLabel.setFont(Font.font("System", FontWeight.BOLD, 13.0));
 
-        // Note: Assumes ResourceType has a getDisplayName() or similar clean string output
         Label causeLabel = new Label("Manque de " + crisisType.getCause() + "");
-        causeLabel.setTextFill(Color.web("#94a3b8")); // Muted slate gray
+        causeLabel.setTextFill(Color.web("#94a3b8"));
         causeLabel.setFont(Font.font("System", FontPosture.ITALIC, 11.0));
 
         headerRow.getChildren().addAll(titleLabel, causeLabel);
 
-        // 3. Build the Description Body
         Label descriptionLabel = new Label(crisisType.getDescription());
-        descriptionLabel.setTextFill(Color.web("#cbd5e1")); // Light slate
+        descriptionLabel.setTextFill(Color.web("#cbd5e1"));
         descriptionLabel.setWrapText(true);
         descriptionLabel.setFont(Font.font("System", 12.0));
 
-        // 4. Assemble the final node hierarchy
         this.getChildren().addAll(headerRow, descriptionLabel);
         
         ThemeManager.addThemeChangeListener(themeUpdater);

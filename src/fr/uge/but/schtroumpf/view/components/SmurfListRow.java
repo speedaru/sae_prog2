@@ -19,12 +19,6 @@ import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.characters.SmurfCharacter;
 import fr.uge.but.schtroumpf.model.characters.SmurfType;
 
-/**
- * Représente une ligne interactive et stylisée pour l'affichage d'un membre du conseil
- * dans le panneau "Master List" à gauche de la vue.
- * * Conçu spécifiquement pour être hautement lisible, notamment pour Thierry (accessibilité daltonisme)
- * en évitant toute dépendance exclusive à des indicateurs de couleur abstraits.
- */
 public class SmurfListRow extends HBox {
     private final SmurfCharacter smurf;
     private final ImageView avatarView;
@@ -35,15 +29,10 @@ public class SmurfListRow extends HBox {
     private final Color labelColor = Color.WHITE;
     private final Color exhaustedLabelColor = Color.web("#ef4444");
 
-    /**
-     * Construit une ligne réactive pour un Schtroumpf donné.
-     * * @param smurf Le modèle de données du Schtroumpf (non nul).
-     */
     public SmurfListRow(SmurfVillage village, SmurfCharacter smurf) {
         super();
         this.smurf = Objects.requireNonNull(smurf, "Le modèle de données du Schtroumpf ne peut pas être nul.");
 
-        // Style de base - Thème sombre premium
         this.setStyle(
             "-fx-background-color: #202225; " +
             "-fx-background-radius: 6; " +
@@ -57,7 +46,6 @@ public class SmurfListRow extends HBox {
         this.setPadding(new Insets(8, 8, 8, 8));
         this.setSpacing(6);
 
-        // Avatar de prévisualisation (24x24)
         this.avatarView = new ImageView();
         this.avatarView.setFitWidth(24);
         this.avatarView.setFitHeight(24);
@@ -66,7 +54,6 @@ public class SmurfListRow extends HBox {
         SmurfType type = smurf.getType();
         loadAvatar(type.getSpritePath());
 
-        // Nom du personnage (Prend tout l'espace restant pour l'alignement)
         this.nameLabel = new Label(smurf.getType().getName());
         this.nameLabel.setTextFill(labelColor);
         this.nameLabel.setFont(Font.font("System", FontWeight.BOLD, 11));
@@ -75,7 +62,6 @@ public class SmurfListRow extends HBox {
         Region regionSeparator = new Region();
         HBox.setHgrow(regionSeparator, Priority.ALWAYS);
 
-        // Indicateur d'énergie explicite en texte brut (Thierry-friendly)
         this.energyLabel = new Label();
         this.energyLabel.setFont(Font.font("System", FontWeight.BOLD, 11));
         this.energyLabel.setTextFill(labelColor);
@@ -83,22 +69,14 @@ public class SmurfListRow extends HBox {
 
         this.getChildren().addAll(this.avatarView, this.nameLabel, regionSeparator, this.energyLabel);
 
-        // Vérification automatique de l'état d'épuisement initial
 		setExhaustedState(smurf.getEnergy());
     }
 
-    /**
-     * Permet d'injecter une nouvelle valeur d'énergie et de recalculer l'affichage textuel associé.
-     */
     public void updateEnergy(int currentEnergy, int maxEnergy) {
         updateEnergyDisplay(currentEnergy, maxEnergy);
         setExhaustedState(currentEnergy);
     }
 
-    /**
-     * Alterne l'état de sélection visuelle de cette ligne (utilisé lors du clic).
-     * * @param selected Vrai pour appliquer le style de surbrillance bleu.
-     */
     public void setSelectedState(boolean selected) {
         if (selected) {
             this.setStyle(
@@ -110,7 +88,6 @@ public class SmurfListRow extends HBox {
                 "-fx-cursor: hand;"
             );
         } else {
-            // Restaure le thème sombre par défaut tout en respectant l'état d'épuisement
             this.setStyle(
                 "-fx-background-color: #202225; " +
                 "-fx-background-radius: 6; " +
@@ -122,24 +99,17 @@ public class SmurfListRow extends HBox {
         }
     }
 
-    /**
-     * Applique une opacité réduite pour indiquer visuellement un état épuisé (0 énergie)
-     * tout en maintenant la ligne pleinement sélectionnable pour consulter la fiche.
-     */
     public void setExhaustedState(int energy) {
         this.isExhausted = energy <= 0;
         if (this.isExhausted) {
             this.setOpacity(0.45);
-            this.energyLabel.setTextFill(exhaustedLabelColor); // Rouge vif de contraste
+            this.energyLabel.setTextFill(exhaustedLabelColor);
         } else {
             this.setOpacity(1.0);
-            this.energyLabel.setTextFill(labelColor); // Couleur de texte adoucie
+            this.energyLabel.setTextFill(labelColor);
         }
     }
 
-    /**
-     * Renvoie le modèle de données du Schtroumpf associé à cette ligne.
-     */
     public SmurfCharacter getSmurf() {
         return this.smurf;
     }

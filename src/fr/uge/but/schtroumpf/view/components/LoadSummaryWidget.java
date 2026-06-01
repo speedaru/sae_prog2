@@ -32,10 +32,8 @@ public class LoadSummaryWidget extends HBox {
         super();
         this.saveName = Objects.requireNonNull(saveName, "Le nom de sauvegarde ne peut pas être nul.");
         
-        // Expose path resolution cleanly to the save manager to avoid any parsing inside this widget
         this.filePath = GameSaveManager.getSaveFilePath(saveName);
 
-        // 1. Styling Container
         this.setAlignment(Pos.CENTER_LEFT);
         this.setPadding(new Insets(12.0, 15.0, 12.0, 15.0));
         this.setSpacing(15.0);
@@ -48,13 +46,12 @@ public class LoadSummaryWidget extends HBox {
             "-fx-cursor: hand;"
         );
 
-        // 2. Information Container (Left)
         VBox infoContainer = new VBox(6.0);
         infoContainer.setAlignment(Pos.CENTER_LEFT);
         HBox.setHgrow(infoContainer, Priority.ALWAYS);
 
         nameLabel = new Label(saveName.toUpperCase());
-        nameLabel.setTextFill(Color.web("#3b82f6")); // Blue signature accent
+        nameLabel.setTextFill(Color.web("#3b82f6"));
         nameLabel.setFont(Font.font("System", FontWeight.BOLD, 15.0));
 
         detailsLabel = new Label(generateMetadataDetailsString());
@@ -65,9 +62,6 @@ public class LoadSummaryWidget extends HBox {
         this.getChildren().add(infoContainer);
     }
 
-    /**
-     * Toggles the background highlights when selected in the menu list.
-     */
     public void setSelectedState(boolean selected) {
         if (selected) {
             this.setStyle(

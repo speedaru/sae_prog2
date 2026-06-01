@@ -23,10 +23,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-/**
- * A reusable card widget that represents a single saved game entry.
- * Completely immune to un-styled hover or click text shrinkage issues.
- */
 public class SaveSummaryWidget extends HBox {
 
     private final String saveName;
@@ -38,7 +34,6 @@ public class SaveSummaryWidget extends HBox {
         this.filePath = Objects.requireNonNull(filePath);
         this.onDeleteCallback = Objects.requireNonNull(onDeleteCallback);
 
-        // Parse File Name manually (remove "save_" prefix and ".json" suffix)
         String rawName = filePath.getFileName().toString();
         if (rawName.startsWith("save_")) {
             rawName = rawName.substring(5);
@@ -48,7 +43,6 @@ public class SaveSummaryWidget extends HBox {
         }
         this.saveName = rawName;
 
-        // Container Styling
         this.setAlignment(Pos.CENTER_LEFT);
         this.setPadding(new Insets(12.0, 15.0, 12.0, 15.0));
         this.setSpacing(15.0);
@@ -60,13 +54,12 @@ public class SaveSummaryWidget extends HBox {
             "-fx-background-radius: 6;"
         );
 
-        // Information Container (Left)
         VBox infoContainer = new VBox(6.0);
         infoContainer.setAlignment(Pos.CENTER_LEFT);
         HBox.setHgrow(infoContainer, Priority.ALWAYS);
 
         Label nameLabel = new Label(saveName.toUpperCase());
-        nameLabel.setTextFill(Color.web("#3b82f6")); // Blue signature accent
+        nameLabel.setTextFill(Color.web("#3b82f6"));
         nameLabel.setFont(Font.font("System", FontWeight.BOLD, 15.0));
 
         Label detailsLabel = new Label(generateMetadataDetailsString());
@@ -76,15 +69,12 @@ public class SaveSummaryWidget extends HBox {
 
         infoContainer.getChildren().addAll(nameLabel, detailsLabel);
 
-        // Spacer
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.NEVER);
 
-        // Action Buttons Container (Right)
         HBox actionsContainer = new HBox(8.0);
         actionsContainer.setAlignment(Pos.CENTER);
 
-        // Delete Game Button (Fixed size CSS hover protection)
         Button deleteBtn = new Button("Supprimer");
         deleteBtn.setPrefHeight(32.0);
         deleteBtn.setPrefWidth(90.0);
@@ -111,7 +101,6 @@ public class SaveSummaryWidget extends HBox {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
             formattedDate = sdf.format(date);
         } catch (IOException e) {
-            // Fallback gracefully
         }
 
         int round = 1;

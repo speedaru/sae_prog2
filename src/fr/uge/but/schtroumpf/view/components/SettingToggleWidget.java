@@ -17,9 +17,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-/**
- * A reusable settings row containing an icon, descriptive text, and a toggle button.
- */
 public class SettingToggleWidget extends HBox {
 
     private boolean isActivated;
@@ -30,7 +27,6 @@ public class SettingToggleWidget extends HBox {
         this.isActivated = initialState;
         this.onToggleAction = onToggleAction;
 
-        // 1. Container Styling
         this.setAlignment(Pos.CENTER_LEFT);
         this.setSpacing(20.0);
         this.setPadding(new Insets(15.0, 20.0, 15.0, 20.0));
@@ -42,7 +38,6 @@ public class SettingToggleWidget extends HBox {
             "-fx-background-radius: 8;"
         );
 
-        // 2. Big Icon Graphic (Left)
         ImageView iconView = new ImageView();
         iconView.setFitHeight(64.0);
         iconView.setFitWidth(64.0);
@@ -50,10 +45,9 @@ public class SettingToggleWidget extends HBox {
         loadIconResource(iconView, iconFile);
         Logger.LogDebug("icon file: %s", iconFile.toUri().toString());
 
-        // 3. Text Container (Middle)
         VBox textContainer = new VBox(5.0);
         textContainer.setAlignment(Pos.CENTER_LEFT);
-        HBox.setHgrow(textContainer, Priority.ALWAYS); // Push the button to the far right
+        HBox.setHgrow(textContainer, Priority.ALWAYS);
 
         Label titleLabel = new Label(title);
         titleLabel.setTextFill(Color.web("#f8fafc"));
@@ -66,7 +60,6 @@ public class SettingToggleWidget extends HBox {
 
         textContainer.getChildren().addAll(titleLabel, descLabel);
 
-        // 4. Interactive Toggle Button (Right)
         this.toggleButton = new Button();
         this.toggleButton.setPrefHeight(45.0);
         this.toggleButton.setPrefWidth(120.0);
@@ -74,17 +67,14 @@ public class SettingToggleWidget extends HBox {
         this.toggleButton.setStyle("-fx-cursor: hand; -fx-background-radius: 6;");
         updateButtonVisuals();
 
-        // 5. Click Event Logic
         this.toggleButton.setOnAction(_ -> {
             this.isActivated = !this.isActivated;
             updateButtonVisuals();
-            // Trigger the external callback method passed into the constructor
             if (this.onToggleAction != null) {
                 this.onToggleAction.accept(this.isActivated);
             }
         });
 
-        // Assemble the widget
         this.getChildren().addAll(iconView, textContainer, toggleButton);
     }
 
@@ -102,7 +92,6 @@ public class SettingToggleWidget extends HBox {
         try {
         	iconView.setImage(new Image(file.toUri().toString()));
         } catch (Exception e) {
-            // Fails silently if the icon is missing
             iconView.setImage(null);
         }
     }

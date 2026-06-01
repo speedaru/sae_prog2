@@ -126,14 +126,14 @@ public class AbilityAccordionWidget extends VBox {
 
         this.requirementsSection = new VBox(6);
         Label reqHeader = new Label("Ressources requises :");
-        reqHeader.setTextFill(Color.web("#fca5a5")); // Soft alert red for cost requirements
+        reqHeader.setTextFill(Color.web("#fca5a5"));
         reqHeader.setFont(Font.font("System", FontWeight.BOLD, 12));
         this.requirementsContainer = new VBox(2);
         this.requirementsSection.getChildren().addAll(reqHeader, this.requirementsContainer);
 
         this.effectsSection = new VBox(6);
         Label effHeader = new Label("Effets potentiels produits :");
-        effHeader.setTextFill(Color.web("#34d399")); // Emerald green for produced yields
+        effHeader.setTextFill(Color.web("#34d399"));
         effHeader.setFont(Font.font("System", FontWeight.BOLD, 12));
         this.effectsListContainer = new VBox(2);
         this.effectsSection.getChildren().addAll(effHeader, this.effectsListContainer);
@@ -210,7 +210,6 @@ public class AbilityAccordionWidget extends VBox {
         } else {
             this.activateButton.setDisable(true);
 
-            // diminuer taille si message long
             if (lockReason.length() >= 15) {
             	int lastSpace = lockReason.lastIndexOf(' ');
             	if (lastSpace != -1) {
