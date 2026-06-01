@@ -220,8 +220,10 @@ public class SmurfVillage {
 
 	private void loadEventsHistory(List<EventHistory> history) {
 		eventsHistory = new ArrayList<>(history);
-		Logger.LogDebug("loaded event history (%d events), last event: %s",
-				eventsHistory.size(), eventsHistory.getLast().eventType().name());
+		Logger.LogDebug("loaded event history (%d events)", eventsHistory.size());
+		if (!eventsHistory.isEmpty()) {
+			Logger.LogDebug("last event: %s", eventsHistory.getLast().eventType().name());
+		}
 	}
 
 	// ------------------------- hooks for modifier engine -------------------------

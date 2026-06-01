@@ -96,19 +96,19 @@ public class GameController implements WindowSubController {
     	router.navigate(NavigationAction.PUSH, WindowType.SETTINGS_WINDOW);
     }
 
-    public void saveGame(Path path) {
+    public void saveGame(String saveName) {
 		try {
-			GameSaveManager.serializeGame(game, path);
-			Logger.LogDebug("saved game to %s", path.toString());
+			GameSaveManager.saveGame(game, saveName);
+			Logger.LogDebug("saved game %s", saveName);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
     }
     
-    public void loadGame(Path path) {
-    	game = GameSaveManager.deserializeGame(path);
+    public void loadGame(String saveName) {
+    	game = GameSaveManager.loadGame(saveName);
 		registerVillageCallbacks();
-    	Logger.LogDebug("loaded saved game from %s", path.toString());
+    	Logger.LogDebug("loaded saved game %s", saveName);
     	
     	loadCurrentPhase();
     	loadUI();

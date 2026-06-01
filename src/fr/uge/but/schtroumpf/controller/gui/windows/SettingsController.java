@@ -5,8 +5,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 
-import java.nio.file.Path;
-
 import fr.uge.but.schtroumpf.controller.AppController;
 import fr.uge.but.schtroumpf.controller.Navigation.NavigationAction;
 import fr.uge.but.schtroumpf.controller.WindowSubController;
@@ -59,7 +57,7 @@ public class SettingsController implements WindowSubController {
     private void handleSaveButton(ActionEvent ev) {
     	GameController gameController = router.getWindowController(WindowType.GAME_WINDOW);
     	if (gameController != null) {
-    		gameController.saveGame(Path.of("save1.json"));
+    		gameController.saveGame("save1");
     	}
     }
     
