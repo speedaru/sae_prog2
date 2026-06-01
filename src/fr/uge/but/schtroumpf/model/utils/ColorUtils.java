@@ -3,6 +3,7 @@ package fr.uge.but.schtroumpf.model.utils;
 import javafx.scene.paint.Color;
 
 public class ColorUtils {
+	/** returns with # */
     public static String colorToHex(Color color) {
     	return String.format("#%02X%02X%02X",
     			(int)(color.getRed() * 255),

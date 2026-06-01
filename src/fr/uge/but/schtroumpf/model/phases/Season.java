@@ -1,10 +1,10 @@
 package fr.uge.but.schtroumpf.model.phases;
 
 public enum Season {
-	SPRING(1, 3, 5, "Praiontemps"),
-	SUMMER(2, 6, 8, "Ete"),
-	AUTUMN(3, 9, 11, "Autaumn"),
-	WINTER(4, 12, 2, "Hyver");
+	SPRING(1, 3, 5, "Printemps"),
+	SUMMER(2, 6, 8, "Eté"),
+	AUTUMN(3, 9, 11, "Automne"),
+	WINTER(4, 12, 2, "Hiver");
 	
 	private int code;
 	private int startMonth;

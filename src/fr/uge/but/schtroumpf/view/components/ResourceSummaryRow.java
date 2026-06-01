@@ -22,6 +22,7 @@ public class ResourceSummaryRow extends HBox {
     private final Label nameLabel;
     private final boolean displayingDelta;
     
+    private int currentDelta;
     private final Runnable themeUpdater = this::applyCurrentThemeColors;
 
     public ResourceSummaryRow(ResourceType type) {
@@ -60,25 +61,31 @@ public class ResourceSummaryRow extends HBox {
     }
 
     public void updateDelta(int value) {
+    	this.currentDelta = value;
+    	updateDeltaLabel();
+    }
+    
+    private void updateDeltaLabel() {
         if (displayingDelta) {
-            if (value > 0) {
-                deltaLabel.setText("+" + value);
-                deltaLabel.setTextFill(Color.web("#10b981"));
-            } else if (value < 0) {
-                deltaLabel.setText(String.valueOf(value));
-                deltaLabel.setTextFill(Color.web("#ef4444"));
+            if (currentDelta > 0) {
+                deltaLabel.setText("+" + currentDelta);
+                deltaLabel.setTextFill(ThemeManager.getSuccessColor());
+            } else if (currentDelta < 0) {
+                deltaLabel.setText(String.valueOf(currentDelta));
+                deltaLabel.setTextFill(ThemeManager.getFailColor());
             } else {
                 deltaLabel.setText("0");
                 deltaLabel.setTextFill(Color.web("#94a3b8"));
             }
         } else {
-            deltaLabel.setText(String.valueOf(Math.abs(value)));
+            deltaLabel.setText(String.valueOf(Math.abs(currentDelta)));
             deltaLabel.setTextFill(Color.web("#cbd5e1"));
         }
     }
 
     private void applyCurrentThemeColors() {
     	this.nameLabel.setTextFill(ThemeManager.getResourceColor(type));
+    	updateDeltaLabel(); // refresh color blind colors
     }
     
     private void loadIconResource() {

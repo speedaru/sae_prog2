@@ -5,13 +5,11 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-
-import java.util.stream.Collectors;
 
 import fr.uge.but.schtroumpf.controller.PhaseSubController;
 import fr.uge.but.schtroumpf.controller.gui.windows.GameController;
@@ -21,22 +19,27 @@ import fr.uge.but.schtroumpf.model.phases.ConsumptionReport;
 import fr.uge.but.schtroumpf.model.phases.ConsumptionRuleResult;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.utils.Logger;
+import fr.uge.but.schtroumpf.view.components.CoolScrollPane;
 import fr.uge.but.schtroumpf.view.components.ResourceSummaryRow;
 
 public class ConsumptionPhaseController implements PhaseSubController {
 	private GameController masterController;
 	private Game game;
 
-    @FXML private VBox consumptionEffectsContainer, penaltyEffectsContainer, statusCardFrame;
-    @FXML private HBox statusBadgeHeader;
+    @FXML private VBox consumptionEffectsContainer, detailsContainer;
+    @FXML private ScrollPane detailsScrollpane, effectsScrollpane;
     @FXML private Button nextPhaseButton;
-    @FXML private Label populationLabel, statusMessageLabel, statusTitleLabel;
+    @FXML private Label populationLabel;
 
 	@Override
 	public void setMasterController(GameController masterController, Game game) {
 		this.masterController = masterController;
 		this.game = game;
 
+		// set scroll bar stlyes
+		CoolScrollPane.setScrollBarStyle(effectsScrollpane);
+		CoolScrollPane.setScrollBarStyle(detailsScrollpane);
+		
 		renderConsumptionReport();
 		Logger.LogDebug("passed master controller to consuption phae");
 	}
@@ -48,7 +51,7 @@ public class ConsumptionPhaseController implements PhaseSubController {
 
     private void renderConsumptionReport() {
         consumptionEffectsContainer.getChildren().clear();
-        penaltyEffectsContainer.getChildren().clear();
+        detailsContainer.getChildren().clear();
 
         if (game.getCurrentPhase() == null) {
         	return;
@@ -83,35 +86,16 @@ public class ConsumptionPhaseController implements PhaseSubController {
         }
 
         if (report.hasAnyCrisis()) {
-            statusCardFrame.setStyle("-fx-background-color: #202225; -fx-border-color: #ef4444; -fx-border-width: 1.5; -fx-border-radius: 8; -fx-background-radius: 8;");
-            statusBadgeHeader.setStyle("-fx-background-color: #ef4444; -fx-background-radius: 6;");
-            
-            statusTitleLabel.setText(String.format("⚠️ ALERTES : %s", report.seasonName().toUpperCase()));
-
-            String combinedCrisisMessages = report.ruleResults().stream()
-                .filter(ConsumptionRuleResult::crisisTriggered)
-                .map(ConsumptionRuleResult::crisisMessage)
-                .collect(Collectors.joining("\n\n"));
-            
-            statusMessageLabel.setText(combinedCrisisMessages);
-
             for (ConsumptionRuleResult result : report.ruleResults()) {
                 if (result.crisisTriggered()) {
                     for (ResourceEffect effect : result.effectsApplied()) {
                         if (effect.delta() < 0) {
                             ResourceSummaryRow penaltyRow = new ResourceSummaryRow(effect.resourceType());
                             penaltyRow.updateDelta(effect.delta());
-                            penaltyEffectsContainer.getChildren().add(penaltyRow);
                         }
                     }
                 }
             }
-        } else {
-            statusCardFrame.setStyle("-fx-background-color: #202225; -fx-border-color: #3f444c; -fx-border-width: 1.5; -fx-border-radius: 8; -fx-background-radius: 8;");
-            statusBadgeHeader.setStyle("-fx-background-color: #10b981; -fx-background-radius: 6;");
-            
-            statusTitleLabel.setText(String.format("✅ RAS : %s", report.seasonName().toUpperCase()));
-            statusMessageLabel.setText("Toutes les contraintes écologiques et rationnements ont été honorés avec succès. Votre village est en parfaite santé et aucun incident n'est à déplorer ce mois-ci !");
         }
 
         masterController.updateHudResources();

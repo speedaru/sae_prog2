@@ -26,6 +26,12 @@ public class ModifierEffect {
     public static ModifierEffect crisisModifierEffect(GameModifierType type, Object value, int duration) {
     	return new ModifierEffect(type, value, duration, true);
     }
+    
+    @Override
+    public String toString() {
+    	return String.format("type: %s, value: %s, remaining rounds: %d, started: %s",
+    		type, value, remainingRounds, started ? "true" : "false");
+    }
 
     public GameModifierType getType() { return type; }
     public Object getValue() { return value; }
@@ -33,6 +39,10 @@ public class ModifierEffect {
     public boolean isCrisis() { return isCrisis; }
     public boolean started() { return started; }
 
+    public void setStarted(boolean state) {
+    	this.started = state;
+    }
+    
     /**
      * starts the counter if not started, decrements round counter
      * @return true if the effect has expired

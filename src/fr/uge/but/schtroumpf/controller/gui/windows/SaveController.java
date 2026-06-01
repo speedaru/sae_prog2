@@ -55,14 +55,14 @@ public class SaveController implements WindowSubController {
             return;
         }
 
-        // Clean name to prevent path traversal vulnerabilities
+        // clean name with regex pattern
         String cleanName = saveName.replaceAll("[^a-zA-Z0-9_\\-]", "");
         if (cleanName.isEmpty()) {
             setStatus("Le nom de sauvegarde contient des caractères interdits.", ThemeManager.getFailColor());
             return;
         }
 
-        // Check if save already exists to prompt or alert
+        // check if file already exists
         for (String existingSave : GameSaveManager.getSaveNames()) {
             if (existingSave.toLowerCase().equals(cleanName)) {
                 setStatus(String.format("La sauvegarde '%s' existe déjà !", cleanName), ThemeManager.getFailColor());
@@ -80,12 +80,10 @@ public class SaveController implements WindowSubController {
         saveNameField.clear();
         setStatus(String.format("Partie '%s' sauvegardée !", cleanName), ThemeManager.getSuccessColor());
         
-        refreshSavesList(); // Dynamic refresh
+        refreshSavesList(); // refresh after changing files
     }
 
-    /**
-     * Loops over active directory directories to build SaveSummaryWidgets.
-     */
+    // create widgets
     private void refreshSavesList() {
         savesContainer.getChildren().clear();
 
@@ -117,11 +115,9 @@ public class SaveController implements WindowSubController {
         alert.setHeaderText(null);
         alert.setContentText("Voulez-vous vraiment supprimer la sauvegarde '" + saveName + "' ? Cette action est irréversible.");
 
-        // Customise dialog styling to match our dark theme
         alert.getDialogPane().setStyle("-fx-background-color: #202225;");
         alert.getDialogPane().lookup(".content.label").setStyle("-fx-text-fill: #f8fafc; -fx-font-weight: bold;");
 
-        // Customise buttons to say "Oui" and "Non"
         ButtonType yesButton = new ButtonType("Oui");
         ButtonType noButton = new ButtonType("Non");
         alert.getButtonTypes().setAll(yesButton, noButton);

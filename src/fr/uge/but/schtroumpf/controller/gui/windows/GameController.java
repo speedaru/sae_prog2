@@ -8,11 +8,6 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.BackgroundPosition;
-import javafx.scene.layout.BackgroundRepeat;
-import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -43,6 +38,9 @@ public class GameController implements WindowSubController {
     private AppController router;
     private Game game = new Game();
 
+
+    @FXML private StackPane root;
+    @FXML private ImageView backgroundImage;
     @FXML private Label monthLabel, phaseLabel, eventLabel;
     @FXML private ImageView settingsButton, quitButton;
     @FXML private VBox resourcesContainer, crisisContainer, totalModifiersContainer;
@@ -158,11 +156,21 @@ public class GameController implements WindowSubController {
     // ------------------------- UI helpers
     
     private void loadUI() {
+    	loadBackground();
     	initNavButtons();
         initResourceWidgets();
         
         updateHudResources();
 		updateHudCrisis();
+    }
+    
+    private void loadBackground() {
+    	Path path = Path.of("src/main/resources/sprites/les-schtroumpfs.png").toAbsolutePath();
+    	backgroundImage.setImage(new Image(path.toUri().toString()));
+    	
+    	backgroundImage.fitWidthProperty().bind(root.widthProperty());
+    	backgroundImage.fitHeightProperty().bind(root.heightProperty());
+    	backgroundImage.setPreserveRatio(false);
     }
     
     private void initNavButtons() {

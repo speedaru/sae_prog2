@@ -45,61 +45,60 @@ public class ThemeManager {
     
     public static Color getAbilityResultTypeColor(AbilityResultType resType) {
     	if (currentTheme == ResourceTheme.COLOR_BLIND) {
-    		return switch (resType) {
-    		case SUCCESS -> Color.ALICEBLUE;
-    		case FAILURE -> Color.ALICEBLUE;
-    		case NEUTRAL -> Color.ALICEBLUE;
-    		};    
-    	}
-		return switch (resType) {
-		case SUCCESS -> Color.web("#10b981");
-		case FAILURE -> Color.web("#ef4444");
-		case NEUTRAL -> Color.web("#3b82f6");
-		};    
+            return switch (resType) {
+                case SUCCESS -> Color.web("#F0E442");
+                case FAILURE -> Color.web("#CC79A7");
+                case NEUTRAL -> Color.web("#56B4E9");
+            };    
+        }
+        return switch (resType) {
+            case SUCCESS -> Color.web("#10b981");
+            case FAILURE -> Color.web("#ef4444");
+            case NEUTRAL -> Color.web("#3b82f6");
+        };
     }
 
     /** should be green */
     public static Color getSuccessColor() {
     	if (currentTheme == ResourceTheme.COLOR_BLIND) {
-    		return Color.CYAN;
-    	}
-
-		return Color.GREEN;
+            return Color.web("#F0E442");
+        }
+        return Color.web("#10b981");
     }
 
-    /** should be green */
+    /** should be red */
     public static Color getFailColor() {
     	if (currentTheme == ResourceTheme.COLOR_BLIND) {
-    		return Color.TURQUOISE;
+    		return Color.web("#CC79A7");
     	}
 
-		return Color.RED;
+		return Color.web("#ef4444");
     }
 
     private static Color getResourceThemeColor(ResourceType type) {
-    	// color blind theme
-		if (currentTheme == ResourceTheme.COLOR_BLIND) {
-			return switch (type) {
-			case BERRIES -> Color.web("#D55E00");
-			case SARSAPARILLA -> Color.web("#009E73");
-			case GOLD -> Color.web("#F0E442");
-			case TOOLS -> Color.web("#7A7A7A");
-			case MORAL -> Color.web("#CC79A7");
-			case DEFENSE -> Color.web("#0072B2");
-			case KNOWLEDGE -> Color.web("#56B4E9");
-			};
-		}
+    	// color blind theme - Palette CUD/Okabe-Ito
+        if (currentTheme == ResourceTheme.COLOR_BLIND) {
+            return switch (type) {
+                case BERRIES -> Color.web("#D55E00");
+                case SARSAPARILLA -> Color.web("#009E73");
+                case GOLD -> Color.web("#F0E442");
+                case TOOLS -> Color.web("#7A7A7A");
+                case MORAL -> Color.web("#CC79A7");
+                case DEFENSE -> Color.web("#0072B2");
+                case KNOWLEDGE -> Color.web("#56B4E9");
+            };
+        }
 
-		// standard theme
-		return switch (type) {
-		case BERRIES -> Color.web("#C62828");
-		case SARSAPARILLA -> Color.web("#2E8B57");
-		case GOLD -> Color.web("#D4AF37");
-		case TOOLS -> Color.web("#6D4C41");
-		case MORAL -> Color.web("#FF6F61");
-		case DEFENSE -> Color.web("#3F51B5");
-		case KNOWLEDGE -> Color.web("#7E57C2");
-		};
+        // standard theme
+        return switch (type) {
+            case BERRIES -> Color.web("#C62828");
+            case SARSAPARILLA -> Color.web("#2E8B57");
+            case GOLD -> Color.web("#D4AF37");
+            case TOOLS -> Color.web("#6D4C41");
+            case MORAL -> Color.web("#FF6F61");
+            case DEFENSE -> Color.web("#3F51B5");
+            case KNOWLEDGE -> Color.web("#7E57C2");
+        };
     }
 
 	public enum ResourceTheme {

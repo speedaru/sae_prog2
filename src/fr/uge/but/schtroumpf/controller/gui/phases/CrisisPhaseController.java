@@ -48,37 +48,21 @@ public class CrisisPhaseController implements PhaseSubController {
     private void renderCrises() {
         crisisCardsContainer.getChildren().clear();
 
-        // get crises and check lose condition
+        // get crises
         List<Crisis> activeCrises = game.getVillage().getActiveCrises();
-        if (activeCrises.size() > 3) {
-        	displayGameOverState();
-        	return;
-        }
 
         // update crisis count indicator
         crisisCountBadge.setText(String.format("%d/%d", activeCrises.size(), SmurfVillage.MAX_CRISES));
 
         // create crisis widgets
+        int counter = 0;
         for (Crisis crisis : activeCrises) {
+        	if (++counter > 3) {
+        		break;
+        	}
             CrisisSummaryRow crisisRow = new CrisisSummaryRow(crisis.getType());
             crisisCardsContainer.getChildren().add(crisisRow);
         }
     }
 
-    private void displayGameOverState() {
-        safeStateContainer.setVisible(false);
-        crisisListWrapper.setVisible(false);
-        
-        gameOverContainer.setVisible(true);
-        
-        phaseTitleLabel.setText("FIN DE LA PARTIE");
-        phaseTitleLabel.setTextFill(Color.web("#ef4444"));
-        phaseSubtitleLabel.setText("Le village a succombé aux crises.");
-        
-        nextMonthButton.setVisible(false);
-        nextMonthButton.setManaged(false);
-        
-        gameOverButtonsBox.setVisible(true);
-        gameOverButtonsBox.setManaged(true);
-    }
 }

@@ -8,9 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.uge.but.schtroumpf.model.save.GameSave;
-import fr.uge.but.schtroumpf.model.save.GameSaveManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -23,11 +20,18 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-public class SaveSummaryWidget extends HBox {
+import fr.uge.but.schtroumpf.model.save.GameSave;
+import fr.uge.but.schtroumpf.model.save.GameSaveManager;
+import fr.uge.but.schtroumpf.model.utils.ColorUtils;
+import fr.uge.but.schtroumpf.view.themes.ThemeManager;
 
+public class SaveSummaryWidget extends HBox {
     private final String saveName;
     private final Path filePath;
-    private final Runnable onDeleteCallback;
+    private final Button deleteBtn;
+
+    @SuppressWarnings("unused")
+	private final Runnable onDeleteCallback;
 
     public SaveSummaryWidget(Path filePath, Runnable onDeleteCallback) {
         super();
@@ -75,11 +79,11 @@ public class SaveSummaryWidget extends HBox {
         HBox actionsContainer = new HBox(8.0);
         actionsContainer.setAlignment(Pos.CENTER);
 
-        Button deleteBtn = new Button("Supprimer");
+        deleteBtn = new Button("Supprimer");
         deleteBtn.setPrefHeight(32.0);
         deleteBtn.setPrefWidth(90.0);
         deleteBtn.setStyle(
-            "-fx-background-color: #ef4444; " +
+        	String.format("-fx-background-color: %s; ", ColorUtils.colorToHex(ThemeManager.getFailColor())) + 
             "-fx-text-fill: white; " +
             "-fx-background-radius: 4; " +
             "-fx-cursor: hand; " +

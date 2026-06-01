@@ -28,12 +28,12 @@
             <javafx.scene.layout.Region HBox.hgrow="ALWAYS" />
             <Label text="Actions disponibles :" textFill="#94a3b8">
                <font>
-                  <Font name="System Bold" size="12.0" />
+                  <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <Label fx:id="actionsCounterLabel" text="3 / 3" textFill="WHITE">
+            <Label fx:id="actionsCounterLabel" text="? / ?" textFill="WHITE">
                <font>
-                  <Font name="System Bold" size="11.0" />
+                  <Font name="System Bold" size="14.0" />
                </font>
                <padding>
                   <Insets bottom="2.0" left="8.0" right="8.0" top="2.0" />

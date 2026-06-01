@@ -23,12 +23,16 @@ public class VillageModifierContext {
 
     	// restore temp modifiers
         for (var tempState : state.temporaryModifiers()) {
-            this.temporaryModifiers.add(new ModifierEffect(
+        	ModifierEffect effect = new ModifierEffect(
                 tempState.type(),
                 tempState.value(),
                 tempState.remainingRounds(),
                 tempState.isCrisis()
-            ));
+            );
+        	effect.setStarted(tempState.started());
+
+            this.temporaryModifiers.add(effect);
+        	Logger.LogDebug("loaded temp modifier: %s", temporaryModifiers.getLast());
         }
     }
 
