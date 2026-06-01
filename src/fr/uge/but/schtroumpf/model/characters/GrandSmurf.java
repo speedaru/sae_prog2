@@ -57,12 +57,13 @@ public class GrandSmurf implements SmurfCharacter {
 		// Organiser une réunion
 		CharacterAbility planMeeting = new CharacterAbility(
 			"Organiser une réunion",
-			"Le Grand Schtroumpf rassemble le village pour motiver les Schtroumpfs et renforcer leur moral.",
+			"Le Grand Schtroumpf rassemble le village pour motiver les Schtroumpfs et renforcer leur moral. Les Schtroumpfs travaillent d'arrache pied et récoltent des baies",
 			3,
 			List.of(new ResourceSnapshot(ResourceType.GOLD,3)),
 			List.of(
 				new ResourceEffect(ResourceType.MORAL, 2),
-				new ResourceEffect(ResourceType.GOLD, -3)
+				new ResourceEffect(ResourceType.GOLD, -3),
+				new ResourceEffect(ResourceType.BERRIES, 2)
 			),
 			this::executePlanMeeting
 		);
@@ -70,13 +71,13 @@ public class GrandSmurf implements SmurfCharacter {
 		// Négocier avec les animaux
 		CharacterAbility talkToAnimals = new CharacterAbility(
 			"Négocier avec les animaux",
-			"Le Grand Schtroumpf négocie avec les animaux de la forêt pour obtenir leur aide. Permet d'obtenir +1 d'Or"
-			+ "  ou +1 de Défense",
+			"Le Grand Schtroumpf négocie avec les animaux de la forêt pour obtenir leur aide. Permet d'obtenir +2 d'Or"
+			+ "  ou +2 de Défense",
 			1,
-			List.of(),
+			List.of(new ResourceSnapshot(ResourceType.SARSAPARILLA,7)),
 			List.of(
-				new ResourceEffect(ResourceType.GOLD, 1),
-				new ResourceEffect(ResourceType.DEFENSE, 1)
+				new ResourceEffect(ResourceType.GOLD, 2),
+				new ResourceEffect(ResourceType.DEFENSE, 2)
 			),
 			this::executeTalkToAnimals
 		);
@@ -114,10 +115,11 @@ public class GrandSmurf implements SmurfCharacter {
 		Logger.LogDebug("Grand Smurf organized a meeting");
 		ResourceEffect plusMoral = new ResourceEffect(ResourceType.MORAL, 2);
 		ResourceEffect minusGold = new ResourceEffect(ResourceType.GOLD, -3);
+		ResourceEffect plusBerries = new ResourceEffect(ResourceType.BERRIES, 2);
 		return new AbilityResult(
 			AbilityResultType.NEUTRAL,
-			String.format("Le Grand Schtroumpf a reuni le village %s %s", plusMoral, minusGold),
-			List.of(plusMoral,minusGold)
+			String.format("Le Grand Schtroumpf a reuni le village %s %s %s", plusMoral, minusGold, plusBerries),
+			List.of(plusMoral,minusGold,plusBerries)
 		);
 	}
 
@@ -131,14 +133,15 @@ public class GrandSmurf implements SmurfCharacter {
 				successChance,
 				AbilityResultType.NEUTRAL,
 				resMessage,
-				List.of(new ResourceEffect(ResourceType.GOLD, 1))
+				List.of(new ResourceEffect(ResourceType.GOLD, 2))
 			))
 			.addChoice(new OutcomeChoice(
 				failureChance,
 				AbilityResultType.NEUTRAL,
 				resMessage,
-				List.of(new ResourceEffect(ResourceType.DEFENSE, 1))
+				List.of(new ResourceEffect(ResourceType.DEFENSE, 2))
 			))
+	
 			.selectAndExecute(village, null);
 	}
 }
