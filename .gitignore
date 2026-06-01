@@ -3,4 +3,4 @@
 bin/
 target/
 
-*save*.json
+saves/
