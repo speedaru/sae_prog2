@@ -54,7 +54,7 @@ public class SettingsController implements WindowSubController {
 			"Gestion des Sauvegardes",
 			"Sauvegardez votre partie actuelle ou chargez une ancienne session de jeu pour reprendre votre village.",
 			BASE_ICONS_PATH.resolve("save_icon.png"),
-			"Sauvegarder",
+			"Gérer",
 			() -> {
 				router.navigate(NavigationAction.PUSH, WindowType.SAVE_WINDOW);
 			}

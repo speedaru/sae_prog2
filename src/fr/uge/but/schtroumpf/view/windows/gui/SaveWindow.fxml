@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -25,56 +26,71 @@
       </HBox>
    </top>
    <center>
-      <VBox alignment="CENTER" spacing="20.0" BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER" spacing="20.0" BorderPane.alignment="CENTER">
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
          <children>
             
-            <!-- SECTION 1: CREATE A NEW SAVE -->
-            <VBox maxWidth="500.0" prefHeight="130.0" prefWidth="450.0" spacing="10.0" style="-fx-background-color: #1a1c1e; -fx-background-radius: 8; -fx-border-color: #3f444c; -fx-border-radius: 8; -fx-border-width: 1;">
+            <!-- LEFT COLUMN: CREATE A NEW SAVE -->
+            <VBox prefWidth="450.0" spacing="15.0" style="-fx-background-color: #202225; -fx-background-radius: 8; -fx-border-color: #3f444c; -fx-border-radius: 8; -fx-border-width: 1.5;">
                <padding>
-                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                </padding>
                <children>
                   <Label text="Créer une nouvelle sauvegarde" textFill="#f8fafc">
                      <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="System Bold" size="16.0" />
                      </font>
                   </Label>
-                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                  <VBox alignment="TOP_CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
                      <children>
-                        <TextField fx:id="saveNameField" prefHeight="38.0" prefWidth="300.0" promptText="Nom de la sauvegarde (ex: partie1)..." style="-fx-background-color: #2d3139; -fx-text-fill: white; -fx-prompt-text-fill: #64748b; -fx-border-color: #3f444c; -fx-border-radius: 4; -fx-background-radius: 4;" HBox.hgrow="ALWAYS">
+                        <TextField fx:id="saveNameField" prefHeight="45.0" promptText="Nom de la sauvegarde (ex: partie1)..." style="-fx-background-color: #2d3139; -fx-text-fill: white; -fx-prompt-text-fill: #64748b; -fx-border-color: #3f444c; -fx-border-radius: 6; -fx-background-radius: 6;">
                            <font>
-                              <Font size="13.0" />
+                              <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Button mnemonicParsing="false" onAction="#handleCreateSave" prefHeight="38.0" prefWidth="110.0" style="-fx-background-color: #4b5563; -fx-background-radius: 8; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold;" text="Sauvegarder" />
+                        <Button maxWidth="1.0E30" mnemonicParsing="false" onAction="#handleCreateSave" prefHeight="45.0" style="-fx-background-color: #3b82f6; -fx-background-radius: 8; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold; -fx-font-size: 16px;" text="Enregistrer" />
+                        <Label fx:id="statusLabel" textFill="#10b981" wrapText="true">
+                           <font>
+                              <Font name="System Italic" size="18.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="20.0" />
+                           </VBox.margin>
+                        </Label>
                      </children>
-                  </HBox>
-                  <Label fx:id="statusLabel" textFill="#10b981">
+                  </VBox>
+               </children>
+            </VBox>
+
+            <!-- RIGHT COLUMN: LIST OF EXISTING SAVES -->
+            <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label text="Sauvegardes existantes" textFill="#cbd5e1">
                      <font>
-                        <Font name="System Italic" size="14.0" />
+                        <Font name="System Bold" size="16.0" />
                      </font>
                   </Label>
+                  <ScrollPane fitToWidth="true" style="-fx-border-color: #3f444c; -fx-background: #1a1c1e; -fx-background-color: #1a1c1e; -fx-border-radius: 6; -fx-background-radius: 6;" VBox.vgrow="ALWAYS">
+                     <content>
+                        <VBox fx:id="savesContainer" spacing="10.0">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
                </children>
-               <VBox.margin>
-                  <Insets bottom="40.0" />
-               </VBox.margin>
             </VBox>
             
          </children>
-      </VBox>
+      </HBox>
    </center>
-
    <bottom>
       <HBox alignment="CENTER" prefHeight="75.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBack" prefHeight="45.0" prefWidth="180.0" style="-fx-background-color: #4b5563; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand;" text="Retour au jeu">
-               <font>
-                  <Font name="System Bold" size="16.0" />
-               </font>
-            </Button>
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBack" prefHeight="45.0" prefWidth="180.0" style="-fx-background-color: #4b5563; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand; -fx-font-weight: bold; -fx-font-size: 16px;" text="Retour au jeu" />
          </children>
          <padding>
             <Insets bottom="20.0" />
