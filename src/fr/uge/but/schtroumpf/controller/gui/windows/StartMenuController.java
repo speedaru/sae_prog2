@@ -26,11 +26,12 @@ public class StartMenuController implements WindowSubController {
 
     @FXML
     void handleLoadGame(ActionEvent event) {
-    	router.navigate(NavigationAction.PUSH, WindowType.GAME_WINDOW);
-
-    	GameController gameController = router.getWindowController(WindowType.GAME_WINDOW);
-    	if (gameController != null) {
-    		gameController.loadGame("save1");
-    	}
+    	router.navigate(NavigationAction.PUSH, WindowType.LOAD_SAVE_WINDOW);
+//    	router.navigate(NavigationAction.PUSH, WindowType.GAME_WINDOW);
+//
+//    	GameController gameController = router.getWindowController(WindowType.GAME_WINDOW);
+//    	if (gameController != null) {
+//    		gameController.loadGame("save1");
+//    	}
     }
 }

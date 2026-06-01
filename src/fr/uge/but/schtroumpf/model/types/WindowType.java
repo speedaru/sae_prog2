@@ -6,7 +6,8 @@ public enum WindowType {
 	START_WINDOW(1, Path.of("windows/gui/StartWindow.fxml")),
 	GAME_WINDOW(2, Path.of("windows/gui/GameWindow.fxml")),
 	SETTINGS_WINDOW(3, Path.of("windows/gui/SettingsWindow.fxml")),
-	EXIT(4, null);
+	SAVE_WINDOW(5, Path.of("windows/gui/SaveWindow.fxml")),
+	LOAD_SAVE_WINDOW(6, Path.of("windows/gui/LoadSaveWindow.fxml"));
 
 	private final int code;
 	private final Path fxmlFile;

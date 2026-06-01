@@ -9,17 +9,17 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #1a1c1e; -fx-background-radius: 12; -fx-border-color: #3f444c; -fx-border-width: 2; -fx-border-radius: 12;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.uge.but.schtroumpf.controller.gui.windows.SettingsController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #1a1c1e;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.uge.but.schtroumpf.controller.gui.windows.SettingsController">
    
    <top>
       <VBox alignment="CENTER" spacing="6.0" BorderPane.alignment="CENTER">
          <children>
             <Label text="PARAMÈTRES DU JEU" textAlignment="CENTER" textFill="#f8fafc">
                <font>
-                  <Font name="System Bold" size="20.0" />
+                  <Font name="System Bold" size="24.0" />
                </font>
             </Label>
-            <Label text="Personnalisez votre expérience de jeu." textFill="#64748b" />
+            <Label text="Personnalisez votre expérience de jeu" textFill="#64748b" />
          </children>
          <padding>
             <Insets bottom="10.0" left="20.0" right="20.0" top="20.0" />

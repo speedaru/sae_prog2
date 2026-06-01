@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -29,20 +30,40 @@ public class GameSaveManager {
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
     }
 
-    /** serialize Game and output json file in a specified file path */
+    public static Path getSaveFilePath(String fileName) {
+        return getSaveFile(fileName);
+    }
+    
     public static void saveGame(Game game, String saveName) throws IOException {
+        saveFile(saveName, serializeGame(game));
+    }
+
+    public static Game loadGame(String saveName) {
+        GameSave save = loadFile(saveName);
+        return deserializeGame(save);
+    }
+    
+    public static GameSave getGameSave(String saveName) {
+        return loadFile(saveName);
+    }
+
+//    public static Game loadGame(Path saveFile) {
+//        GameSave save = loadFile(saveFile);
+//        return deserializeGame(save);
+//    }
+
+    /** serialize Game and output json file in a specified file path */
+    public static GameSave serializeGame(Game game) {
         SmurfVillage village = game.getVillage();
 
         GameSave.EngineState engineState = serialEngine(game);
         GameSave.VillageState villageState = serializeVillage(village);
 
-        GameSave saveFileContent = new GameSave(engineState, villageState);
-        saveFile(saveName, saveFileContent);
+        return new GameSave(engineState, villageState);
     }
 
     /** deserializes a file from a path into a Game instance */
-    public static Game loadGame(String saveName) {
-        GameSave save = loadFile(saveName);
+    public static Game deserializeGame(GameSave save) {
         if (save == null) {
 			Logger.LogError("failed to load save");
 			return null;
@@ -55,6 +76,29 @@ public class GameSaveManager {
 		village.loadSave(save.villageState());
 		
 		return game;
+    }
+
+    /** @return a list of available save names */
+    public static List<String> getSaveNames() {
+        List<String> cleanNames = new ArrayList<>();
+        if (!Files.exists(SAVE_PATH)) {
+            return cleanNames;
+        }
+
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(SAVE_PATH, "save_*.json")) {
+            for (Path entry : stream) {
+                String filename = entry.getFileName().toString();
+                // remove save_ suffix and .json extension
+                if (filename.length() > 10) {
+                    String cleanName = filename.substring(5, filename.length() - 5);
+                    cleanNames.add(cleanName);
+                }
+            }
+        } catch (IOException e) {
+            Logger.LogError("failed to read save files: %s", e.getMessage());
+        }
+
+        return cleanNames;
     }
     
     private static GameSave.EngineState serialEngine(Game game) {
@@ -141,6 +185,16 @@ public class GameSaveManager {
 
 		return null;
     }
+    
+//    private static GameSave loadFile(Path file) {
+//		try {
+//			return objectMapper.readValue(file.toFile(), GameSave.class);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//
+//		return null;
+//    }
 
     private static ResourceMap resourcesSnapToMap(List<ResourceSnapshot> snapshots) {
         ResourceMap map = new ResourceMap();

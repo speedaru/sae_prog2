@@ -1,6 +1,9 @@
 package fr.uge.but.schtroumpf.view.components;
 
+import java.nio.file.Path;
 import java.util.function.Consumer;
+
+import fr.uge.but.schtroumpf.model.utils.Logger;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -23,7 +26,7 @@ public class SettingToggleWidget extends HBox {
     private final Button toggleButton;
     private final Consumer<Boolean> onToggleAction;
 
-    public SettingToggleWidget(String title, String description, String iconFileName, boolean initialState, Consumer<Boolean> onToggleAction) {
+    public SettingToggleWidget(String title, String description, Path iconFile, boolean initialState, Consumer<Boolean> onToggleAction) {
         this.isActivated = initialState;
         this.onToggleAction = onToggleAction;
 
@@ -44,7 +47,8 @@ public class SettingToggleWidget extends HBox {
         iconView.setFitHeight(64.0);
         iconView.setFitWidth(64.0);
         iconView.setPreserveRatio(true);
-        loadIconResource(iconView, iconFileName);
+        loadIconResource(iconView, iconFile);
+        Logger.LogDebug("icon file: %s", iconFile.toUri().toString());
 
         // 3. Text Container (Middle)
         VBox textContainer = new VBox(5.0);
@@ -94,12 +98,9 @@ public class SettingToggleWidget extends HBox {
         }
     }
 
-    private void loadIconResource(ImageView iconView, String filename) {
+    private void loadIconResource(ImageView iconView, Path file) {
         try {
-            var url = getClass().getResource("/icons/" + filename);
-            if (url != null) {
-                iconView.setImage(new Image(url.toExternalForm()));
-            }
+        	iconView.setImage(new Image(file.toUri().toString()));
         } catch (Exception e) {
             // Fails silently if the icon is missing
             iconView.setImage(null);

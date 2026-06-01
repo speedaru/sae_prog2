@@ -58,6 +58,24 @@ public class ThemeManager {
 		};    
     }
 
+    /** should be green */
+    public static Color getSuccessColor() {
+    	if (currentTheme == ResourceTheme.COLOR_BLIND) {
+    		return Color.CYAN;
+    	}
+
+		return Color.GREEN;
+    }
+
+    /** should be green */
+    public static Color getFailColor() {
+    	if (currentTheme == ResourceTheme.COLOR_BLIND) {
+    		return Color.TURQUOISE;
+    	}
+
+		return Color.RED;
+    }
+
     private static Color getResourceThemeColor(ResourceType type) {
     	// color blind theme
 		if (currentTheme == ResourceTheme.COLOR_BLIND) {
