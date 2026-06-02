@@ -29,7 +29,7 @@ public enum GameModifierType {
     	obj -> formatIntDelta(obj),
     	GameModifierType::addInt
 	),
-    PASSIVE_FOOD_PRODUCTION_BLOCKED(Boolean.class, "Production baies bloque", false,
+    PASSIVE_FOOD_PRODUCTION_BLOCKED(Boolean.class, "Baies bloquée", false,
     	obj -> formatBool(obj),
     	GameModifierType::addBool
     ),

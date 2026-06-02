@@ -11,10 +11,10 @@ public class Main {
 	public static void main(String[] args) {
 		// init logger
 		List<LoggerFlag> flags = List.of(
-				LoggerFlag.DEBUG,
-				LoggerFlag.WARNING,
-				LoggerFlag.ERROR,
-				LoggerFlag.TRACE
+//				LoggerFlag.DEBUG,
+//				LoggerFlag.WARNING,
+//				LoggerFlag.ERROR,
+//				LoggerFlag.TRACE
 		);
 		Logger.Init(flags);
 		
