@@ -297,7 +297,7 @@ public class GameController implements WindowSubController {
         // clean view if the village has no active penalties
         if (!hasModifiers) {
             Label happyLabel = new Label("Aucun modificateur");
-            happyLabel.setTextFill(javafx.scene.paint.Color.web("#64748b"));
+            happyLabel.setTextFill(javafx.scene.paint.Color.web("#869ab8"));
             happyLabel.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontPosture.ITALIC, 12.0));
             happyLabel.setPadding(new javafx.geometry.Insets(10, 0, 0, 4));
             
@@ -312,7 +312,7 @@ public class GameController implements WindowSubController {
     	nextCrisisBtn.setDisable(true);
 
     	Label calmLabel = new Label("le village est calme");
-    	calmLabel.setTextFill(javafx.scene.paint.Color.web("#64748b"));
+    	calmLabel.setTextFill(javafx.scene.paint.Color.web("#869ab8"));
     	calmLabel.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontPosture.ITALIC, 13));
     	calmLabel.setPadding(new javafx.geometry.Insets(30, 0, 0, 0));
 
