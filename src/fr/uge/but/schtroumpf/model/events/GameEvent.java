@@ -19,6 +19,7 @@ public interface GameEvent {
 			case FRIENDLY_VILLAGE -> new FriendlyVillage();
 			case SMURF_PARTY -> new SmurfParty();
 			case FOREST_CURSE -> new ForestCurse();
+			case PILLAGE -> new Pillage();
 			default -> throw new IllegalArgumentException("invalid type"); 
 		};
 	}

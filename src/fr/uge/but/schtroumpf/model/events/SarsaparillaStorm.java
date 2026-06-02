@@ -19,7 +19,7 @@ public class SarsaparillaStorm implements GameEvent {
 		List<ResourceEffect> impacts = new ArrayList<ResourceEffect>();
 		
 		// always lose tools
-		impacts.add(new ResourceEffect(ResourceType.TOOLS, -3));
+		impacts.add(new ResourceEffect(ResourceType.SARSAPARILLA, -3));
 		
 		// if knowledge is high then study storm
 		if (village.getResourceQuantity(ResourceType.KNOWLEDGE) >= REQUIRED_KNOWLEDGE) {

@@ -11,6 +11,7 @@ import javafx.scene.layout.VBox;
 import fr.uge.but.schtroumpf.controller.PhaseSubController;
 import fr.uge.but.schtroumpf.controller.gui.windows.GameController;
 import fr.uge.but.schtroumpf.model.Game;
+import fr.uge.but.schtroumpf.model.events.GameEventType;
 import fr.uge.but.schtroumpf.model.types.EventHistory;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.view.components.ResourceSummaryRow;
@@ -19,7 +20,7 @@ public class EventPhaseController implements PhaseSubController {
 	private GameController masterController;
 	private Game game;
 	
-    @FXML private Label eventNameLabel;
+    @FXML private Label eventNameLabel, messageLabel;
     @FXML private VBox negativeEffectsContainer, positiveEffectsContainer;
     @FXML private Button nextPhaseButton;
 	
@@ -29,7 +30,7 @@ public class EventPhaseController implements PhaseSubController {
 		this.game = game;
 
 		// creates positive and negative resource effects widgets
-		loadResourceRows();
+		loadUi();
 	}
 
     @FXML
@@ -37,7 +38,7 @@ public class EventPhaseController implements PhaseSubController {
     	masterController.advanceTurn();
     }
 
-    private void loadResourceRows() {
+    private void loadUi() {
     	Objects.requireNonNull(game, "game was not initialized, please call setMasterController before");
     	
     	final EventHistory lastEvent = game.getVillage().getLastEvent();
@@ -45,7 +46,9 @@ public class EventPhaseController implements PhaseSubController {
     		throw new IllegalStateException("last event doesn't match current round");
     	}
     	
-    	eventNameLabel.setText(lastEvent.eventType().getTitle());
+    	GameEventType type = lastEvent.eventType();
+    	eventNameLabel.setText(type.getTitle());
+    	messageLabel.setText(type.getDescription());
 
 		List<ResourceEffect> effectsApplied = lastEvent.effectsApplied();
 

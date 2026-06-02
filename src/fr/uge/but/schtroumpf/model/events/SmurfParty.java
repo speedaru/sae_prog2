@@ -16,12 +16,13 @@ public class SmurfParty implements GameEvent {
 	public List<ResourceEffect> trigger(SmurfVillage village) {
 		List<ResourceEffect> impacts = new ArrayList<ResourceEffect>();
 		
-		// always lose berries
+		// always lose berries and sarsaparilla
 		impacts.add(new ResourceEffect(ResourceType.BERRIES, -2));
+		impacts.add(new ResourceEffect(ResourceType.SARSAPARILLA, -1));
 		
 		// if we don't have berries, we don't gain moral
 		if (village.getResourceQuantity(ResourceType.BERRIES) >= REQUIRED_BERRIES) {
-			impacts.add(new ResourceEffect(ResourceType.MORAL, 3));
+			impacts.add(new ResourceEffect(ResourceType.MORAL, 1));
 		}
 		
 		return impacts;

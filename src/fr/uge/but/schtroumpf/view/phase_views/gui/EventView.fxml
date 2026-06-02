@@ -8,11 +8,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #1a1c1e; -fx-background-radius: 12; -fx-border-color: #3f444c; -fx-border-width: 2; -fx-border-radius: 12;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.uge.but.schtroumpf.controller.gui.phases.EventPhaseController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #1a1c1e; -fx-background-radius: 12; -fx-border-color: #3f444c; -fx-border-width: 2; -fx-border-radius: 12;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.uge.but.schtroumpf.controller.gui.phases.EventPhaseController">
    
    <!-- Header Area: Announcement & Event Name -->
    <top>
-      <VBox alignment="CENTER" spacing="10.0" BorderPane.alignment="CENTER">
+      <VBox alignment="CENTER" spacing="4.0" BorderPane.alignment="CENTER">
          <children>
             <Label text="Un événement aléatoire apparaît !" textFill="#f8fafc">
                <font>
@@ -30,9 +30,14 @@
                   </Label>
                </children>
             </HBox>
+            <Label fx:id="messageLabel" text="message" textFill="#a19f9d">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
          </children>
          <padding>
-            <Insets bottom="10.0" top="25.0" />
+            <Insets bottom="10.0" top="12.0" />
          </padding>
       </VBox>
    </top>
