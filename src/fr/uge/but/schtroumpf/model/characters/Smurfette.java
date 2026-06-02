@@ -6,8 +6,7 @@ import java.util.Map;
 
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
-import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
-import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResultType;
+import fr.uge.but.schtroumpf.model.characters.CharacterAbility.*;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 import fr.uge.but.schtroumpf.model.utils.Logger;
@@ -50,9 +49,14 @@ public class Smurfette implements SmurfCharacter {
 				new ResourceSnapshot(ResourceType.GOLD, 2)
 			),
 			List.of(
-				new ResourceEffect(ResourceType.BERRIES, 2),
-				new ResourceEffect(ResourceType.SARSAPARILLA, 2),
-				new ResourceEffect(ResourceType.GOLD,-2)
+				new PossibleBranch("Effets possibles :", List.of(
+					new ResourceEffect(ResourceType.GOLD,-2),
+					new ResourceEffect(ResourceType.BERRIES, 2)
+				)),
+				new PossibleBranch("Effets possibles :", List.of(
+					new ResourceEffect(ResourceType.GOLD,-2),
+					new ResourceEffect(ResourceType.SARSAPARILLA, 2)
+				))
 			),
 			this::executeNegociate
 		);
@@ -62,11 +66,14 @@ public class Smurfette implements SmurfCharacter {
 			"Schtroumpfette calme deux Schtroupfs en embrouille",
 			1,
 			List.of(
-					new ResourceSnapshot(ResourceType.KNOWLEDGE, 2)
-				),
+				new ResourceSnapshot(ResourceType.KNOWLEDGE, 2)
+			),
 			List.of(
+				new PossibleBranch("Succès :", List.of(
 					new ResourceEffect(ResourceType.MORAL, 2)
-				),
+				)),
+				new PossibleBranch("Echec :", List.of())
+			),
 			this::executeAppease
 		);
 			
@@ -78,8 +85,10 @@ public class Smurfette implements SmurfCharacter {
 				new ResourceSnapshot(ResourceType.BERRIES, 4)
 			),
 			List.of(
-				new ResourceEffect(ResourceType.MORAL, 3),
-				new ResourceEffect(ResourceType.BERRIES, -3)
+				new PossibleBranch("Effets :", List.of(
+					new ResourceEffect(ResourceType.MORAL, 3),
+					new ResourceEffect(ResourceType.BERRIES, -3)
+				))
 			),
 			this::executeFeast
 		);

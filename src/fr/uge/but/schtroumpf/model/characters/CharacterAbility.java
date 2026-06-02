@@ -21,7 +21,7 @@ public record CharacterAbility(
     String description,
     int energyCost,
     List<ResourceSnapshot> requiredResources,
-	List<ResourceEffect> primaryEffects, // for UI, not logic
+	List<PossibleBranch> possibleBranches, // for UI, not logic
     Function<SmurfVillage, AbilityResult> actionLogic
 )
 {
@@ -37,6 +37,11 @@ public record CharacterAbility(
 	    AbilityResultType type,
 	    String message,
 	    List<ResourceEffect> effectsToApply
+	) {}
+	
+	public record PossibleBranch(
+		String displayName,
+		List<ResourceEffect> effects
 	) {}
 	
 	@Override

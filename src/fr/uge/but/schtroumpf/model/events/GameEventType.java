@@ -6,7 +6,7 @@ public enum GameEventType {
 	GARGAMEL_ATTACK(1, 35, GargamelAttack::getFrequencyModifier, "Attaque de Gargamel", "votre village subit un assaut de Gargamel"),
 	MAGIC_BERRIES(2, 15, GameEventType::noFreqModifier, "Découverte de baies magique", "des baies magiques se retrouvent dans le village"),
 	FRIENDLY_VILLAGE(3, 15, GameEventType::noFreqModifier, "Visite d'un village ami", "un village ami de schtroumpfs visite votre village"),
-	SARSAPARILLA_STORM(4, 25, GameEventType::noFreqModifier, "Tempête de Salsepareille", "votre village subit une tempete de salsepareille"),
+	SARSAPARILLA_STORM(4, 30, GameEventType::noFreqModifier, "Tempête de Salsepareille", "votre village subit une tempete de salsepareille"),
 	SMURF_PARTY(5, 20, GameEventType::noFreqModifier, "Fête des Schtroumpfs", "votre village fait la fête et gaspille des resources"),
 	FOREST_CURSE(6, 25, GameEventType::noFreqModifier, "Malédiction de la forêt", "votre village subit une malédiction venant des bois"),
 	PILLAGE(7, 30, GameEventType::noFreqModifier, "Pillage", "votre village se fait piller");

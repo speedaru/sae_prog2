@@ -12,6 +12,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
 import java.util.List;
@@ -20,7 +21,9 @@ import java.util.Objects;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility;
+import fr.uge.but.schtroumpf.model.characters.CharacterAbility.PossibleBranch;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
+import fr.uge.but.schtroumpf.view.themes.ThemeManager;
 
 public class AbilityAccordionWidget extends VBox {
 
@@ -39,7 +42,6 @@ public class AbilityAccordionWidget extends VBox {
     private final VBox requirementsSection;
     private final VBox requirementsContainer;
     private final VBox effectsSection;
-    private final VBox effectsListContainer;
     private final Label descriptionLabel;
 
     private AbilityActivationListener activationListener;
@@ -132,11 +134,6 @@ public class AbilityAccordionWidget extends VBox {
         this.requirementsSection.getChildren().addAll(reqHeader, this.requirementsContainer);
 
         this.effectsSection = new VBox(6);
-        Label effHeader = new Label("Effets potentiels produits :");
-        effHeader.setTextFill(Color.web("#34d399"));
-        effHeader.setFont(Font.font("System", FontWeight.BOLD, 12));
-        this.effectsListContainer = new VBox(2);
-        this.effectsSection.getChildren().addAll(effHeader, this.effectsListContainer);
 
         this.detailsContainer.getChildren().addAll(this.descriptionLabel, this.requirementsSection, this.effectsSection);
         this.getChildren().addAll(outerRow, this.detailsContainer);
@@ -171,20 +168,54 @@ public class AbilityAccordionWidget extends VBox {
             }
         }
 
-        this.effectsListContainer.getChildren().clear();
-        List<ResourceEffect> primaryEffects = ability.primaryEffects();
+        this.effectsSection.getChildren().clear();
+        List<PossibleBranch> possibleBranches = ability.possibleBranches();
         
-        if (primaryEffects == null || primaryEffects.isEmpty()) {
-            this.effectsSection.setVisible(false);
-            this.effectsSection.setManaged(false);
-        } else {
-            this.effectsSection.setVisible(true);
-            this.effectsSection.setManaged(true);
-            for (ResourceEffect effect : primaryEffects) {
-                ResourceSummaryRow row = new ResourceSummaryRow(effect.resourceType(), true);
-                row.updateDelta(village.getDynamicEffectDelta(effect));
-                this.effectsListContainer.getChildren().add(row);
-            }
+        for (PossibleBranch branch : possibleBranches ) {
+        	List<ResourceEffect> effects = branch.effects();
+
+        	VBox effectsListContainer = new VBox(2);
+
+        	String displayName = branch.displayName();
+			Label effHeader = new Label(displayName);
+			
+			Color color = Color.WHITE;
+			if (displayName.toLowerCase().contains("succès")) {
+				color = ThemeManager.getSuccessColor();
+			}
+			else if (displayName.toLowerCase().contains("echec")) {
+				color = ThemeManager.getFailColor();
+			}
+			else if (displayName.toLowerCase().contains("neutre")) {
+				color = Color.CYAN;
+			}
+			else if (displayName.toLowerCase().contains("possible")) {
+				color = Color.YELLOW;
+			}
+			
+			effHeader.setTextFill(color);
+			effHeader.setFont(Font.font("System", FontWeight.BOLD, 12));
+			effectsListContainer.getChildren().add(effHeader);
+
+			this.effectsSection.setVisible(true);
+			this.effectsSection.setManaged(true);
+			
+			if (!effects.isEmpty()) {
+				for (ResourceEffect effect : effects) {
+					ResourceSummaryRow row = new ResourceSummaryRow(effect.resourceType(), true);
+					row.updateDelta(village.getDynamicEffectDelta(effect));
+					effectsListContainer.getChildren().add(row);
+				}
+			}
+			else {
+				Label label = new Label("aucuns effets");
+				label.setTextFill(Color.web("#8f8e8d"));
+				label.setFont(Font.font("System", FontPosture.ITALIC, 14));
+				VBox.setMargin(label, new Insets(0, 0, 0, 24));
+				effectsListContainer.getChildren().add(label);
+			}
+			
+			this.effectsSection.getChildren().add(effectsListContainer);
         }
     }
 

@@ -6,8 +6,7 @@ import java.util.Map;
 
 import fr.uge.but.schtroumpf.model.*;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
-import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
-import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResultType;
+import fr.uge.but.schtroumpf.model.characters.CharacterAbility.*;
 import fr.uge.but.schtroumpf.model.types.GameModifierType;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
@@ -42,11 +41,13 @@ public class GrouchySmurf implements SmurfCharacter {
         // watch surroundings
         CharacterAbility watchSurroundings = new CharacterAbility(
             "surveiller les alentours",
-            "le schtroumpf grognon surveille le village pour augmenter la defense.",
+            "Le schtroumpf grognon surveille le village pour augmenter la defense.",
             1,
             List.of(),
             List.of(
-                new ResourceEffect(ResourceType.DEFENSE, 1)
+				new PossibleBranch("Effets :", List.of(
+					new ResourceEffect(ResourceType.DEFENSE, 1)
+				))
             ),
             this::executeWatchSurroundings
         );
@@ -54,12 +55,14 @@ public class GrouchySmurf implements SmurfCharacter {
         // snitch lazy
         CharacterAbility snitchOnSlacker = new CharacterAbility(
             "denoncer un paresseux",
-            "le schtroumpf grognon denonce un autre schtroumpf. ca enerve mais ca rapporte.",
+            "Le schtroumpf grognon denonce un autre schtroumpf. Ca enerve mais ca rapporte.",
             2,
             List.of(),
             List.of(
-                new ResourceEffect(ResourceType.MORAL, -1),
-                new ResourceEffect(ResourceType.GOLD, 1)
+				new PossibleBranch("Effets :", List.of(
+					new ResourceEffect(ResourceType.MORAL, -1),
+					new ResourceEffect(ResourceType.GOLD, 1)
+				))
             ),
             this::executeSnitchOnSlacker
         );
@@ -67,13 +70,15 @@ public class GrouchySmurf implements SmurfCharacter {
         // prevent attack
         CharacterAbility preventAttack = new CharacterAbility(
             "prevenir une attaque",
-            "le schtroumpf grognon rale tellement fort qu'il annule un evenement negatif.",
+            "Le schtroumpf grognon rale tellement fort qu'il annule un futur evenement negatif.",
             3,
             List.of(
             	new ResourceSnapshot(ResourceType.DEFENSE, 4)
             ),
             List.of(
-            	new ResourceEffect(ResourceType.DEFENSE, -3)
+				new PossibleBranch("Effets :", List.of(
+					new ResourceEffect(ResourceType.DEFENSE, -3)
+				))
 			),
             this::executePreventAttack
         );

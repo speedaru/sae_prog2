@@ -4,8 +4,7 @@ import module java.base;
 
 import fr.uge.but.schtroumpf.model.*;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
-import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
-import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResultType;
+import fr.uge.but.schtroumpf.model.characters.CharacterAbility.*;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 import fr.uge.but.schtroumpf.model.utils.Logger;
@@ -49,8 +48,12 @@ public class GrandSmurf implements SmurfCharacter {
 				new ResourceSnapshot(ResourceType.MORAL, 1)
 			),
 			List.of(
-				new ResourceEffect(ResourceType.KNOWLEDGE, 1),
-				new ResourceEffect(ResourceType.MORAL, -1)
+				new PossibleBranch("Succès :", List.of(
+					new ResourceEffect(ResourceType.KNOWLEDGE, 1)
+				)),
+				new PossibleBranch("Echec :", List.of(
+					new ResourceEffect(ResourceType.MORAL, -1)
+				))
 			),
 			this::executeCheckSpellBook
 		);
@@ -62,9 +65,11 @@ public class GrandSmurf implements SmurfCharacter {
 			3,
 			List.of(new ResourceSnapshot(ResourceType.GOLD,3)),
 			List.of(
-				new ResourceEffect(ResourceType.MORAL, 2),
-				new ResourceEffect(ResourceType.GOLD, -3),
-				new ResourceEffect(ResourceType.BERRIES, 2)
+				new PossibleBranch("Effets :", List.of(
+					new ResourceEffect(ResourceType.GOLD, -3),
+					new ResourceEffect(ResourceType.MORAL, 2),
+					new ResourceEffect(ResourceType.BERRIES, 2)
+				))
 			),
 			this::executePlanMeeting
 		);
@@ -77,8 +82,12 @@ public class GrandSmurf implements SmurfCharacter {
 			1,
 			List.of(new ResourceSnapshot(ResourceType.SARSAPARILLA, 6)),
 			List.of(
-				new ResourceEffect(ResourceType.GOLD, 2),
-				new ResourceEffect(ResourceType.DEFENSE, 2)
+				new PossibleBranch("Effets possibles :", List.of(
+					new ResourceEffect(ResourceType.GOLD, 2)
+				)),
+				new PossibleBranch("Effets possibles :", List.of(
+					new ResourceEffect(ResourceType.DEFENSE, 2)
+				))
 			),
 			this::executeTalkToAnimals
 		);

@@ -4,8 +4,7 @@ import module java.base;
 
 import fr.uge.but.schtroumpf.model.*;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
-import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
-import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResultType;
+import fr.uge.but.schtroumpf.model.characters.CharacterAbility.*;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 import fr.uge.but.schtroumpf.model.utils.Logger;
@@ -57,8 +56,12 @@ public class HandySmurf implements SmurfCharacter {
 			"Le Schtroumpf Bricoleur utilise de la salsepareille pour fabriquer des outils. Augmente ses capacites de construction.",
 			2,
 			List.of(new ResourceSnapshot(ResourceType.SARSAPARILLA, 1)),
-			List.of(new ResourceEffect(ResourceType.TOOLS, 1),
-			new ResourceEffect(ResourceType.SARSAPARILLA, -1)),
+			List.of(
+				new PossibleBranch("Effets :", List.of(
+					new ResourceEffect(ResourceType.TOOLS, 1),
+					new ResourceEffect(ResourceType.SARSAPARILLA, -1)
+				))
+			),
 			this::executeRepairHouses
 		);
 
@@ -67,8 +70,11 @@ public class HandySmurf implements SmurfCharacter {
 			"Le Schtroumpf Bricoleur utilise des outils pour renforcer les défenses du village. Augmente ses capacites de construction.",
 			2,
 			List.of(new ResourceSnapshot(ResourceType.TOOLS, 1)),
-			List.of(new ResourceEffect(ResourceType.DEFENSE, 1),
-			new ResourceEffect(ResourceType.TOOLS, -1)),
+			List.of(
+				new PossibleBranch("Effets :", List.of(
+					new ResourceEffect(ResourceType.DEFENSE, 1),
+					new ResourceEffect(ResourceType.TOOLS, -1))
+				)),
 			this::executeBuildTrap
 		);
 
@@ -78,9 +84,15 @@ public class HandySmurf implements SmurfCharacter {
 			3,
 			List.of(new ResourceSnapshot(ResourceType.TOOLS, 1)),
 			List.of(
-				new ResourceEffect(ResourceType.TOOLS, 2),
-				new ResourceEffect(ResourceType.MORAL, 1),
-				new ResourceEffect(ResourceType.TOOLS, -1)
+				new PossibleBranch("Succès :", List.of(
+					new ResourceEffect(ResourceType.TOOLS, 2)
+				)),
+				new PossibleBranch("Neutre :", List.of(
+					new ResourceEffect(ResourceType.MORAL, 1)
+				)),
+				new PossibleBranch("Echec :", List.of(
+					new ResourceEffect(ResourceType.TOOLS, -1)
+				))
 			),
 			this::executeInventGadget
 		);

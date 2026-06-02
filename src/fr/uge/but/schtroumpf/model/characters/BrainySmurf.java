@@ -6,8 +6,7 @@ import java.util.Map;
 
 import fr.uge.but.schtroumpf.model.*;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
-import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
-import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResultType;
+import fr.uge.but.schtroumpf.model.characters.CharacterAbility.*;
 import fr.uge.but.schtroumpf.model.types.GameModifierType;
 import fr.uge.but.schtroumpf.model.types.ModifierEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
@@ -49,7 +48,10 @@ public class BrainySmurf implements SmurfCharacter {
             2,
             List.of(),
             List.of(
-            	new ResourceEffect(ResourceType.KNOWLEDGE, 1)
+            	new PossibleBranch("Succès :", List.of(
+					new ResourceEffect(ResourceType.KNOWLEDGE, 1)
+				)),
+				new PossibleBranch("Echec :", List.of())
 			),
             this::executeTranslateFormula
         );
@@ -64,7 +66,9 @@ public class BrainySmurf implements SmurfCharacter {
                 new ResourceSnapshot(ResourceType.KNOWLEDGE, 1)
             ),
             List.of(
-                new ResourceEffect(ResourceType.KNOWLEDGE, -1)
+            	new PossibleBranch("Effets :", List.of(
+					new ResourceEffect(ResourceType.KNOWLEDGE, -1)
+				))
             ),
             this::executeStudyScroll
         );

@@ -4,8 +4,7 @@ import module java.base;
 
 import fr.uge.but.schtroumpf.model.*;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
-import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
-import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResultType;
+import fr.uge.but.schtroumpf.model.characters.CharacterAbility.*;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 import fr.uge.but.schtroumpf.model.utils.GameRandomness;
@@ -45,7 +44,9 @@ public class GluttonSmurf implements SmurfCharacter {
 			1,
 			List.of(),
 			List.of(
-				new ResourceEffect(ResourceType.BERRIES, 1)
+				new PossibleBranch("Effets :", List.of(
+					new ResourceEffect(ResourceType.BERRIES, 1)
+				))
 			),
 			this::executeGatherBerries
 		);
@@ -57,8 +58,10 @@ public class GluttonSmurf implements SmurfCharacter {
 			3,
 			List.of(new ResourceSnapshot(ResourceType.DEFENSE,3)),
 			List.of(
-				new ResourceEffect(ResourceType.DEFENSE, -1),
-				new ResourceEffect(ResourceType.BERRIES, 3)
+				new PossibleBranch("Effets :", List.of(
+					new ResourceEffect(ResourceType.DEFENSE, -1),
+					new ResourceEffect(ResourceType.BERRIES, 3)
+				))
 			),
 			this::executeStealBerries
 		);
@@ -70,13 +73,27 @@ public class GluttonSmurf implements SmurfCharacter {
 			1,
 			List.of(),
 			List.of(
-				new ResourceEffect(ResourceType.BERRIES, 1),
-				new ResourceEffect(ResourceType.SARSAPARILLA, 1),
-				new ResourceEffect(ResourceType.GOLD, 1),
-				new ResourceEffect(ResourceType.TOOLS, 1),
-				new ResourceEffect(ResourceType.MORAL, 1),
-				new ResourceEffect(ResourceType.DEFENSE, 1),
-				new ResourceEffect(ResourceType.KNOWLEDGE, 1)
+				new PossibleBranch("Effets :", List.of(
+					new ResourceEffect(ResourceType.BERRIES, 1)
+				)),
+				new PossibleBranch("Effets :", List.of(
+					new ResourceEffect(ResourceType.SARSAPARILLA, 1)
+				)),
+				new PossibleBranch("Effets :", List.of(
+					new ResourceEffect(ResourceType.GOLD, 1)
+				)),
+				new PossibleBranch("Effets :", List.of(
+					new ResourceEffect(ResourceType.TOOLS, 1)
+				)),
+				new PossibleBranch("Effets :", List.of(
+					new ResourceEffect(ResourceType.MORAL, 1)
+				)),
+				new PossibleBranch("Effets :", List.of(
+					new ResourceEffect(ResourceType.DEFENSE, 1)
+				)),
+				new PossibleBranch("Effets :", List.of(
+					new ResourceEffect(ResourceType.KNOWLEDGE, 1)
+				))
 			),
 			this::executeFindRareMushroom
 		);
