@@ -44,7 +44,7 @@ public class GrandSmurf implements SmurfCharacter {
 			"Consulter le grimoire",
 			"Le Grand Schtroumpf étudie un ancien grimoire. Succès (+1 Savoir) indexé sur la Sagesse du schtroumpf, "
 			+ "mais risque d'échec infligeant -1 Moral.",
-			2,
+			1,
 			List.of(
 				new ResourceSnapshot(ResourceType.MORAL, 1)
 			),
@@ -75,7 +75,7 @@ public class GrandSmurf implements SmurfCharacter {
 			"Le Grand Schtroumpf négocie avec les animaux de la forêt pour obtenir leur aide. Permet d'obtenir +2 d'Or"
 			+ "  ou +2 de Défense",
 			1,
-			List.of(new ResourceSnapshot(ResourceType.SARSAPARILLA,7)),
+			List.of(new ResourceSnapshot(ResourceType.SARSAPARILLA, 6)),
 			List.of(
 				new ResourceEffect(ResourceType.GOLD, 2),
 				new ResourceEffect(ResourceType.DEFENSE, 2)

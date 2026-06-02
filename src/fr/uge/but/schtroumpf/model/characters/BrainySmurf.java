@@ -20,7 +20,7 @@ public class BrainySmurf implements SmurfCharacter {
     private final Map<CharacterAttribute, Integer> attributes = new HashMap<>();
 
     public BrainySmurf() {
-        attributes.put(CharacterAttribute.WISDOM, 2);
+        attributes.put(CharacterAttribute.WISDOM, 0);
     }
 
     @Override public SmurfType getType() { return SmurfType.BRAINY_SMURF; }
@@ -45,14 +45,11 @@ public class BrainySmurf implements SmurfCharacter {
         // translate formula
         CharacterAbility translateFormula = new CharacterAbility(
             "traduire une formule",
-            "le schtroumpf a lunettes traduit un vieux texte, donne de la defense ou du moral.",
-            1,
+            "le schtroumpf a lunettes traduit un vieux texte, donne du savoir en cas de succès.",
+            2,
+            List.of(),
             List.of(
-                new ResourceSnapshot(ResourceType.KNOWLEDGE, 2)
-            ),
-            List.of(
-            	new ResourceEffect(ResourceType.DEFENSE, 1),
-            	new ResourceEffect(ResourceType.MORAL, 1)
+            	new ResourceEffect(ResourceType.KNOWLEDGE, 1)
 			),
             this::executeTranslateFormula
         );
@@ -75,7 +72,7 @@ public class BrainySmurf implements SmurfCharacter {
         // write history
         CharacterAbility writeHistory = new CharacterAbility(
             "etudie l'histoire",
-            "le schtroumpf a lunettes predit l'avenir et augmente la chance du village de 200% pendant 2 mois.",
+            "le schtroumpf a lunettes predit l'avenir et augmente la chance du village de 50% pendant 2 mois.",
             3,
             List.of(new ResourceSnapshot(ResourceType.KNOWLEDGE, 3)),
             List.of(),
@@ -106,20 +103,21 @@ public class BrainySmurf implements SmurfCharacter {
     }
 
     private AbilityResult executeTranslateFormula(SmurfVillage village) {
-        double chance = 0.5;
+        double chance = 0.5 + getAttribute(CharacterAttribute.WISDOM) * 0.05;
 
         return new WeightedOutcomeSelector()
         	.addChoice(new OutcomeChoice(
 				chance,
-        		AbilityResultType.NEUTRAL,
+        		AbilityResultType.SUCCESS,
         		"le schtroumpf a lunettes a traduit une formule ",
-        		List.of(new ResourceEffect(ResourceType.DEFENSE, 1))
-        	))
+        		List.of(new ResourceEffect(ResourceType.KNOWLEDGE, 1)),
+        		() -> updateAttribute(CharacterAttribute.WISDOM, 1)
+			))
         	.addChoice(new OutcomeChoice(
-				chance,
-        		AbilityResultType.NEUTRAL,
-        		"le schtroumpf a lunettes a traduit une formule ",
-        		List.of(new ResourceEffect(ResourceType.MORAL, 1))
+        		1 - chance,
+        		AbilityResultType.FAILURE,
+        		"le schtroumpf a lunettes n'a pas pu traduire la formule !",
+        		List.of()
 			))
         	.selectAndExecute(village, null);
     }
@@ -127,11 +125,11 @@ public class BrainySmurf implements SmurfCharacter {
     private AbilityResult executeWriteHistory(SmurfVillage village) {
     	AbilityResult res = new AbilityResult(
             AbilityResultType.NEUTRAL,
-            "le schtroumpf a lunettes a augmente la chance de 200%.",
+            "le schtroumpf a lunettes a augmente la chance de 50%.",
             List.of()
         );
     	
-		village.accumulateTempModifier(new ModifierEffect(GameModifierType.SUCCESS_CHANCE_BONUS, 2.0, 1, false));
+		village.accumulateTempModifier(new ModifierEffect(GameModifierType.SUCCESS_CHANCE_BONUS, 0.5, 1, false));
 
         return res;
     }

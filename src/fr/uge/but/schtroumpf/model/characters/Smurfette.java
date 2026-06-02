@@ -62,7 +62,7 @@ public class Smurfette implements SmurfCharacter {
 			"Schtroumpfette calme deux Schtroupfs en embrouille",
 			1,
 			List.of(
-					new ResourceSnapshot(ResourceType.KNOWLEDGE, 6)
+					new ResourceSnapshot(ResourceType.KNOWLEDGE, 2)
 				),
 			List.of(
 					new ResourceEffect(ResourceType.MORAL, 2)
@@ -71,15 +71,15 @@ public class Smurfette implements SmurfCharacter {
 		);
 			
 		CharacterAbility feast = new CharacterAbility(
-			"Organise une grande fête pour le village",
+			"Organiser une grande fête",
 			"Schtroumpfette Prépare et invite les Schtroumpfs à un festin!",
 			4, 
 			List.of(
-				new ResourceSnapshot(ResourceType.BERRIES, 7)
+				new ResourceSnapshot(ResourceType.BERRIES, 4)
 			),
 			List.of(
-				new ResourceEffect(ResourceType.MORAL, 5),
-				new ResourceEffect(ResourceType.BERRIES,-6)
+				new ResourceEffect(ResourceType.MORAL, 3),
+				new ResourceEffect(ResourceType.BERRIES, -3)
 			),
 			this::executeFeast
 		);
@@ -134,10 +134,10 @@ public class Smurfette implements SmurfCharacter {
 	}
 
 	private AbilityResult executeFeast(SmurfVillage village) {
-		ResourceEffect plusMoral = new ResourceEffect(ResourceType.MORAL, 5);
-		ResourceEffect minusBerries = new ResourceEffect(ResourceType.BERRIES, -6);
+		ResourceEffect plusMoral = new ResourceEffect(ResourceType.MORAL, 3);
+		ResourceEffect minusBerries = new ResourceEffect(ResourceType.BERRIES, -3);
 		
-		Logger.LogDebug("Les schtroumpfs font la fête, +5 moral -6 baies");
+		Logger.LogDebug("Les schtroumpfs font la fête, %s %s", plusMoral, minusBerries);
 		return new AbilityResult(AbilityResultType.SUCCESS,
 				"Les schtroumpfs ont fait la fête : " + plusMoral + ", " + minusBerries,
 				List.of(plusMoral, minusBerries));

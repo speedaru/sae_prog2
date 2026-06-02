@@ -57,7 +57,7 @@ public class GluttonSmurf implements SmurfCharacter {
 			3,
 			List.of(new ResourceSnapshot(ResourceType.DEFENSE,3)),
 			List.of(
-				new ResourceEffect(ResourceType.DEFENSE, -2),
+				new ResourceEffect(ResourceType.DEFENSE, -1),
 				new ResourceEffect(ResourceType.BERRIES, 3)
 			),
 			this::executeStealBerries
@@ -100,7 +100,7 @@ public class GluttonSmurf implements SmurfCharacter {
 
 	private AbilityResult executeStealBerries(SmurfVillage village) {
 		Logger.LogDebug("Steals Berries from another village");
-		ResourceEffect minusDefense = new ResourceEffect(ResourceType.DEFENSE, -2);
+		ResourceEffect minusDefense = new ResourceEffect(ResourceType.DEFENSE, -1);
 		ResourceEffect plusBerries = new ResourceEffect(ResourceType.BERRIES, 2);
 		return new AbilityResult(
 			AbilityResultType.NEUTRAL,

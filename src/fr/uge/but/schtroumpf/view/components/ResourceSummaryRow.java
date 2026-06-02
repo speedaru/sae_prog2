@@ -89,8 +89,7 @@ public class ResourceSummaryRow extends HBox {
     }
     
     private void loadIconResource() {
-		String resource = "src/main/resources/icons/" + type.name().toLowerCase() + ".png";
-		Path path = Path.of(resource);
+		Path path = type.getSpritePath();
 		try {
 			resourceIconImage.setImage(new Image(path.toUri().toString()));
 		} catch (Exception e) {

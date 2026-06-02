@@ -29,4 +29,8 @@ public enum ResourceType implements CodeEnum {
 	public String toString() {
 		return displayName;
 	}
+	
+	public Path getSpritePath() {
+		return Path.of("src/main/resources/icons/" + name().toLowerCase() + ".png");
+	}
 }

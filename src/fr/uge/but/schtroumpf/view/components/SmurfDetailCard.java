@@ -1,12 +1,14 @@
 package fr.uge.but.schtroumpf.view.components;
 
 import javafx.geometry.Insets;
+import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -15,28 +17,33 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Objects;
 
-public class SmurfDetailCard extends VBox {
+import fr.uge.but.schtroumpf.model.types.ResourceType;
+
+public class SmurfDetailCard extends HBox {
+    private static final double RESOURCE_INDICATOR_SIZE = 32;
+	private static final int INDICATORS_COUNT = 3;
 
     private final ImageView portraitView;
     private final Label nameLabel;
     private final Label roleLabel;
     private final Label energyLabel;
+	private final HBox resourceIndicators;
 
     public SmurfDetailCard() {
         super();
 
         this.setPadding(new Insets(12));
-        this.setSpacing(10);
+        this.setAlignment(Pos.BOTTOM_LEFT);
+        this.setSpacing(15);
+        this.setFillHeight(false);
+        HBox.setHgrow(this, Priority.ALWAYS);
         this.setStyle(
             "-fx-background-color: #202225; " +
             "-fx-background-radius: 8; "
         );
-
-        HBox profileLayout = new HBox();
-        profileLayout.setAlignment(Pos.CENTER_LEFT);
-        profileLayout.setSpacing(15);
 
         StackPane portraitFrame = new StackPane();
         portraitFrame.setPrefSize(68, 68);
@@ -76,8 +83,16 @@ public class SmurfDetailCard extends VBox {
 
         textLayout.getChildren().addAll(this.nameLabel, this.roleLabel, this.energyLabel);
 
-        profileLayout.getChildren().addAll(portraitFrame, textLayout);
-        this.getChildren().add(profileLayout);
+        Region regionSeparator = new Region();
+        HBox.setHgrow(regionSeparator, Priority.ALWAYS);
+        
+        // resource indicators
+        this.resourceIndicators = new HBox();
+        this.resourceIndicators.setMaxWidth(RESOURCE_INDICATOR_SIZE * INDICATORS_COUNT);
+        this.resourceIndicators.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+        this.resourceIndicators.setSpacing(8);
+        
+        this.getChildren().addAll(portraitFrame, textLayout, regionSeparator, resourceIndicators);
     }
 
     public void updateEnergy(int newEnergy, int maxEnergy) {
@@ -99,6 +114,19 @@ public class SmurfDetailCard extends VBox {
     public void setPortrait(Path portraitPath) {
     	if (portraitPath != null) {
 			this.portraitView.setImage(new Image(portraitPath.toUri().toString()));
+    	}
+    }
+    
+    public void setAssociatedResources(List<ResourceType> resources) {
+    	this.resourceIndicators.getChildren().clear();
+
+    	for (ResourceType type : resources) {
+			ImageView resourceIcon = new ImageView(new Image(
+				type.getSpritePath().toUri().toString()
+			));
+			resourceIcon.setFitWidth(RESOURCE_INDICATOR_SIZE);
+			resourceIcon.setFitHeight(RESOURCE_INDICATOR_SIZE);
+			this.resourceIndicators.getChildren().add(resourceIcon);
     	}
     }
 }

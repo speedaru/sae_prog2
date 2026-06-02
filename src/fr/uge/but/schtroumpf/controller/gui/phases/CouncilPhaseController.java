@@ -108,6 +108,7 @@ public class CouncilPhaseController implements PhaseSubController {
         int finalMaxEnergy = game.getVillage().getDynamicMaxEnergy(smurf);
         detailHeaderCard.updateData(smurfType.getName(), smurfType.getRoleDescription(), smurf.getEnergy(), finalMaxEnergy);
         detailHeaderCard.setPortrait(smurf.getType().getSpritePath());
+        detailHeaderCard.setAssociatedResources(smurf.getType().getAssociatedResources());
 
         // load abilities
         loadAbilitiesForSelectedMember(smurf);
