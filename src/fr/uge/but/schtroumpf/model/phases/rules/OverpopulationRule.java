@@ -27,7 +27,7 @@ public class OverpopulationRule implements ConsumptionRule {
 
         // 
         if (population < MIN_OVERPOPULATION) {
-            return new ConsumptionRuleResult(TITLE, List.of(), false, "");
+            return new ConsumptionRuleResult(TITLE, List.of(), "");
         }
 
         // calculate max energy vs current energy
@@ -54,17 +54,11 @@ public class OverpopulationRule implements ConsumptionRule {
             return new ConsumptionRuleResult(
             	TITLE,
                 resourceEffects,
-                true,
-                String.format("⚠️ DISPUTE : Des Schtroumpfs surmenés et fatigués se sont battus dans le village ! (-1 Moral, Risque était de %.0f%%)", finalDramaChance * 100)
+                String.format("Dispute : Des Schtroumpfs surmenés et fatigués se sont battus dans le village ! (risque était de %.0f%%)", finalDramaChance * 100)
             );
         }
 
         // no drama
-        return new ConsumptionRuleResult(
-			TITLE,
-            List.of(),
-            false,
-            ""
-        );
+        return new ConsumptionRuleResult(TITLE, List.of(), "");
     }
 }

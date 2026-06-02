@@ -17,7 +17,7 @@ public class WinterHeatingRule implements ConsumptionRule {
         boolean isWinter = Season.getSeason(turnNumber) == Season.WINTER;
 
         if (!isWinter) {
-            return new ConsumptionRuleResult(TITLE, List.of(), false, "");
+            return new ConsumptionRuleResult(TITLE, List.of(), "");
         }
 
         int currentDefense = village.getResourceQuantity(ResourceType.DEFENSE);
@@ -33,7 +33,6 @@ public class WinterHeatingRule implements ConsumptionRule {
             return new ConsumptionRuleResult(
                 TITLE,
                 appliedEffects,
-                false,
                 ""
             );
         } else {
@@ -50,8 +49,7 @@ public class WinterHeatingRule implements ConsumptionRule {
             return new ConsumptionRuleResult(
                 TITLE,
                 appliedEffects,
-                true,
-                "⚠️ CRISE DE GEL : Le village n'a plus de Defense pour se defendre cet hiver glaciale ! Les Schtroumpfs gèlent dans leurs chaumières. (-2 Moral)"
+                "Gel : Le village n'a plus de Defense pour se defendre cet hiver glaciale ! Les Schtroumpfs gèlent dans leurs chaumières."
             );
         }
     }

@@ -7,6 +7,5 @@ import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 public record ConsumptionRuleResult(
 	String ruleName,
 	List<ResourceEffect> effectsApplied,
-	boolean crisisTriggered,
-	String crisisMessage
+	String feedbackMessage
 ) {}

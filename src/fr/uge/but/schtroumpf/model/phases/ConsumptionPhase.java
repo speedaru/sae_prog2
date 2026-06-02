@@ -32,12 +32,12 @@ public class ConsumptionPhase implements GamePhase {
         for (ConsumptionRule rule : rules) {
             ConsumptionRuleResult res = rule.evaluate(village, currentRound);
             results.add(res);
-            if (res.crisisTriggered()) {
-                crises.add(res.crisisMessage());
+            if (!res.feedbackMessage().isEmpty()) {
+				crises.add(res.feedbackMessage());
             }
         }
 
-        String season = determineSeason(currentRound);
+        Season season = determineSeason(currentRound);
         this.currentReport = new ConsumptionReport(currentRound, season, results, crises);
 	}
 
@@ -51,7 +51,7 @@ public class ConsumptionPhase implements GamePhase {
 	
 	public ConsumptionReport getCurrentReport() { return this.currentReport; }
 	
-	private String determineSeason(int currentRound) {
-		return Season.getSeason(currentRound).getName();
+	private Season determineSeason(int currentRound) {
+		return Season.getSeason(currentRound);
 	}
 }

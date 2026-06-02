@@ -14,19 +14,23 @@ public class CoolScrollPane extends ScrollPane {
 	public static void setScrollBarStyle(ScrollPane scrollPane) {
     	Platform.runLater(() -> {
     		scrollPane.lookupAll(".scroll-bar").forEach(scrollBar -> {
-    			Node thumb = scrollBar.lookup(".thumb");
-    			if (thumb != null) {
-    				thumb.setStyle("""
-						-fx-background-color: #252525;
-						-fx-background-radius: 10;
-						-fx-pref-width: 10;
-					""");
+    			Node thumb = null;
+    			while (thumb == null) { // busy wait
+    				thumb = scrollBar.lookup(".thumb");
     			}
+    			
+				thumb.setStyle("""
+					-fx-background-color: #252525;
+					-fx-background-radius: 10;
+					-fx-pref-width: 10;
+				""");
 
-    			Node track = scrollBar.lookup(".track");
-    			if (track != null) {
-    				track.setStyle("-fx-background-color: #555555;");
+    			Node track = null;
+    			while (track == null) {
+					track = scrollBar.lookup(".track");
     			}
+    			
+				track.setStyle("-fx-background-color: #555555;");
     		});
     	});
 	}

@@ -79,7 +79,7 @@
             </HBox>
             
             <!-- Actions/Settings Panel (Top Right) -->
-            <HBox alignment="CENTER_RIGHT" spacing="10.0">
+            <HBox alignment="CENTER_RIGHT" prefWidth="220.0" spacing="10.0">
                <children>
                   <ImageView fx:id="settingsButton" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" />
                   <ImageView fx:id="quitButton" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" />

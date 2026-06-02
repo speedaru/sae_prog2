@@ -45,6 +45,8 @@ public class WeightedOutcomeSelector {
         double probSuccess = sumSuccess / totalRawWeight;
         double probFailure = sumFailure / totalRawWeight;
         double probNeutral = sumNeutral / totalRawWeight;
+        
+        Logger.LogDebug("success: %.2f, fail: %.2f, neutral: %.2f", probSuccess, probFailure, probNeutral);
 
         // apply modifier
         double modifier = village.getModifier(GameModifierType.SUCCESS_CHANCE_BONUS);

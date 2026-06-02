@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -16,12 +17,12 @@
    <top>
       <VBox alignment="CENTER" spacing="6.0" BorderPane.alignment="CENTER">
          <children>
-            <Label text="BILAN DE LA CONSOMMATION" textAlignment="CENTER" textFill="#f8fafc">
+            <Label text="BILAN DE CONSOMMATION" textAlignment="CENTER" textFill="#f8fafc">
                <font>
                   <Font name="System Bold" size="20.0" />
                </font>
             </Label>
-            <Label text="Fin du mois : Ravitaillement de la population" textFill="#64748b" />
+            <Label text="Fin du mois : Ravitaillement de la population" textFill="#91a6c4" />
          </children>
          <padding>
             <Insets bottom="10.0" left="20.0" right="20.0" top="15.0" />
@@ -36,7 +37,7 @@
          </padding>
          <children>
             
-                  <VBox maxWidth="300.0" spacing="15.0" style="-fx-background-color: #202225; -fx-border-color: #3f444c; -fx-border-width: 1.5; -fx-border-radius: 8; -fx-background-radius: 8;">
+                  <VBox spacing="15.0" style="-fx-background-color: #202225; -fx-border-color: #3f444c; -fx-border-width: 1.5; -fx-border-radius: 8; -fx-background-radius: 8;" HBox.hgrow="ALWAYS">
                <padding>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                </padding>
@@ -44,44 +45,46 @@
                   
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                      <children>
-                        <Label text="Population totale :" textFill="#94a3b8" />
+                        <Label text="Population :" textFill="#91a6c4">
+                           <font>
+                              <Font size="14.0" />
+                           </font></Label>
                         <Label fx:id="populationLabel" text="0 Schtroumpfs" textFill="WHITE">
                            <font>
-                              <Font name="System Bold" size="12.0" />
+                              <Font name="System Bold" size="14.0" />
                            </font>
                         </Label>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <HBox fx:id="seasonContainer" alignment="CENTER" prefHeight="45.0">
+                           <children>
+                              <Label fx:id="seasonLabel" text="Label">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <padding>
+                              <Insets left="8.0" right="8.0" />
+                           </padding>
+                        </HBox>
                      </children>
                   </HBox>
-                  <Label text="Rapport de Rationnement" textFill="#cbd5e1">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <ScrollPane fx:id="effectsScrollpane" hbarPolicy="NEVER" prefHeight="310.0" prefWidth="315.0" style="-fx-background-color: transparent; -fx-background: #202225; -fx-border-color: transparent;">
+                  <ScrollPane fx:id="reportScrollpane" fitToWidth="true" hbarPolicy="NEVER" prefHeight="310.0" prefWidth="0.0" style="-fx-background-color: transparent; -fx-background: #202225; -fx-background-radius: 8; -fx-border-color: #3f444c; -fx-border-radius: 8; -fx-border-width: 1;">
                      <content>
                         
-                              <VBox fx:id="consumptionEffectsContainer" spacing="8.0" />
+                              <VBox fx:id="reportContainer" spacing="8.0" />
                      </content>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <padding>
+                        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                     </padding>
                   </ScrollPane>
                </children>
-            </VBox>
-            
-                  <VBox fx:id="statusCardFrame" spacing="15.0" style="-fx-background-color: #202225; -fx-border-color: #3f444c; -fx-border-width: 1.5; -fx-border-radius: 8; -fx-background-radius: 8;">
-               <padding>
-                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-               </padding>
-               <children>
-                  <Label text="État de Santé du Village" textFill="#cbd5e1">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <ScrollPane fx:id="detailsScrollpane" hbarPolicy="NEVER" prefHeight="310.0" prefWidth="315.0" style="-fx-background-color: transparent; -fx-background: #202225; -fx-border-color: transparent;">
-                     <content>
-                        <VBox fx:id="detailsContainer" spacing="8.0" />
-                     </content>
-                  </ScrollPane>
-               </children>
+               <HBox.margin>
+                  <Insets left="20.0" right="20.0" />
+               </HBox.margin>
             </VBox>
             
          </children>

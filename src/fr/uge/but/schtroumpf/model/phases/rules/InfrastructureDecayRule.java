@@ -7,6 +7,7 @@ import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.phases.ConsumptionRuleResult;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
+import fr.uge.but.schtroumpf.model.utils.GameRandomness;
 
 public class InfrastructureDecayRule implements ConsumptionRule {
 	private static String TITLE = "Maintenance des Infrastructures";
@@ -14,7 +15,7 @@ public class InfrastructureDecayRule implements ConsumptionRule {
     @Override
     public ConsumptionRuleResult evaluate(SmurfVillage village, int turnNumber) {
         int currentTools = village.getResourceQuantity(ResourceType.TOOLS);
-        int toolsRequired = 1;
+        int TOOLS_REQUIRED = 1;
 
         List<ResourceEffect> appliedEffects = new ArrayList<>();
 
@@ -23,23 +24,18 @@ public class InfrastructureDecayRule implements ConsumptionRule {
 
         // check for false bcs its negative effect, so more luck should mean higher fail rate
         if (!village.rollChance(baseTriggerOdds)) {
-			return new ConsumptionRuleResult(TITLE, List.of(), false, "");
+			return new ConsumptionRuleResult(TITLE, List.of(), "");
         }
         
-        // consume tools
-        
-        if (currentTools >= toolsRequired) {
+		// random chance to decrease tools
+		double odds = 0.70;
+        if (currentTools >= TOOLS_REQUIRED && GameRandomness.rollChance(odds)) {
         	// normal
-            village.updateResource(ResourceType.TOOLS, -toolsRequired);
-            appliedEffects.add(new ResourceEffect(ResourceType.TOOLS, -toolsRequired));
-
-            return new ConsumptionRuleResult(
-            	TITLE,
-                appliedEffects,
-                false,
-                ""
-            );
-        } else {
+			village.updateResource(ResourceType.TOOLS, -TOOLS_REQUIRED);
+			appliedEffects.add(new ResourceEffect(ResourceType.TOOLS, -TOOLS_REQUIRED));
+			return new ConsumptionRuleResult(TITLE, appliedEffects, "");
+        }
+        else if (currentTools < TOOLS_REQUIRED) {
         	// no more tools so apply other penalites
             if (currentTools > 0) {
                 village.setResourceQuantity(ResourceType.TOOLS, 0);
@@ -53,9 +49,10 @@ public class InfrastructureDecayRule implements ConsumptionRule {
             return new ConsumptionRuleResult(
             	TITLE,
                 appliedEffects,
-                true,
-                "⚠️ LABRELEMENT : Faute d'Outils, les palissades du village s'effondrent et tombent en ruine ! (-2 Défense)"
+                "Manque d'Outils, les palissades du village s'effondrent et tombent en ruine !"
             );
         }
+
+		return new ConsumptionRuleResult(TITLE, appliedEffects, "");
     }
 }

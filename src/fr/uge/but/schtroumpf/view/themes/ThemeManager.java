@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResultType;
+import fr.uge.but.schtroumpf.model.phases.Season;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 import javafx.scene.paint.Color;
 
@@ -74,6 +75,26 @@ public class ThemeManager {
 
 		return Color.web("#ef4444");
     }
+    
+    public static Color getSeasonColor(Season season) {
+    	if (currentTheme == ResourceTheme.COLOR_BLIND) {
+    		return switch(season) {
+				case Season.SPRING -> Color.web("#56B4E9");
+				case Season.SUMMER -> Color.web("#F0E442");
+				case Season.AUTUMN -> Color.web("#E69F00");
+				case Season.WINTER -> Color.web("#CC79A7");
+    		};
+    	}
+
+		return switch(season) {
+			case Season.SPRING -> Color.web("#4CAF50");
+			case Season.SUMMER -> Color.web("#FFD54F");
+			case Season.AUTUMN -> Color.web("#FF8F00");
+			case Season.WINTER -> Color.web("#64B5F6");
+		};
+    }
+    
+    // ------------------------- private
 
     private static Color getResourceThemeColor(ResourceType type) {
     	// color blind theme - Palette CUD/Okabe-Ito

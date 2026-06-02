@@ -7,6 +7,7 @@ import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.phases.ConsumptionRuleResult;
 import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
+import fr.uge.but.schtroumpf.model.utils.GameRandomness;
 
 public class FoodRule implements ConsumptionRule {
     @Override
@@ -14,7 +15,11 @@ public class FoodRule implements ConsumptionRule {
         int population = village.getAvailableSmurfs().size();
         
         // 1 berries for 1 smurf
-        int foodRequired = Math.max(1, population / 3);
+        int foodRequired = GameRandomness.randomChoice(1, population / 2 + 1);
+        if (foodRequired == 0) {
+            return new ConsumptionRuleResult("Rationnement Alimentaire", List.of(), "");
+        }
+        
         int currentBerries = village.getResourceQuantity(ResourceType.BERRIES);
 
         List<ResourceEffect> appliedEffects = new ArrayList<>();
@@ -24,12 +29,7 @@ public class FoodRule implements ConsumptionRule {
             village.updateResource(ResourceType.BERRIES, -foodRequired);
             appliedEffects.add(new ResourceEffect(ResourceType.BERRIES, -foodRequired));
 
-            return new ConsumptionRuleResult(
-                "Rationnement Alimentaire",
-                appliedEffects,
-                false,
-                ""
-            );
+            return new ConsumptionRuleResult("Rationnement Alimentaire", appliedEffects, "");
         } else {
         	// if no more berries then apply more penalties
             village.setResourceQuantity(ResourceType.BERRIES, 0);
@@ -44,8 +44,7 @@ public class FoodRule implements ConsumptionRule {
             return new ConsumptionRuleResult(
                 "Rationnement Alimentaire",
                 appliedEffects,
-                true,
-                "⚠️ FAMINE : Le village a manqué de Baies pour nourrir la population et les prix augmentent ! (-3 Or, -2 Moral)"
+                "Le village a manqué de Baies pour nourrir la population et les prix augmentent !"
             );
         }
     }

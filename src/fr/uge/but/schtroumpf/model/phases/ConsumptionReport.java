@@ -4,7 +4,7 @@ import java.util.List;
 
 public record ConsumptionReport(
 	int turnNumber,
-	String seasonName,
+	Season season,
 	List<ConsumptionRuleResult> ruleResults,
 	List<String> activeCrises
 ) {
