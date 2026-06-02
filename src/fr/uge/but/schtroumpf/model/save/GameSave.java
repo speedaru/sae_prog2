@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import fr.uge.but.schtroumpf.model.Game.GameState;
+import fr.uge.but.schtroumpf.model.characters.CharacterAttribute;
 import fr.uge.but.schtroumpf.model.characters.SmurfType;
 import fr.uge.but.schtroumpf.model.crises.CrisisType;
 import fr.uge.but.schtroumpf.model.phases.GamePhaseType;
@@ -34,7 +35,13 @@ public record GameSave(
 
     public record CouncilMemberState(
         SmurfType type,
-        int currentEnergy
+        int currentEnergy,
+        List<AttributeState> attribs
+    ) {}
+    
+    public record AttributeState(
+    	CharacterAttribute type,
+    	int value
     ) {}
 
     public record CrisisState(

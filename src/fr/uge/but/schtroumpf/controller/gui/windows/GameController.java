@@ -23,7 +23,6 @@ import fr.uge.but.schtroumpf.model.phases.*;
 import fr.uge.but.schtroumpf.model.save.GameSaveManager;
 import fr.uge.but.schtroumpf.model.types.EventHistory;
 import fr.uge.but.schtroumpf.model.types.GameModifierType;
-import fr.uge.but.schtroumpf.model.types.ResourceEffect;
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 import fr.uge.but.schtroumpf.model.types.VillageCallbackType;
 import fr.uge.but.schtroumpf.model.types.WindowType;
@@ -37,7 +36,6 @@ import fr.uge.but.schtroumpf.view.components.ResourceSidebarWidget;
 public class GameController implements WindowSubController {
     private AppController router;
     private Game game = new Game();
-
 
     @FXML private StackPane root;
     @FXML private ImageView backgroundImage;

@@ -7,6 +7,7 @@ import fr.uge.but.schtroumpf.model.characters.*;
 import fr.uge.but.schtroumpf.model.characters.CharacterAbility.AbilityResult;
 import fr.uge.but.schtroumpf.model.crises.*;
 import fr.uge.but.schtroumpf.model.save.GameSave;
+import fr.uge.but.schtroumpf.model.save.GameSaveManager;
 import fr.uge.but.schtroumpf.model.types.EventHistory;
 import fr.uge.but.schtroumpf.model.types.ModifierEffect;
 import fr.uge.but.schtroumpf.model.types.GameModifierType;
@@ -54,9 +55,7 @@ public class SmurfVillage {
 		// council members
 		councilMembers = new ArrayList<>();
 		for (var savedMember : state.councilMembers()) {
-			SmurfCharacter newMember = SmurfCharacter.fromType(savedMember.type());
-			councilMembers.add(newMember);
-			newMember.setEnergy(savedMember.currentEnergy());
+			councilMembers.add(GameSaveManager.deserializeCouncilMember(savedMember));
 		}
 		
 		// event history

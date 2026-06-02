@@ -30,6 +30,7 @@ public class GluttonSmurf implements SmurfCharacter {
 	}
 
 	@Override public int getAttribute(CharacterAttribute attrib) { return attributes.getOrDefault(attrib, 0); }
+    @Override public void setAttribute(CharacterAttribute attrib, int value) { attributes.put(attrib, value); }
     @Override public void updateAttribute(CharacterAttribute attrib, int delta) { attributes.put(attrib, getAttribute(attrib) + delta); }
 
 	@Override

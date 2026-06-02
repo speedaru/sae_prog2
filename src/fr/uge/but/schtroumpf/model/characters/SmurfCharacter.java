@@ -14,6 +14,7 @@ public interface SmurfCharacter {
 
     // dynamic attributes tracking
     int getAttribute(CharacterAttribute attrib);
+    void setAttribute(CharacterAttribute attrib, int value);
     void updateAttribute(CharacterAttribute attrib, int delta);
 
     List<CharacterAbility> getAbilities();

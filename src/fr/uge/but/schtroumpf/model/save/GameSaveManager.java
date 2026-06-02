@@ -13,8 +13,10 @@ import java.util.List;
 import fr.uge.but.schtroumpf.model.Game;
 import fr.uge.but.schtroumpf.model.SmurfVillage;
 import fr.uge.but.schtroumpf.model.ResourceManager.ResourceSnapshot;
+import fr.uge.but.schtroumpf.model.characters.CharacterAttribute;
 import fr.uge.but.schtroumpf.model.characters.SmurfCharacter;
 import fr.uge.but.schtroumpf.model.crises.Crisis;
+import fr.uge.but.schtroumpf.model.save.GameSave.CouncilMemberState;
 import fr.uge.but.schtroumpf.model.types.EventHistory;
 import fr.uge.but.schtroumpf.model.types.ResourceMap;
 import fr.uge.but.schtroumpf.model.utils.Logger;
@@ -101,6 +103,18 @@ public class GameSaveManager {
         return cleanNames;
     }
     
+    public static SmurfCharacter deserializeCouncilMember(CouncilMemberState state) {
+    	SmurfCharacter smurf = SmurfCharacter.fromType(state.type());
+    	smurf.setEnergy(state.currentEnergy());
+    	
+    	// set attribs
+    	for (GameSave.AttributeState attrib : state.attribs()) {
+			smurf.setAttribute(attrib.type(), attrib.value());
+    	}
+    	
+    	return smurf;
+    }
+    
     private static GameSave.EngineState serialEngine(Game game) {
         return new GameSave.EngineState(
 			game.getCurrentRound(),
@@ -147,7 +161,20 @@ public class GameSaveManager {
         ArrayList<GameSave.CouncilMemberState> councilState = new ArrayList<>();
         
         for (SmurfCharacter smurf : councilMembers) {
-        	councilState.add(new GameSave.CouncilMemberState(smurf.getType(), smurf.getEnergy()));
+        	// get attributes
+        	ArrayList<GameSave.AttributeState> attribs = new ArrayList<>();
+        	for (CharacterAttribute attrib : CharacterAttribute.values()) {
+        		int val = smurf.getAttribute(attrib);
+        		if (val != 0) {
+					attribs.add(new GameSave.AttributeState(attrib, val));
+        		}
+        	}
+        	
+        	councilState.add(new GameSave.CouncilMemberState(
+				smurf.getType(),
+				smurf.getEnergy(),
+				List.copyOf(attribs)
+        	));
         }
         
         return List.copyOf(councilState);
