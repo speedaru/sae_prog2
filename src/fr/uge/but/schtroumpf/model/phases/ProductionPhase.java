@@ -40,7 +40,7 @@ public class ProductionPhase implements GamePhase {
 		}
 		
 		// apply generation effects
-		village.applyEffects(effects);
+		village.applyStaticEffects(effects);
 		
 		// recharge energy for council members
 		rechargeCouncil(village);

@@ -132,7 +132,7 @@ public class SmurfVillage {
 
 		// apply effects
 		AbilityResult result = ability.actionLogic().apply(this);
-		this.applyEffects(result.effectsToApply());
+		this.applyDynamicEffects(result.effectsToApply());
 		
 		// increase used abilities counter
 		this.abilitiesUsedThisTurn++;
@@ -266,13 +266,21 @@ public class SmurfVillage {
 	}
 	
 	/** applies effects with efficiency multipliers */
-	public void applyEffects(List<ResourceEffect> resourceEffects) {
+	public void applyDynamicEffects(List<ResourceEffect> resourceEffects) {
 		for (ResourceEffect effect : resourceEffects) {
 			int finalDelta = getDynamicEffectDelta(effect);
 			updateResource(effect.resourceType(), finalDelta);
 		}
 	}
-
+	
+	/** applies effects WITHOUT efficiency multipliers */
+	public void applyStaticEffects(List<ResourceEffect> resourceEffects) {
+		for (ResourceEffect effect : resourceEffects) {
+			int finalDelta = effect.delta();
+			updateResource(effect.resourceType(), finalDelta);
+		}
+	}
+	
 	/** recharge smurf energy with energy recharge rate delta modifier */
 	public void rechargeSmurfEnergy(SmurfCharacter smurf, int baseRate) {
 		int energyRechargeRateDelta = modifiers.getInt(GameModifierType.ENERGY_RECHARGE_RATE_DELTA);

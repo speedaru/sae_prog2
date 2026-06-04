@@ -18,7 +18,7 @@ public class EventPhase implements GamePhase {
 		
 		// get and apply event effects
 		List<ResourceEffect> effectsToApply = event.trigger(ctx.village());
-		ctx.village().applyEffects(effectsToApply);
+		ctx.village().applyDynamicEffects(effectsToApply);
 
 		// log event in village history
 		ctx.village().recordEvent(
