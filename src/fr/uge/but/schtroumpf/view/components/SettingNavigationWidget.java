@@ -1,7 +1,7 @@
 package fr.uge.but.schtroumpf.view.components;
 
-import java.nio.file.Path;
-import fr.uge.but.schtroumpf.model.utils.Logger;
+import java.net.URL;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -15,9 +15,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
+import fr.uge.but.schtroumpf.model.utils.Logger;
+
 public class SettingNavigationWidget extends HBox {
 
-    public SettingNavigationWidget(String title, String description, Path iconFile, String buttonText, Runnable onNavigateAction) {
+    public SettingNavigationWidget(String title, String description, String iconFileName, String buttonText, Runnable onNavigateAction) {
         super();
 
         this.setAlignment(Pos.CENTER_LEFT);
@@ -35,7 +37,7 @@ public class SettingNavigationWidget extends HBox {
         iconView.setFitHeight(64.0);
         iconView.setFitWidth(64.0);
         iconView.setPreserveRatio(true);
-        loadIconResource(iconView, iconFile);
+        loadIconResource(iconView, iconFileName);
 
         VBox textContainer = new VBox(5.0);
         textContainer.setAlignment(Pos.CENTER_LEFT);
@@ -72,11 +74,12 @@ public class SettingNavigationWidget extends HBox {
         this.getChildren().addAll(iconView, textContainer, navigationButton);
     }
 
-    private void loadIconResource(ImageView iconView, Path file) {
+    private void loadIconResource(ImageView iconView, String fileName) {
         try {
-            iconView.setImage(new Image(file.toUri().toString()));
+			URL resource = getClass().getResource("/settings/" + fileName);
+        	iconView.setImage(new Image(resource.toExternalForm()));
         } catch (Exception e) {
-            Logger.LogDebug("Navigation widget icon not loaded: %s", file.toString());
+            Logger.LogDebug("Navigation widget icon not loaded: %s", fileName);
             iconView.setImage(null);
         }
     }

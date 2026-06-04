@@ -16,7 +16,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
@@ -111,9 +110,9 @@ public class SmurfDetailCard extends HBox {
         }
     }
 
-    public void setPortrait(Path portraitPath) {
+    public void setPortrait(String portraitPath) {
     	if (portraitPath != null) {
-			this.portraitView.setImage(new Image(portraitPath.toUri().toString()));
+			this.portraitView.setImage(new Image(portraitPath));
     	}
     }
     
@@ -122,7 +121,7 @@ public class SmurfDetailCard extends HBox {
 
     	for (ResourceType type : resources) {
 			ImageView resourceIcon = new ImageView(new Image(
-				type.getSpritePath().toUri().toString()
+				type.getSpritePath()
 			));
 			resourceIcon.setFitWidth(RESOURCE_INDICATOR_SIZE);
 			resourceIcon.setFitHeight(RESOURCE_INDICATOR_SIZE);

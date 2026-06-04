@@ -1,18 +1,16 @@
 package fr.uge.but.schtroumpf.model.types;
 
-import java.nio.file.Path;
-
 public enum WindowType {
-	START_WINDOW(1, Path.of("windows/gui/StartWindow.fxml")),
-	GAME_WINDOW(2, Path.of("windows/gui/GameWindow.fxml")),
-	SETTINGS_WINDOW(3, Path.of("windows/gui/SettingsWindow.fxml")),
-	SAVE_WINDOW(5, Path.of("windows/gui/SaveWindow.fxml")),
-	LOAD_SAVE_WINDOW(6, Path.of("windows/gui/LoadSaveWindow.fxml"));
+	START_WINDOW(1, "/view/windows/StartWindow.fxml"),
+	GAME_WINDOW(2, "/view/windows/GameWindow.fxml"),
+	SETTINGS_WINDOW(3, "/view/windows/SettingsWindow.fxml"),
+	SAVE_WINDOW(5, "/view/windows/SaveWindow.fxml"),
+	LOAD_SAVE_WINDOW(6, "/view/windows/LoadSaveWindow.fxml");
 
 	private final int code;
-	private final Path fxmlFile;
+	private final String fxmlFile;
 
-	WindowType(int code, Path fxmlFile) {
+	WindowType(int code, String fxmlFile) {
 		this.code = code;
 		this.fxmlFile = fxmlFile;
 	}
@@ -23,5 +21,5 @@ public enum WindowType {
 	}
 
 	public int getCode() { return code; }
-	public Path getFxmlFile() { return fxmlFile; }
+	public String getFxmlFile() { return fxmlFile; }
 }

@@ -30,7 +30,11 @@ public enum ResourceType implements CodeEnum {
 		return displayName;
 	}
 	
-	public Path getSpritePath() {
-		return Path.of("src/main/resources/icons/" + name().toLowerCase() + ".png");
+	public String getSpritePath() {
+		var resource = ResourceType.class.getResource("/icons/" + name().toLowerCase() + ".png");
+		if (resource == null) {
+			throw new IllegalStateException("Icon not found for: " + name());
+		}
+		return resource.toExternalForm();
 	}
 }

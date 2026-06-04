@@ -12,7 +12,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-import java.nio.file.Path;
 import java.util.Objects;
 
 import fr.uge.but.schtroumpf.model.SmurfVillage;
@@ -118,9 +117,9 @@ public class SmurfListRow extends HBox {
         this.energyLabel.setText(String.format("%d/%d ⚡", current, max));
     }
 
-    private void loadAvatar(Path spritePath) {
+    private void loadAvatar(String spritePath) {
     	if (spritePath != null) {
-			this.avatarView.setImage(new Image(spritePath.toUri().toString()));
+			this.avatarView.setImage(new Image(spritePath));
     	}
     }
 }

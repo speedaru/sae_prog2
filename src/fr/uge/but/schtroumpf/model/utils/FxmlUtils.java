@@ -2,23 +2,22 @@ package fr.uge.but.schtroumpf.model.utils;
 
 import module java.base;
 
-import fr.uge.but.schtroumpf.view.MainWindow;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 
 public class FxmlUtils {
-	public static FXMLLoader loadFxml(Path file) {
-		URL fxml = MainWindow.class.getResource(file.toString());
+	public static FXMLLoader loadFxml(String file) {
+		URL fxml = FxmlUtils.class.getResource(file);
 		if (fxml == null) {
-			Logger.LogError("can't find: " + fxml);
-			return null;
+			Logger.LogError("can't find fxml file: %s", file);
+			throw new IllegalStateException("FXML not found: " + file);
 		}
 
 		return new FXMLLoader(fxml);
 	}
 	
 	public static <PC, SC> FxWindow<SC> loadFxmlAndPassController(
-			Path file,
+			String file,
 			PC masterController,
 			BiConsumer<FXMLLoader, PC> passControllerCallback
 	) {

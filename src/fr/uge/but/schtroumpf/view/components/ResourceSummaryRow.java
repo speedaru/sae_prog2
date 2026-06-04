@@ -10,8 +10,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-import java.nio.file.Path;
-
 import fr.uge.but.schtroumpf.model.types.ResourceType;
 import fr.uge.but.schtroumpf.view.themes.ThemeManager;
 
@@ -89,9 +87,9 @@ public class ResourceSummaryRow extends HBox {
     }
     
     private void loadIconResource() {
-		Path path = type.getSpritePath();
+		String path = type.getSpritePath();
 		try {
-			resourceIconImage.setImage(new Image(path.toUri().toString()));
+			resourceIconImage.setImage(new Image(path));
 		} catch (Exception e) {
 			resourceIconImage.setImage(null);
 		}

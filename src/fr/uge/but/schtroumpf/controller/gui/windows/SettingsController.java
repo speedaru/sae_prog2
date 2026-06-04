@@ -4,8 +4,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 
-import java.nio.file.Path;
-
 import fr.uge.but.schtroumpf.controller.AppController;
 import fr.uge.but.schtroumpf.controller.Navigation.NavigationAction;
 import fr.uge.but.schtroumpf.controller.WindowSubController;
@@ -16,8 +14,6 @@ import fr.uge.but.schtroumpf.view.themes.ThemeManager;
 import fr.uge.but.schtroumpf.view.themes.ThemeManager.ResourceTheme;
 
 public class SettingsController implements WindowSubController {
-	private static final Path BASE_ICONS_PATH = Path.of("src/main/resources/settings/");
-
     private AppController router;
 
     @FXML private VBox settingsListContainer;
@@ -38,7 +34,7 @@ public class SettingsController implements WindowSubController {
 		SettingToggleWidget colorblindSetting = new SettingToggleWidget(
 			"Mode Daltonien",
 			"Ajuste les couleurs des interfaces (vert/rouge) pour améliorer la lisibilité pour les joueurs atteints de daltonisme.",
-			BASE_ICONS_PATH.resolve("colorblind_icon.png"),
+			"colorblind_icon.png",
 			false,
 			(isActivated) -> {
 				if (isActivated) {
@@ -53,7 +49,7 @@ public class SettingsController implements WindowSubController {
 		SettingNavigationWidget saveLoadSetting = new SettingNavigationWidget(
 			"Gestion des Sauvegardes",
 			"Sauvegardez votre partie actuelle ou chargez une ancienne session de jeu pour reprendre votre village.",
-			BASE_ICONS_PATH.resolve("save_icon.png"),
+			"save_icon.png",
 			"Gérer",
 			() -> {
 				router.navigate(NavigationAction.PUSH, WindowType.SAVE_WINDOW);

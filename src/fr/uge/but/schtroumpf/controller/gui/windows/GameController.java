@@ -163,8 +163,8 @@ public class GameController implements WindowSubController {
     }
     
     private void loadBackground() {
-    	Path path = Path.of("src/main/resources/sprites/les-schtroumpfs.png").toAbsolutePath();
-    	backgroundImage.setImage(new Image(path.toUri().toString()));
+    	String imageUri = getClass().getResource("/sprites/les-schtroumpfs.png").toExternalForm();
+    	backgroundImage.setImage(new Image(imageUri));
     	
     	backgroundImage.fitWidthProperty().bind(root.widthProperty());
     	backgroundImage.fitHeightProperty().bind(root.heightProperty());
@@ -172,16 +172,16 @@ public class GameController implements WindowSubController {
     }
     
     private void initNavButtons() {
-    	Path settingsIconPath = Path.of("src/main/resources/icons/settings.png");
-    	Path quitIconPath = Path.of("src/main/resources/icons/quit.png");
+    	String settingsIconPath = getClass().getResource("/icons/settings.png").toExternalForm();
+    	String quitIconPath = getClass().getResource("/icons/quit.png").toExternalForm();
     	
-    	settingsButton.setImage(new Image(settingsIconPath.toUri().toString()));
+    	settingsButton.setImage(new Image(settingsIconPath));
     	settingsButton.setOnMouseClicked(this::handleOpenSettings);
 
-    	quitButton.setImage(new Image(quitIconPath.toUri().toString()));
+    	quitButton.setImage(new Image(quitIconPath));
     	quitButton.setOnMouseClicked(this::handleQuitButton);
     	
-    	Logger.LogDebug("seetings icon path: %s", settingsIconPath.toUri().toString());
+    	Logger.LogDebug("seetings icon path: %s", settingsIconPath);
     }
     
     private void initResourceWidgets() {
@@ -347,11 +347,11 @@ public class GameController implements WindowSubController {
         updateHudRoundIndicator(game.getCurrentRound());
         updateHudEventIndicator();
 
-        Path phaseFxmlFile = currentPhase.getType().getFxmlFile();
+        String phaseFxmlFile = currentPhase.getType().getFxmlFile();
         loadCenterView(phaseFxmlFile);
     }
     
-    private void loadCenterView(Path fxmlFile) {
+    private void loadCenterView(String fxmlFile) {
     	centerContainer.getChildren().clear();
 
     	FxWindow<PhaseSubController> window = FxmlUtils.loadFxmlAndPassController(fxmlFile, this, (loader, masterCtlr) -> {
